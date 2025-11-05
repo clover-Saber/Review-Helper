@@ -1,23 +1,23 @@
 /* 科研风格统一设计系统 */
 
 :root {
-    /* 科研风格配色 */
-    --primary-color: #1e3a5f;        /* 深蓝 - 主色 */
-    --primary-light: #2d4a6f;        /* 浅深蓝 */
-    --primary-dark: #0f2538;         /* 深蓝暗色 */
-    --secondary-color: #4a5568;      /* 灰蓝 - 次要色 */
-    --accent-color: #2c5282;         /* 强调色 */
-    --success-color: #2d7d32;       /* 成功色 - 深绿 */
-    --warning-color: #f57c00;       /* 警告色 */
-    --error-color: #c62828;         /* 错误色 */
+    /* 科研风格配色 - 柔和版本 */
+    --primary-color: #3b82f6;        /* 蓝色 - 主色（更柔和） */
+    --primary-light: #60a5fa;        /* 浅蓝 */
+    --primary-dark: #2563eb;         /* 深蓝 */
+    --secondary-color: #64748b;      /* 灰蓝 - 次要色 */
+    --accent-color: #4f46e5;         /* 强调色 */
+    --success-color: #10b981;       /* 成功色 - 绿色（更柔和） */
+    --warning-color: #f59e0b;       /* 警告色（更柔和） */
+    --error-color: #ef4444;         /* 错误色（更柔和） */
     
     /* 中性色 */
-    --text-primary: #1a1a1a;        /* 主文本 */
-    --text-secondary: #4a5568;      /* 次要文本 */
-    --text-muted: #718096;          /* 弱文本 */
+    --text-primary: #1e293b;        /* 主文本（稍浅） */
+    --text-secondary: #64748b;      /* 次要文本 */
+    --text-muted: #94a3b8;          /* 弱文本 */
     --border-color: #e2e8f0;        /* 边框色 */
     --bg-primary: #ffffff;          /* 主背景 */
-    --bg-secondary: #f8f9fa;       /* 次背景 */
+    --bg-secondary: #f8fafc;       /* 次背景（更浅） */
     --bg-tertiary: #f1f5f9;        /* 三级背景 */
     
     /* 间距 */

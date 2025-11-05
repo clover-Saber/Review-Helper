@@ -31,25 +31,38 @@
                 </div>
             </section>
 
-            <section class="research-section">
-                <h3>研究主题</h3>
-                <div id="research-topic-display" class="topic-display">（将自动读取主页面研究主题）</div>
-            </section>
-
             <section class="import-section">
-                <h3>导入PDF文献（可选）</h3>
-                <div class="import-controls">
-                    <input type="file" id="pdf-file-input" accept=".pdf" multiple style="display: none;">
-                    <button id="select-pdf-btn">选择PDF文件</button>
-                    <button id="import-pdf-btn" disabled>导入PDF</button>
-                    <div id="import-progress" style="display: none;">
+                <h3>补充文献（可选）</h3>
+                
+                <div class="import-by-name-section" style="margin-bottom: 20px;">
+                    <label for="paper-title-input" style="display: block; margin-bottom: 8px; font-weight: 500;">通过论文名称搜索导入：</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="paper-title-input" placeholder="请输入论文标题..." style="flex: 1; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px;">
+                        <button id="search-paper-btn">搜索并导入</button>
+                    </div>
+                    <div id="search-paper-progress" style="display: none; margin-top: 10px;">
                         <div class="progress-bar">
-                            <div class="progress-fill" id="import-progress-fill"></div>
+                            <div class="progress-fill" id="search-paper-progress-fill"></div>
                         </div>
-                        <p id="import-progress-text">准备导入...</p>
+                        <p id="search-paper-progress-text">准备搜索...</p>
                     </div>
                 </div>
-                <div id="selected-files" style="margin-top: 10px; font-size: 14px; color: #4a5568;"></div>
+                
+                <div class="import-pdf-section">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">通过PDF文件导入：</label>
+                    <div class="import-controls">
+                        <input type="file" id="pdf-file-input" accept=".pdf" multiple style="display: none;">
+                        <button id="select-pdf-btn">选择PDF文件</button>
+                        <button id="import-pdf-btn" disabled>导入PDF</button>
+                        <div id="import-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="import-progress-fill"></div>
+                            </div>
+                            <p id="import-progress-text">准备导入...</p>
+                        </div>
+                    </div>
+                    <div id="selected-files" style="margin-top: 10px; font-size: 14px; color: #4a5568;"></div>
+                </div>
             </section>
 
             <section class="filter-section">
@@ -88,21 +101,121 @@
             </section>
         </main>
         
+        <!-- 编辑文献模态框 -->
+        <div id="edit-literature-modal" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+                <div class="modal-header">
+                    <h2>编辑文献信息</h2>
+                    <button class="modal-close" id="edit-modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit-title">标题：</label>
+                        <input type="text" id="edit-title" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-authors">作者：</label>
+                        <input type="text" id="edit-authors" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-year">年份：</label>
+                        <input type="text" id="edit-year" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-source">来源：</label>
+                        <input type="text" id="edit-source" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-cited">被引次数：</label>
+                        <input type="number" id="edit-cited" class="form-input" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-url">URL：</label>
+                        <input type="url" id="edit-url" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-abstract">摘要：</label>
+                        <textarea id="edit-abstract" class="form-input" rows="6"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-ai-reason">AI判断理由：</label>
+                        <textarea id="edit-ai-reason" class="form-input" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="edit-ai-recommended"> AI推荐
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="edit-save-btn" class="btn-primary">保存</button>
+                    <button id="edit-cancel-btn" class="btn-secondary">取消</button>
+                </div>
+            </div>
+        </div>
+        
         <footer>
             <div class="footer-controls">
                 <button id="back-btn">返回主页面</button>
                 <button id="confirm-btn" disabled>确认完成</button>
             </div>
         </footer>
+        
+        <!-- Toast通知 -->
+        <div id="toast" class="toast" style="display: none;">
+            <div class="toast-content">
+                <span class="toast-message" id="toast-message"></span>
+            </div>
+        </div>
     </div>
     
     <script>
+        // Electron IPC API（提前定义，确保在DOMContentLoaded之前可用）
+        window.electronAPI = {
+            saveProjectData: (projectName, data) => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('save-project-data', projectName, data);
+                }
+            },
+            loadProjectData: (projectName) => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('load-project-data', projectName);
+                }
+            },
+            getCurrentProject: () => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('get-current-project');
+                }
+            },
+            parsePdf: (buffer, filename) => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('parse-pdf', buffer, filename);
+                }
+            },
+            searchGoogleScholar: (keyword, limit) => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('search-google-scholar', keyword, limit);
+                }
+            },
+            openScholarLogin: () => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('open-scholar-login');
+                }
+            }
+        };
+        
         document.addEventListener('DOMContentLoaded', function() {
+            
             // DOM元素
             const currentProjectNameSpan = document.getElementById('current-project-name');
             const saveProjectBtn = document.getElementById('save-project-btn');
             const apiKeyInput = document.getElementById('api-key');
-            const researchTopicDisplay = document.getElementById('research-topic-display');
             const startFilterBtn = document.getElementById('start-filter-btn');
             const filterProgress = document.getElementById('filter-progress');
             const filterProgressFill = document.getElementById('filter-progress-fill');
@@ -125,11 +238,51 @@
             const importProgressFill = document.getElementById('import-progress-fill');
             const importProgressText = document.getElementById('import-progress-text');
             const selectedFilesDiv = document.getElementById('selected-files');
+            const paperTitleInput = document.getElementById('paper-title-input');
+            const searchPaperBtn = document.getElementById('search-paper-btn');
+            const searchPaperProgress = document.getElementById('search-paper-progress');
+            const searchPaperProgressFill = document.getElementById('search-paper-progress-fill');
+            const searchPaperProgressText = document.getElementById('search-paper-progress-text');
             
             // 数据存储
             let currentProject = null;
             let literatureList = []; // 文献列表，每篇包含 { ...literature, selected: boolean, aiRecommended: boolean, aiReason: string }
             let selectedPdfFiles = []; // 选中的PDF文件列表
+            
+            // 显示Toast通知
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toast-message');
+                
+                if (!toast || !toastMessage) return;
+                
+                // 设置消息
+                toastMessage.textContent = message;
+                
+                // 根据类型设置样式
+                if (type === 'success') {
+                    toast.style.background = 'linear-gradient(135deg, var(--success-color) 0%, #059669 100%)';
+                } else if (type === 'error') {
+                    toast.style.background = 'linear-gradient(135deg, var(--error-color) 0%, #dc2626 100%)';
+                }
+                
+                // 显示toast
+                toast.style.display = 'block';
+                toast.style.opacity = '0';
+                
+                // 触发动画
+                setTimeout(() => {
+                    toast.style.opacity = '1';
+                }, 10);
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 300);
+                }, 3000);
+            }
             
             // 初始化当前项目信息并加载数据
             initCurrentProject();
@@ -146,7 +299,7 @@
                             loadProjectData(result.data);
                         }
                     } else {
-                        alert('未选择项目，请在主页面先新建或打开项目。');
+                        showToast('未选择项目，请在主页面先新建或打开项目', 'error');
                     }
                 } catch (e) {
                     console.error('获取当前项目失败:', e);
@@ -155,11 +308,6 @@
             
             // 加载项目数据
             function loadProjectData(data) {
-                // 加载研究主题
-                if (researchTopicDisplay) {
-                    researchTopicDisplay.textContent = data.reviewDescription || data.userNeeds || data.researchTopic || '（未设置研究主题）';
-                }
-                
                 // 加载API Key
                 apiKeyInput.value = (data.config && data.config.apiKey) || data.apiKey || '';
                 
@@ -189,11 +337,11 @@
                 }
             }
             
-            // 保存项目（合并保存）
+            // 保存项目（合并保存，避免覆盖旧字段）
             saveProjectBtn.addEventListener('click', async function() {
                 const projectName = currentProject;
                 if (!projectName) {
-                    alert('未绑定项目，请返回主页面选择项目');
+                    showToast('未绑定项目，请返回主页面选择项目', 'error');
                     return;
                 }
                 
@@ -201,10 +349,10 @@
                 if (window.electronAPI) {
                     try {
                         await mergeAndSave(projectName, projectData);
-                        alert(`项目 "${projectName}" 保存成功`);
+                        showToast(`项目 "${projectName}" 保存成功`);
                     } catch (error) {
                         console.error('保存项目失败:', error);
-                        alert('保存项目失败: ' + error.message);
+                        showToast('保存项目失败: ' + error.message, 'error');
                     }
                 }
             });
@@ -247,18 +395,12 @@
             startFilterBtn.addEventListener('click', async function() {
                 const apiKey = apiKeyInput.value.trim();
                 if (!apiKey) {
-                    alert('请输入DeepSeek API Key');
+                    showToast('请输入DeepSeek API Key', 'error');
                     return;
                 }
                 
                 if (literatureList.length === 0) {
-                    alert('没有可筛选的文献，请先完成模块1的文献搜索');
-                    return;
-                }
-                
-                const researchTopic = researchTopicDisplay.textContent.trim();
-                if (!researchTopic || researchTopic === '（将自动读取主页面研究主题）' || researchTopic === '（未设置研究主题）') {
-                    alert('请先设置研究主题');
+                    showToast('没有可筛选的文献，请先完成模块1的文献搜索', 'error');
                     return;
                 }
                 
@@ -277,7 +419,7 @@
                     const skipCount = totalCount - needFilterList.length;
                     
                     if (needFilterList.length === 0) {
-                        alert('所有文献已经筛选完成，无需重新筛选');
+                        showToast('所有文献已经筛选完成，无需重新筛选');
                         filterProgress.style.display = 'none';
                         startFilterBtn.disabled = false;
                         return;
@@ -305,7 +447,7 @@
                         updateFilterProgress(progress, `正在筛选: ${item.title.substring(0, 30)}... (${processedCount}/${needFilterList.length} 新筛选, 已跳过 ${currentSkippedCount} 篇)`);
                         
                         // 调用AI筛选
-                        const filterResult = await filterLiteratureWithAI(item, researchTopic, apiKey);
+                        const filterResult = await filterLiteratureWithAI(item, apiKey);
                         item.aiRecommended = filterResult.recommended;
                         item.aiReason = filterResult.reason;
                         
@@ -336,24 +478,22 @@
                     
                     // 显示完成提示
                     if (finalSkippedCount > 0) {
-                        alert(`筛选完成！\n新筛选: ${processedCount} 篇文献\n跳过: ${finalSkippedCount} 篇已筛选的文献`);
+                        showToast(`筛选完成！新筛选: ${processedCount} 篇文献，跳过: ${finalSkippedCount} 篇已筛选的文献`);
                     } else {
-                        alert(`筛选完成！共筛选 ${processedCount} 篇文献`);
+                        showToast(`筛选完成！共筛选 ${processedCount} 篇文献`);
                     }
                     
                 } catch (error) {
                     console.error('AI筛选失败:', error);
                     filterProgress.style.display = 'none';
                     startFilterBtn.disabled = false;
-                    alert('AI筛选失败: ' + error.message);
+                    showToast('AI筛选失败: ' + error.message, 'error');
                 }
             });
             
             // 使用DeepSeek API筛选文献
-            async function filterLiteratureWithAI(literature, researchTopic, apiKey) {
-                const prompt = `你是一个学术研究助手。请根据研究主题，判断以下文献是否应该被选用用于文献综述。
-
-研究主题：${researchTopic}
+            async function filterLiteratureWithAI(literature, apiKey) {
+                const prompt = `你是一个学术研究助手。请根据文献信息，判断以下文献是否应该被选用用于文献综述。
 
 文献信息：
 - 标题：${literature.title || '无'}
@@ -460,7 +600,11 @@
                         <div class="literature-content">
                             <div class="literature-header">
                                 <h3>${escapeHtml(item.title)}</h3>
-                                ${item.aiRecommended ? '<span class="ai-badge">AI推荐</span>' : ''}
+                                <div class="literature-actions">
+                                    ${item.aiRecommended ? '<span class="ai-badge">AI推荐</span>' : ''}
+                                    <button class="btn-edit" data-index="${index}" title="编辑">✏️</button>
+                                    <button class="btn-delete" data-index="${index}" title="删除">🗑️</button>
+                                </div>
                             </div>
                             <div class="literature-meta">
                                 <span class="authors">${escapeHtml(item.authors || '')}</span> | 
@@ -501,6 +645,109 @@
                         autoSaveConfig();
                     });
                 });
+                
+                // 绑定编辑按钮事件
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        openEditModal(index);
+                    });
+                });
+                
+                // 绑定删除按钮事件
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        deleteLiterature(index);
+                    });
+                });
+            }
+            
+            // 当前正在编辑的文献索引
+            let editingIndex = -1;
+            
+            // 打开编辑模态框
+            function openEditModal(index) {
+                if (index < 0 || index >= literatureList.length) return;
+                
+                editingIndex = index;
+                const item = literatureList[index];
+                
+                // 填充表单
+                document.getElementById('edit-title').value = item.title || '';
+                document.getElementById('edit-authors').value = item.authors || '';
+                document.getElementById('edit-year').value = item.year || '';
+                document.getElementById('edit-source').value = item.source || '';
+                document.getElementById('edit-cited').value = item.cited || 0;
+                document.getElementById('edit-url').value = item.url || '';
+                document.getElementById('edit-abstract').value = item.abstract || '';
+                document.getElementById('edit-ai-reason').value = item.aiReason || '';
+                document.getElementById('edit-ai-recommended').checked = item.aiRecommended || false;
+                
+                // 显示模态框
+                document.getElementById('edit-literature-modal').style.display = 'flex';
+            }
+            
+            // 关闭编辑模态框
+            function closeEditModal() {
+                document.getElementById('edit-literature-modal').style.display = 'none';
+                editingIndex = -1;
+            }
+            
+            // 保存编辑
+            function saveEdit() {
+                if (editingIndex < 0 || editingIndex >= literatureList.length) return;
+                
+                const item = literatureList[editingIndex];
+                
+                // 更新文献信息
+                item.title = document.getElementById('edit-title').value.trim();
+                item.authors = document.getElementById('edit-authors').value.trim();
+                item.year = document.getElementById('edit-year').value.trim();
+                item.source = document.getElementById('edit-source').value.trim();
+                item.cited = parseInt(document.getElementById('edit-cited').value) || 0;
+                item.url = document.getElementById('edit-url').value.trim();
+                item.abstract = document.getElementById('edit-abstract').value.trim();
+                item.aiReason = document.getElementById('edit-ai-reason').value.trim();
+                item.aiRecommended = document.getElementById('edit-ai-recommended').checked;
+                
+                // 验证必填字段
+                if (!item.title) {
+                    showToast('标题不能为空', 'error');
+                    return;
+                }
+                
+                // 更新显示
+                displayLiteratureList();
+                updateStatistics();
+                
+                // 自动保存
+                autoSaveConfig();
+                
+                // 关闭模态框
+                closeEditModal();
+                
+                showToast('文献信息已更新');
+            }
+            
+            // 删除文献
+            function deleteLiterature(index) {
+                if (index < 0 || index >= literatureList.length) return;
+                
+                const item = literatureList[index];
+                if (confirm(`确定要删除文献《${item.title}》吗？此操作不可撤销。`)) {
+                    literatureList.splice(index, 1);
+                    
+                    // 更新显示
+                    displayLiteratureList();
+                    updateStatistics();
+                    updateConfirmButton();
+                    
+                    // 自动保存
+                    autoSaveConfig();
+                    
+                    showToast('文献已删除');
+                }
             }
             
             // 更新统计信息
@@ -553,25 +800,27 @@
             confirmBtn.addEventListener('click', async function() {
                 const selectedLiterature = literatureList.filter(item => item.selected);
                 if (selectedLiterature.length === 0) {
-                    alert('请至少选择一篇文献');
+                    showToast('请至少选择一篇文献', 'error');
                     return;
                 }
                 
                 try {
                     const projectName = currentProject;
                     if (!projectName) {
-                        alert('未绑定项目，无法保存');
+                        showToast('未绑定项目，无法保存', 'error');
                         return;
                     }
                     
                     const data = getModule2Patch();
                     data.status = 'module3';
                     await mergeAndSave(projectName, data);
-                    alert(`文献整理完成，已选择 ${selectedLiterature.length} 篇文献，已保存至项目。`);
-                    window.location.href = 'index.html';
+                    showToast(`文献整理完成，已选择 ${selectedLiterature.length} 篇文献，已保存至项目`);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
                 } catch (e) {
                     console.error('保存项目失败:', e);
-                    alert('保存项目失败: ' + e.message);
+                    showToast('保存项目失败: ' + e.message, 'error');
                 }
             });
             
@@ -591,6 +840,115 @@
                 } catch (e) {
                     console.error('自动保存失败', e);
                 }
+            }
+            
+            // 搜索并导入论文的函数
+            async function searchAndImportPaper() {
+                const paperTitle = paperTitleInput.value.trim();
+                if (!paperTitle) {
+                    showToast('请输入论文标题', 'error');
+                    return;
+                }
+                
+                // 检查API是否可用
+                if (!window.electronAPI || !window.electronAPI.searchGoogleScholar) {
+                    showToast('Google Scholar搜索功能不可用', 'error');
+                    return;
+                }
+                
+                // 显示进度
+                searchPaperProgress.style.display = 'block';
+                searchPaperBtn.disabled = true;
+                paperTitleInput.disabled = true;
+                
+                try {
+                    updateSearchPaperProgress(10, `正在搜索: "${paperTitle}"...`);
+                    
+                    // 使用精确搜索（只搜索1篇，获取最匹配的结果）
+                    const searchResult = await window.electronAPI.searchGoogleScholar(paperTitle, 1);
+                    
+                    if (!searchResult || !searchResult.success || !searchResult.results || searchResult.results.length === 0) {
+                        showToast('未找到匹配的论文，请检查论文标题是否正确', 'error');
+                        searchPaperProgress.style.display = 'none';
+                        searchPaperBtn.disabled = false;
+                        paperTitleInput.disabled = false;
+                        return;
+                    }
+                    
+                    // 取第一篇结果（最匹配的）
+                    const literature = searchResult.results[0];
+                    
+                    updateSearchPaperProgress(70, '正在检查重复...');
+                    
+                    // 检查是否重复
+                    const isDuplicate = checkDuplicate(literature);
+                    
+                    if (isDuplicate) {
+                        showToast('该论文已存在于列表中，跳过导入', 'error');
+                        searchPaperProgress.style.display = 'none';
+                        searchPaperBtn.disabled = false;
+                        paperTitleInput.disabled = false;
+                        return;
+                    }
+                    
+                    updateSearchPaperProgress(90, '正在添加到列表...');
+                    
+                    // 添加到文献列表
+                    const newLiterature = {
+                        ...literature,
+                        selected: false,
+                        aiRecommended: false,
+                        aiReason: '',
+                        source: literature.source || 'Google Scholar搜索导入'
+                    };
+                    
+                    literatureList.push(newLiterature);
+                    
+                    // 更新显示
+                    displayLiteratureList();
+                    updateStatistics();
+                    updateConfirmButton();
+                    literatureSection.style.display = 'block';
+                    
+                    // 自动保存
+                    await autoSaveConfig();
+                    
+                    updateSearchPaperProgress(100, '导入完成！');
+                    
+                    // 清空输入框
+                    paperTitleInput.value = '';
+                    
+                    setTimeout(() => {
+                        searchPaperProgress.style.display = 'none';
+                        searchPaperBtn.disabled = false;
+                        paperTitleInput.disabled = false;
+                    }, 1500);
+                    
+                    showToast(`成功导入: ${literature.title}`);
+                    
+                } catch (error) {
+                    console.error('搜索论文失败:', error);
+                    searchPaperProgress.style.display = 'none';
+                    searchPaperBtn.disabled = false;
+                    paperTitleInput.disabled = false;
+                    showToast('搜索论文失败: ' + error.message, 'error');
+                }
+            }
+            
+            // 通过论文名称搜索并导入
+            searchPaperBtn.addEventListener('click', searchAndImportPaper);
+            
+            // 支持按Enter键搜索
+            paperTitleInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchAndImportPaper();
+                }
+            });
+            
+            // 更新搜索论文进度
+            function updateSearchPaperProgress(percent, text) {
+                searchPaperProgressFill.style.width = `${percent}%`;
+                searchPaperProgressText.textContent = text;
             }
             
             // PDF文件选择
@@ -615,19 +973,13 @@
             // 导入PDF
             importPdfBtn.addEventListener('click', async function() {
                 if (selectedPdfFiles.length === 0) {
-                    alert('请先选择PDF文件');
+                    showToast('请先选择PDF文件', 'error');
                     return;
                 }
                 
                 const apiKey = apiKeyInput.value.trim();
                 if (!apiKey) {
-                    alert('请先输入DeepSeek API Key');
-                    return;
-                }
-                
-                const researchTopic = researchTopicDisplay.textContent.trim();
-                if (!researchTopic || researchTopic === '（将自动读取主页面研究主题）' || researchTopic === '（未设置研究主题）') {
-                    alert('请先设置研究主题');
+                    showToast('请先输入DeepSeek API Key', 'error');
                     return;
                 }
                 
@@ -671,7 +1023,6 @@
                             const literature = await extractLiteratureFromPdfWithAI(
                                 pdfText || null, // 如果有文本内容就传递，否则为null
                                 file.name, 
-                                researchTopic, 
                                 apiKey
                             );
                             
@@ -733,15 +1084,15 @@
                         selectedPdfFiles = [];
                         selectedFilesDiv.textContent = '';
                         
-                        let message = `导入完成！\n成功导入: ${successCount} 个文件`;
+                        let message = `导入完成！成功导入: ${successCount} 个文件`;
                         if (duplicateCount > 0) {
-                            message += `\n跳过重复: ${duplicateCount} 个文件`;
+                            message += `，跳过重复: ${duplicateCount} 个文件`;
                         }
                         if (failCount > 0) {
-                            message += `\n处理失败: ${failCount} 个文件`;
+                            message += `，处理失败: ${failCount} 个文件`;
                         }
-                        message += `\n共添加 ${successCount} 篇新文献到列表`;
-                        alert(message);
+                        message += `，共添加 ${successCount} 篇新文献到列表`;
+                        showToast(message);
                     }, 1000);
                     
                 } catch (error) {
@@ -749,7 +1100,7 @@
                     importProgress.style.display = 'none';
                     importPdfBtn.disabled = false;
                     selectPdfBtn.disabled = false;
-                    alert('导入PDF失败: ' + error.message);
+                    showToast('导入PDF失败: ' + error.message, 'error');
                 }
             });
             
@@ -823,7 +1174,7 @@
             }
             
             // 使用大模型API从PDF中提取文献信息（与模块1搜索结果的字段结构一致）
-            async function extractLiteratureFromPdfWithAI(pdfText, filename, researchTopic, apiKey) {
+            async function extractLiteratureFromPdfWithAI(pdfText, filename, apiKey) {
                 let prompt = '';
                 
                 if (pdfText && pdfText.trim().length > 0) {
@@ -832,8 +1183,6 @@
                     const limitedText = pdfText.substring(0, 10000);
                     
                     prompt = `You are an academic literature information extraction assistant. Please accurately extract key information from the following PDF document text content.
-
-Research Topic: ${researchTopic}
 
 PDF Filename: ${filename}
 
@@ -862,21 +1211,19 @@ Please reply in JSON format with the following fields:
 
 Only return JSON, no other content. If a field cannot be extracted from the text, use an empty string "".`;
                 } else {
-                    // 如果没有PDF文本内容，根据文件名和基本信息推断
-                    prompt = `You are an academic literature information extraction assistant. Please infer key information about the literature based on the PDF filename and research topic.
-
-Research Topic: ${researchTopic}
+                    // 如果没有PDF文本内容，根据文件名推断
+                    prompt = `You are an academic literature information extraction assistant. Please infer key information about the literature based on the PDF filename.
 
 PDF Filename: ${filename}
 
-Note: Unable to directly read PDF content. Please infer literature information as accurately as possible based on the filename format and related research topic. Filenames usually contain the paper title or related keywords.
+Note: Unable to directly read PDF content. Please infer literature information as accurately as possible based on the filename format. Filenames usually contain the paper title or related keywords.
 
 Please infer the following information based on the filename:
 1. Title: Infer the complete paper title from the filename (the filename is usually the title or contains title keywords, please format it as a complete paper title)
-2. Authors: Infer possible authors from the filename format or research topic (if the filename contains author names, extract them; otherwise use empty string)
+2. Authors: Infer possible authors from the filename format (if the filename contains author names, extract them; otherwise use empty string)
 3. Year: Find a 4-digit year in the filename (such as 2023, 2024, etc.), if not found, use empty string
 4. Source: Infer possible journal, conference, or publishing institution from the filename format (if unable to infer, use "PDF导入")
-5. Abstract: Generate a possible abstract description (200-300 words) based on keywords in the filename and research topic, describing the research content and direction that the literature may involve
+5. Abstract: Generate a possible abstract description (200-300 words) based on keywords in the filename, describing the research content and direction that the literature may involve
 
 Important: Please identify the language based on the filename. If the filename suggests an English paper, output all fields in English. If it suggests a Chinese paper, output all fields in Chinese.
 
@@ -951,8 +1298,8 @@ Only return JSON, no other content. If a field cannot be inferred, use an empty 
                     const title = filename.replace('.pdf', '');
                     const isEnglish = /[a-zA-Z]/.test(title);
                     const fallbackAbstract = pdfText ? pdfText.substring(0, 300) + '...' : 
-                        (isEnglish ? `Abstract inferred from filename "${filename}" and research topic "${researchTopic}".` : 
-                         `根据文件名"${filename}"和研究主题"${researchTopic}"推断的文献摘要。`);
+                        (isEnglish ? `Abstract inferred from filename "${filename}".` : 
+                         `根据文件名"${filename}"推断的文献摘要。`);
                     
                     return {
                         title: title,
@@ -980,7 +1327,7 @@ Only return JSON, no other content. If a field cannot be inferred, use an empty 
             // 导出Excel(CSV)
             exportExcelBtn.addEventListener('click', function() {
                 if (!literatureList || literatureList.length === 0) {
-                    alert('没有可导出的数据');
+                    showToast('没有可导出的数据', 'error');
                     return;
                 }
                 
@@ -1052,35 +1399,41 @@ Only return JSON, no other content. If a field cannot be inferred, use an empty 
             // 参数变更自动保存
             apiKeyInput.addEventListener('change', autoSaveConfig);
             apiKeyInput.addEventListener('blur', autoSaveConfig);
-        });
-        
-        // Electron IPC API
-        window.electronAPI = {
-            saveProjectData: (projectName, data) => {
-                if (window.require) {
-                    const { ipcRenderer } = window.require('electron');
-                    return ipcRenderer.invoke('save-project-data', projectName, data);
-                }
-            },
-            loadProjectData: (projectName) => {
-                if (window.require) {
-                    const { ipcRenderer } = window.require('electron');
-                    return ipcRenderer.invoke('load-project-data', projectName);
-                }
-            },
-            getCurrentProject: () => {
-                if (window.require) {
-                    const { ipcRenderer } = window.require('electron');
-                    return ipcRenderer.invoke('get-current-project');
-                }
-            },
-            parsePdf: (buffer, filename) => {
-                if (window.require) {
-                    const { ipcRenderer } = window.require('electron');
-                    return ipcRenderer.invoke('parse-pdf', buffer, filename);
-                }
+            
+            // 初始化编辑模态框事件（在函数定义之后）
+            const editModal = document.getElementById('edit-literature-modal');
+            const editSaveBtn = document.getElementById('edit-save-btn');
+            const editCancelBtn = document.getElementById('edit-cancel-btn');
+            const editCloseBtn = document.getElementById('edit-modal-close');
+            
+            if (editSaveBtn) {
+                editSaveBtn.addEventListener('click', saveEdit);
             }
-        };
+            
+            if (editCancelBtn) {
+                editCancelBtn.addEventListener('click', closeEditModal);
+            }
+            
+            if (editCloseBtn) {
+                editCloseBtn.addEventListener('click', closeEditModal);
+            }
+            
+            // 点击模态框背景关闭
+            if (editModal) {
+                editModal.addEventListener('click', function(e) {
+                    if (e.target === editModal) {
+                        closeEditModal();
+                    }
+                });
+            }
+            
+            // 按ESC键关闭
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && editModal && editModal.style.display === 'flex') {
+                    closeEditModal();
+                }
+            });
+        });
     </script>
 </body>
 </html>

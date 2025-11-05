@@ -31,11 +31,6 @@
                 </div>
             </section>
 
-            <section class="research-section">
-                <h3>研究主题</h3>
-                <div id="research-topic-display" class="topic-display">（将自动读取主页面研究主题）</div>
-            </section>
-
             <section class="literature-info-section">
                 <h3>选定文献信息</h3>
                 <div id="selected-literature-info">
@@ -61,7 +56,7 @@
                 <div class="section-header">
                     <h2>文献综述</h2>
                     <div class="review-controls">
-                        <button id="export-review-btn">导出Word文档</button>
+                        <button id="export-review-btn">导出文档</button>
                     </div>
                 </div>
                 <div class="review-container">
@@ -76,6 +71,13 @@
                 <button id="confirm-btn" disabled>确认完成</button>
             </div>
         </footer>
+        
+        <!-- Toast通知 -->
+        <div id="toast" class="toast" style="display: none;">
+            <div class="toast-content">
+                <span class="toast-message" id="toast-message"></span>
+            </div>
+        </div>
     </div>
     
     <script>
@@ -84,7 +86,6 @@
             const currentProjectNameSpan = document.getElementById('current-project-name');
             const saveProjectBtn = document.getElementById('save-project-btn');
             const apiKeyInput = document.getElementById('api-key');
-            const researchTopicDisplay = document.getElementById('research-topic-display');
             const selectedCountSpan = document.getElementById('selected-count');
             const literatureSummary = document.getElementById('literature-summary');
             const generateReviewBtn = document.getElementById('generate-review-btn');
@@ -102,12 +103,47 @@
             let selectedLiterature = []; // 模块2选定的文献列表
             let reviewText = ''; // 生成的综述内容
             
+            // 显示Toast通知
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toast-message');
+                
+                if (!toast || !toastMessage) return;
+                
+                // 设置消息
+                toastMessage.textContent = message;
+                
+                // 根据类型设置样式
+                if (type === 'success') {
+                    toast.style.background = 'linear-gradient(135deg, var(--success-color) 0%, #059669 100%)';
+                } else if (type === 'error') {
+                    toast.style.background = 'linear-gradient(135deg, var(--error-color) 0%, #dc2626 100%)';
+                }
+                
+                // 显示toast
+                toast.style.display = 'block';
+                toast.style.opacity = '0';
+                
+                // 触发动画
+                setTimeout(() => {
+                    toast.style.opacity = '1';
+                }, 10);
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 300);
+                }, 3000);
+            }
+            
             // 初始化当前项目信息并加载数据
             initCurrentProject();
             async function initCurrentProject() {
                 if (!window.electronAPI) {
                     console.error('Electron API不可用');
-                    alert('Electron API不可用，请确保在Electron环境中运行');
+                    showToast('Electron API不可用，请确保在Electron环境中运行', 'error');
                     return;
                 }
                 try {
@@ -125,27 +161,20 @@
                             loadProjectData(result.data);
                         } else {
                             console.error('加载项目数据失败:', result.error || '未知错误');
-                            alert('加载项目数据失败: ' + (result.error || '未知错误'));
+                            showToast('加载项目数据失败: ' + (result.error || '未知错误'), 'error');
                         }
                     } else {
-                        alert('未选择项目，请在主页面先新建或打开项目。');
+                        showToast('未选择项目，请在主页面先新建或打开项目', 'error');
                     }
                 } catch (e) {
                     console.error('获取当前项目失败:', e);
-                    alert('获取当前项目失败: ' + e.message);
+                    showToast('获取当前项目失败: ' + e.message, 'error');
                 }
             }
             
             // 加载项目数据
             function loadProjectData(data) {
                 console.log('开始加载项目数据:', data);
-                
-                // 加载研究主题
-                if (researchTopicDisplay) {
-                    const topic = data.reviewDescription || data.userNeeds || data.researchTopic || '（未设置研究主题）';
-                    researchTopicDisplay.textContent = topic;
-                    console.log('研究主题:', topic);
-                }
                 
                 // 加载API Key
                 const apiKey = (data.config && data.config.apiKey) || data.apiKey || '';
@@ -193,12 +222,25 @@
                 if (selectedLiterature.length === 0) {
                     literatureSummary.innerHTML = '<p class="warning">请先完成模块2的文献筛选，并至少选择一篇文献</p>';
                 } else {
-                    const summaryList = selectedLiterature.slice(0, 10).map((item, index) => {
+                    // 显示所有选定的文献信息
+                    const summaryList = selectedLiterature.map((item, index) => {
                         const title = item && item.title ? item.title : '无标题';
-                        return `<div class="literature-item-summary">${index + 1}. ${escapeHtml(title)}</div>`;
+                        const authors = item && item.authors ? item.authors : '';
+                        const year = item && item.year ? item.year : '';
+                        const source = item && item.source ? item.source : '';
+                        return `
+                            <div class="literature-item-summary">
+                                <div class="literature-item-title">${index + 1}. ${escapeHtml(title)}</div>
+                                ${authors || year || source ? `
+                                <div class="literature-item-meta">
+                                    ${authors ? `<span class="meta-authors">作者: ${escapeHtml(authors)}</span>` : ''}
+                                    ${year ? `<span class="meta-year">年份: ${escapeHtml(year)}</span>` : ''}
+                                    ${source ? `<span class="meta-source">来源: ${escapeHtml(source)}</span>` : ''}
+                                </div>` : ''}
+                            </div>
+                        `;
                     }).join('');
-                    const moreText = selectedLiterature.length > 10 ? `<div class="literature-item-summary">...还有 ${selectedLiterature.length - 10} 篇文献</div>` : '';
-                    literatureSummary.innerHTML = summaryList + moreText;
+                    literatureSummary.innerHTML = summaryList;
                 }
             }
             
@@ -210,11 +252,11 @@
                 return div.innerHTML;
             }
             
-            // 保存项目（合并保存）
+            // 保存项目（合并保存，避免覆盖旧字段）
             saveProjectBtn.addEventListener('click', async function() {
                 const projectName = currentProject;
                 if (!projectName) {
-                    alert('未绑定项目，请返回主页面选择项目');
+                    showToast('未绑定项目，请返回主页面选择项目', 'error');
                     return;
                 }
                 
@@ -222,10 +264,10 @@
                 if (window.electronAPI) {
                     try {
                         await mergeAndSave(projectName, projectData);
-                        alert(`项目 "${projectName}" 保存成功`);
+                        showToast(`项目 "${projectName}" 保存成功`);
                     } catch (error) {
                         console.error('保存项目失败:', error);
-                        alert('保存项目失败: ' + error.message);
+                        showToast('保存项目失败: ' + error.message, 'error');
                     }
                 }
             });
@@ -268,25 +310,17 @@
             generateReviewBtn.addEventListener('click', async function() {
                 const apiKey = apiKeyInput.value.trim();
                 if (!apiKey) {
-                    alert('请输入DeepSeek API Key');
+                    showToast('请输入DeepSeek API Key', 'error');
                     return;
                 }
                 
                 if (selectedLiterature.length === 0) {
-                    alert('没有选定的文献，请先完成模块2的文献筛选并选择文献');
+                    showToast('没有选定的文献，请先完成模块2的文献筛选并选择文献', 'error');
                     console.warn('选定的文献为空，无法生成综述');
                     return;
                 }
                 
                 console.log('准备生成综述，选定的文献数量:', selectedLiterature.length);
-                
-                const researchTopic = researchTopicDisplay.textContent.trim();
-                if (!researchTopic || researchTopic === '（将自动读取主页面研究主题）' || researchTopic === '（未设置研究主题）') {
-                    alert('请先设置研究主题');
-                    return;
-                }
-                
-                console.log('研究主题:', researchTopic);
                 
                 // 显示进度条
                 generateProgress.style.display = 'block';
@@ -302,7 +336,7 @@
                     updateGenerateProgress(50, '正在调用AI生成综述...');
                     
                     // 使用大模型生成文献综述
-                    const review = await generateReviewWithAI(selectedLiterature, researchTopic, apiKey);
+                    const review = await generateReviewWithAI(selectedLiterature, apiKey);
                     
                     updateGenerateProgress(90, '正在保存综述内容...');
                     await new Promise(resolve => setTimeout(resolve, 500));
@@ -327,12 +361,12 @@
                     console.error('生成综述失败:', error);
                     generateProgress.style.display = 'none';
                     generateReviewBtn.disabled = false;
-                    alert('生成综述失败: ' + error.message);
+                    showToast('生成综述失败: ' + error.message, 'error');
                 }
             });
             
             // 使用大模型生成文献综述
-            async function generateReviewWithAI(literatureList, researchTopic, apiKey) {
+            async function generateReviewWithAI(literatureList, apiKey) {
                 // 构建文献信息摘要
                 const literatureSummary = literatureList.map((item, index) => {
                     return `
@@ -346,9 +380,7 @@
 `;
                 }).join('\n');
                 
-                const prompt = `你是一个专业的学术文献综述撰写助手。请根据用户提供的研究主题和选定的文献，撰写一篇高质量的文献综述。
-
-研究主题：${researchTopic}
+                const prompt = `你是一个专业的学术文献综述撰写助手。请根据选定的文献，撰写一篇高质量的文献综述。
 
 选定的文献信息（共${literatureList.length}篇）：
 ${literatureSummary}
@@ -402,7 +434,7 @@ ${literatureSummary}
             exportReviewBtn.addEventListener('click', function() {
                 const content = reviewContent.value;
                 if (!content || content.trim() === '') {
-                    alert('没有可导出的内容');
+                    showToast('没有可导出的内容', 'error');
                     return;
                 }
                 
@@ -475,25 +507,27 @@ ${literatureSummary}
             confirmBtn.addEventListener('click', async function() {
                 const content = reviewContent.value.trim();
                 if (!content) {
-                    alert('请先生成或输入综述内容');
+                    showToast('请先生成或输入综述内容', 'error');
                     return;
                 }
                 
                 try {
                     const projectName = currentProject;
                     if (!projectName) {
-                        alert('未绑定项目，无法保存');
+                        showToast('未绑定项目，无法保存', 'error');
                         return;
                     }
                     
                     const data = getModule3Patch();
                     data.status = 'completed';
                     await mergeAndSave(projectName, data);
-                    alert(`文献综述已完成并保存至项目！`);
-                    window.location.href = 'index.html';
+                    showToast(`文献综述已完成并保存至项目！`);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
                 } catch (e) {
                     console.error('保存项目失败:', e);
-                    alert('保存项目失败: ' + e.message);
+                    showToast('保存项目失败: ' + e.message, 'error');
                 }
             });
             

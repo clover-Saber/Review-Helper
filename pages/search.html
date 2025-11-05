@@ -33,16 +33,16 @@
                     <label>搜索偏好：</label>
                     <div class="input-group">
                         <input type="number" id="pref-keyword-count" placeholder="关键词数量(默认6)" min="1" style="max-width: 200px;">
-                        <input type="number" id="pref-max-per-keyword" placeholder="每关键词文献数(默认3)" min="1" style="max-width: 200px;">
+                        <input type="number" id="pref-max-per-keyword" placeholder="每关键词文献数(默认10)" min="1" max="19" style="max-width: 200px;">
                         <input type="number" id="pref-start-year" placeholder="起始年份(可选)" min="1900" style="max-width: 200px;">
                         <input type="number" id="pref-min-citations" placeholder="最低引用数(可选)" min="0" style="max-width: 200px;">
                     </div>
                 </div>
 
                 <div class="step-section">
-                    <h3>分析关键词</h3>
+                    <h3>综述主题输入</h3>
                     <div class="input-group">
-                        <div id="topic-display" style="width:100%; padding: 12px; background:#f7fafc; border:1px solid #e2e8f0; border-radius:6px; color:#4a5568;">（将自动读取主页面研究主题）</div>
+                        <textarea id="topic-display" placeholder="例如：写一个和共享自动驾驶汽车以及mass系统相关的综述"></textarea>
                         <button id="extract-keywords-btn">分析关键词</button>
                     </div>
                 </div>
@@ -85,6 +85,13 @@
                 <button id="confirm-btn" disabled>确认完成</button>
             </div>
         </footer>
+        
+        <!-- Toast通知 -->
+        <div id="toast" class="toast" style="display: none;">
+            <div class="toast-content">
+                <span class="toast-message" id="toast-message"></span>
+            </div>
+        </div>
     </div>
     
     <script>
@@ -132,23 +139,60 @@
                         const result = await window.electronAPI.loadProjectData(cp);
                         if (result.success && result.data) {
                             loadProjectData(result.data);
-                            if (topicDisplay && (result.data.reviewDescription || result.data.userNeeds || result.data.researchTopic)) {
-                                topicDisplay.textContent = result.data.reviewDescription || result.data.userNeeds || result.data.researchTopic;
+                            // 加载项目简介到输入框（如果存在）
+                            const projectDescription = result.data.projectDescription || result.data.reviewDescription || result.data.userNeeds || result.data.researchTopic || '';
+                            if (topicDisplay && projectDescription) {
+                                topicDisplay.value = projectDescription;
                             }
                         }
                     } else {
-                        alert('未选择项目，请在主页面先新建或打开项目。');
+                        showToast('未选择项目，请在主页面先新建或打开项目', 'error');
                     }
                 } catch (e) {
                     console.error('获取当前项目失败:', e);
                 }
             }
             
+            // 显示Toast通知
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toast-message');
+                
+                if (!toast || !toastMessage) return;
+                
+                // 设置消息
+                toastMessage.textContent = message;
+                
+                // 根据类型设置样式
+                if (type === 'success') {
+                    toast.style.background = 'linear-gradient(135deg, var(--success-color) 0%, #059669 100%)';
+                } else if (type === 'error') {
+                    toast.style.background = 'linear-gradient(135deg, var(--error-color) 0%, #dc2626 100%)';
+                }
+                
+                // 显示toast
+                toast.style.display = 'block';
+                toast.style.opacity = '0';
+                
+                // 触发动画
+                setTimeout(() => {
+                    toast.style.opacity = '1';
+                }, 10);
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 300);
+                }, 3000);
+            }
+            
             // 保存项目（合并保存，避免覆盖旧字段）
             saveProjectBtn.addEventListener('click', async function() {
                 const projectName = currentProject;
                 if (!projectName) {
-                    alert('未绑定项目，请返回主页面选择项目');
+                    showToast('未绑定项目，请返回主页面选择项目', 'error');
                     return;
                 }
                 
@@ -156,31 +200,26 @@
                 if (window.electronAPI) {
                     try {
                         await mergeAndSave(projectName, projectData);
-                        const result = { success: true };
-                        if (result.success) {
-                            alert(`项目 "${projectName}" 保存成功`);
-                        } else {
-                            alert('保存项目失败: ' + result.error);
-                        }
+                        showToast(`项目 "${projectName}" 保存成功`);
                     } catch (error) {
                         console.error('保存项目失败:', error);
-                        alert('保存项目失败: ' + error.message);
+                        showToast('保存项目失败: ' + error.message, 'error');
                     }
                 }
             });
             
             // 获取项目数据
             function getModule1Patch() {
-                const topic = (topicDisplay && topicDisplay.textContent ? topicDisplay.textContent : '').trim();
+                // 从输入框获取综述主题
+                const projectDescription = (topicDisplay && topicDisplay.value) ? topicDisplay.value.trim() : '';
+                
                 return {
-                    userNeeds: topic,
-                    researchTopic: topic, // 兼容旧字段
-                    reviewDescription: topic,
+                    projectDescription: projectDescription,
                     config: {
                         apiKey: apiKeyInput.value,
                         searchPreferences: {
                             keywordCount: Number(prefKeywordCountInput.value) || 6,
-                            maxPerKeyword: Number(prefMaxPerKeywordInput.value) || 3,
+                            maxPerKeyword: Number(prefMaxPerKeywordInput.value) || 10,
                             startYear: prefStartYearInput.value || '',
                             minCitations: prefMinCitationsInput.value ? Number(prefMinCitationsInput.value) : ''
                         }
@@ -219,7 +258,12 @@
             
             // 加载项目数据
             function loadProjectData(data) {
-                if (topicDisplay) topicDisplay.textContent = data.reviewDescription || data.userNeeds || data.researchTopic || '';
+                // 加载项目简介到输入框
+                const projectDescription = data.projectDescription || data.reviewDescription || data.userNeeds || data.researchTopic || '';
+                if (topicDisplay && projectDescription) {
+                    topicDisplay.value = projectDescription;
+                }
+                
                 apiKeyInput.value = (data.config && data.config.apiKey) || data.apiKey || '';
                 const prefs = (data.config && data.config.searchPreferences) || {};
                 prefKeywordCountInput.value = prefs.keywordCount || '';
@@ -246,25 +290,21 @@
                 updateConfirmButton();
             }
             
-            // 从主进程获取研究主题
-            if (window.electronAPI) {
-                window.electronAPI.getResearchTopic().then(topic => {
-                    if (topic && topicDisplay && !topicDisplay.textContent) topicDisplay.textContent = topic;
-                });
-            }
+            // 不再从主进程获取研究主题，改为从项目数据中读取
             
             // 提取关键词
             extractKeywordsBtn.addEventListener('click', async function() {
-                const topic = (topicDisplay && topicDisplay.textContent ? topicDisplay.textContent : '').trim();
+                // 从输入框获取综述主题
+                const topic = (topicDisplay && topicDisplay.value) ? topicDisplay.value.trim() : '';
                 const apiKey = apiKeyInput.value.trim();
                 
                 if (!apiKey) {
-                    alert('请输入DeepSeek API Key');
+                    showToast('请输入DeepSeek API Key', 'error');
                     return;
                 }
                 
                 if (!topic) {
-                    alert('请输入研究主题');
+                    showToast('请输入综述主题', 'error');
                     return;
                 }
                 
@@ -279,7 +319,7 @@
                     await autoSaveConfig();
                 } catch (error) {
                     console.error('提取关键词失败:', error);
-                    alert('提取关键词失败: ' + error.message);
+                    showToast('提取关键词失败: ' + error.message, 'error');
                 }
             });
             
@@ -354,12 +394,12 @@
                 const apiKey = apiKeyInput.value.trim();
                 
                 if (!apiKey) {
-                    alert('请输入DeepSeek API Key');
+                    showToast('请输入DeepSeek API Key', 'error');
                     return;
                 }
                 
                 if (keywords.length === 0) {
-                    alert('请先提取或添加关键词');
+                    showToast('请先提取或添加关键词', 'error');
                     return;
                 }
                 
@@ -371,7 +411,7 @@
                     }
                 } catch (loginError) {
                     console.error('登录/验证失败:', loginError);
-                    alert('登录/验证失败: ' + loginError.message + '\n搜索将取消');
+                    showToast('登录/验证失败: ' + loginError.message + '，搜索已取消', 'error');
                     return;
                 }
                 
@@ -388,7 +428,7 @@
                         updateProgress(currentProgress, `正在搜索: ${keyword} (${i + 1}/${keywords.length})`);
                         
                         // 搜索文献
-                        const perCount = Number(prefMaxPerKeywordInput.value) || 3;
+                        const perCount = Number(prefMaxPerKeywordInput.value) || 10;
                         const minYear = Number(prefStartYearInput.value) || null;
                         const minCitations = prefMinCitationsInput.value ? Number(prefMinCitationsInput.value) : null;
                         let results = await searchGoogleScholar(keyword, perCount);
@@ -455,7 +495,7 @@
                     // 如果结果为空，给用户提示
                     if (allLiterature.length === 0) {
                         console.warn('警告：合并后没有找到任何文献！');
-                        alert('搜索完成，但没有找到符合条件的文献。\n可能原因：\n1. 搜索关键词无结果\n2. 年份或引用数过滤条件过严\n3. 需要完成验证码');
+                        showToast('搜索完成，但没有找到符合条件的文献', 'error');
                     } else {
                         console.log(`成功找到 ${allLiterature.length} 篇文献`);
                     }
@@ -468,7 +508,7 @@
                 } catch (error) {
                     console.error('搜索文献失败:', error);
                     searchProgress.style.display = 'none';
-                    alert('搜索文献失败: ' + error.message);
+                    showToast('搜索文献失败: ' + error.message, 'error');
                 }
             });
             
@@ -568,17 +608,20 @@
                 try {
                     const projectName = currentProject;
                     if (!projectName) {
-                        alert('未绑定项目，无法保存');
+                        showToast('未绑定项目，无法保存', 'error');
                         return;
                     }
                     const data = getModule1Patch();
                     data.status = 'module2';
                     await mergeAndSave(projectName, data);
-                    alert(`文献查询完成，共 ${allLiterature.length} 篇不重复文献，已保存至项目。`);
-                    window.location.href = 'index.html';
+                    showToast(`文献查询完成，共 ${allLiterature.length} 篇不重复文献，已保存至项目`);
+                    // 延迟跳转，让用户看到Toast通知
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
                 } catch (e) {
                     console.error('保存项目失败:', e);
-                    alert('保存项目失败: ' + e.message);
+                    showToast('保存项目失败: ' + e.message, 'error');
                 }
             });
             
@@ -687,7 +730,7 @@
             const exportBtn = document.getElementById('export-excel-btn');
             exportBtn.addEventListener('click', function() {
                 if (!allLiterature || allLiterature.length === 0) {
-                    alert('没有可导出的数据');
+                    showToast('没有可导出的数据', 'error');
                     return;
                 }
                 const headers = ['Title','Authors','Year','Source','Cited','URL','Abstract'];

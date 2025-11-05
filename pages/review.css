@@ -6,31 +6,62 @@ header {
     text-align: center;
     margin-bottom: var(--spacing-2xl);
     padding: var(--spacing-2xl) var(--spacing-xl);
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
     color: white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: pulse 20s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(5%, 5%) scale(1.1); }
 }
 
 header h1 {
     font-size: var(--font-size-3xl);
     margin-bottom: var(--spacing-sm);
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 header p {
     font-size: var(--font-size-lg);
     opacity: 0.95;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
 }
 
 .project-section, .api-section, .research-section, .literature-info-section, 
 .generate-section, .review-section {
-    background: var(--bg-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     padding: var(--spacing-xl);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     border: 1px solid var(--border-color);
     margin-bottom: var(--spacing-lg);
+    transition: box-shadow 0.3s ease;
+}
+
+.project-section:hover, .api-section:hover, .research-section:hover, 
+.literature-info-section:hover, .generate-section:hover, .review-section:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .project-section h3, .research-section h3, .literature-info-section h3, 
@@ -100,7 +131,7 @@ header p {
 }
 
 .literature-summary {
-    max-height: 300px;
+    max-height: 500px;
     overflow-y: auto;
     padding: var(--spacing-md);
     background: var(--bg-tertiary);
@@ -109,12 +140,51 @@ header p {
 }
 
 .literature-item-summary {
-    padding: var(--spacing-sm) var(--spacing-md);
-    margin-bottom: var(--spacing-xs);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
     background: var(--bg-primary);
     border-left: 3px solid var(--primary-color);
     border-radius: var(--radius-sm);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.literature-item-summary:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(2px);
+}
+
+.literature-item-title {
     font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.5;
+}
+
+.literature-item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+.literature-item-meta span {
+    display: inline-block;
+}
+
+.meta-authors {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.meta-year {
+    color: var(--primary-color);
+}
+
+.meta-source {
     color: var(--text-secondary);
 }
 
@@ -124,21 +194,39 @@ header p {
 }
 
 button {
-    padding: var(--spacing-sm) var(--spacing-lg);
-    background-color: var(--primary-color);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
     color: white;
     border: none;
     border-radius: var(--radius-md);
     font-size: var(--font-size-base);
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
 }
 
 button:hover:not(:disabled) {
-    background-color: var(--primary-light);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+button:hover:not(:disabled)::before {
+    left: 100%;
 }
 
 button:disabled {
@@ -148,27 +236,33 @@ button:disabled {
 }
 
 #generate-review-btn {
-    background-color: var(--success-color);
+    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 #generate-review-btn:hover:not(:disabled) {
-    background-color: #1b5e20;
+    background: linear-gradient(135deg, #059669 0%, var(--success-color) 100%);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
 #confirm-btn {
-    background-color: var(--success-color);
+    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 #confirm-btn:hover:not(:disabled) {
-    background-color: #1b5e20;
+    background: linear-gradient(135deg, #059669 0%, var(--success-color) 100%);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
 #export-review-btn {
-    background-color: var(--warning-color);
+    background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 #export-review-btn:hover {
-    background-color: #e65100;
+    background: linear-gradient(135deg, #d97706 0%, var(--warning-color) 100%);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
 }
 
 #back-btn {
@@ -223,20 +317,22 @@ button:disabled {
     width: 100%;
     min-height: 600px;
     padding: var(--spacing-xl);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
     font-size: var(--font-size-base);
     line-height: 1.8;
     font-family: var(--font-family-serif);
     resize: vertical;
     color: var(--text-primary);
-    background: var(--bg-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    transition: all 0.3s ease;
 }
 
 .review-textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 16px rgba(59, 130, 246, 0.1);
+    background: #ffffff;
 }
 
 footer {
@@ -275,5 +371,56 @@ footer {
     
     .footer-controls button {
         width: 100%;
+    }
+}
+
+/* Toast通知样式 */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+    z-index: 10000;
+    min-width: 250px;
+    max-width: 400px;
+    animation: toastSlideIn 0.3s ease-out, toastSlideOut 0.3s ease-in 2.7s forwards;
+    opacity: 0;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.toast-message {
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
     }
 }

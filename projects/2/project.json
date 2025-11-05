@@ -1,0 +1,16 @@
+{
+  "projectName": "2",
+  "researchTopic": "自动驾驶",
+  "createdAt": "2025-11-05T17:00:12.794Z",
+  "updatedAt": "2025-11-05T17:08:28.826Z",
+  "step1": {
+    "status": "pending"
+  },
+  "step2": {
+    "status": "pending"
+  },
+  "step3": {
+    "status": "pending"
+  },
+  "userNeeds": "自动驾驶"
+}
