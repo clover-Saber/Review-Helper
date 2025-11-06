@@ -40,7 +40,14 @@
             </section>
 
             <section class="generate-section">
-                <h3>生成文献综述</h3>
+                <h3>文献综述要求</h3>
+                <div class="input-group">
+                    <textarea id="review-requirements" class="requirements-textarea" placeholder="请输入文献综述的要求，例如：综述内容结构清晰，逻辑严密；准确引用所有文献，并在引用位置标记[文献序号]；一段一段表述，不要分小点">
+- 内容结构清晰，逻辑严密
+- 准确引用所有文献，并在引用位置标记[文献序号]
+- 一段一段表述，不要分小点
+                    </textarea>
+                </div>
                 <div class="input-group">
                     <button id="generate-review-btn">开始生成综述</button>
                     <div id="generate-progress" style="display: none;">
@@ -61,6 +68,22 @@
                 </div>
                 <div class="review-container">
                     <textarea id="review-content" class="review-textarea" placeholder="综述内容将显示在这里..."></textarea>
+                </div>
+                <div class="modify-section" style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-color);">
+                    <h3>修改文献综述</h3>
+                    <div class="input-group" style="flex-direction: column; align-items: stretch;">
+                        <label for="modify-requirements">修改要求：</label>
+                        <textarea id="modify-requirements" class="modify-textarea" placeholder="请输入您希望如何修改这篇文献综述，例如：增加某个方面的内容、调整段落顺序、修改某些表述等..."></textarea>
+                    </div>
+                    <div class="input-group" style="margin-top: var(--spacing-md);">
+                        <button id="modify-review-btn">开始修改</button>
+                        <div id="modify-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="modify-progress-fill"></div>
+                            </div>
+                            <p id="modify-progress-text">准备修改综述...</p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
@@ -88,6 +111,8 @@
             const apiKeyInput = document.getElementById('api-key');
             const selectedCountSpan = document.getElementById('selected-count');
             const literatureSummary = document.getElementById('literature-summary');
+            const reviewRequirementsInput = document.getElementById('review-requirements');
+            const promptPreview = document.getElementById('prompt-preview');
             const generateReviewBtn = document.getElementById('generate-review-btn');
             const generateProgress = document.getElementById('generate-progress');
             const generateProgressFill = document.getElementById('generate-progress-fill');
@@ -95,6 +120,11 @@
             const reviewSection = document.getElementById('review-section');
             const reviewContent = document.getElementById('review-content');
             const exportReviewBtn = document.getElementById('export-review-btn');
+            const modifyRequirementsInput = document.getElementById('modify-requirements');
+            const modifyReviewBtn = document.getElementById('modify-review-btn');
+            const modifyProgress = document.getElementById('modify-progress');
+            const modifyProgressFill = document.getElementById('modify-progress-fill');
+            const modifyProgressText = document.getElementById('modify-progress-text');
             const confirmBtn = document.getElementById('confirm-btn');
             const backBtn = document.getElementById('back-btn');
             
@@ -211,8 +241,67 @@
                 // 更新显示
                 updateSelectedLiteratureInfo();
                 
+                // 如果有保存的要求，加载它
+                if (data.module3 && data.module3.requirements) {
+                    reviewRequirementsInput.value = data.module3.requirements;
+                }
+                
+                // 更新提示词预览
+                updatePromptPreview();
+                
                 console.log('项目数据加载完成');
             }
+            
+            // 更新提示词预览
+            function updatePromptPreview() {
+                if (selectedLiterature.length === 0) {
+                    promptPreview.value = '请先确保已从模块2选择文献';
+                    return;
+                }
+                
+                // 构建文献信息摘要
+                const literatureSummary = selectedLiterature.map((item, index) => {
+                    return `
+文献 ${index + 1}:
+- 标题: ${item.title || '无'}
+- 作者: ${item.authors || '无'}
+- 年份: ${item.year || '无'}
+- 来源: ${item.source || '无'}
+- 摘要: ${item.abstract || '无'}
+- 被引次数: ${item.cited || 0}
+`;
+                }).join('\n');
+                
+                // 获取用户输入的要求，并清理格式
+                let requirements = reviewRequirementsInput.value.trim();
+                
+                // 如果用户输入包含"文献综述要求如下："等前缀，去掉它们
+                requirements = requirements.replace(/^文献综述要求如下[：:]\s*/i, '');
+                requirements = requirements.replace(/^请根据以上文献[，,]撰写一篇文献综述[。.]满足如下要求[：:]\s*/i, '');
+                
+                // 如果用户输入为空，使用默认要求
+                if (!requirements) {
+                    requirements = '内容结构清晰，逻辑严密\n准确引用所有文献，并在引用位置标记[文献序号]\n一段一段表述，不要分小点';
+                }
+                
+                // 构建完整提示词
+                const fullPrompt = `你是一个专业的学术文献综述撰写助手。请根据选定的文献，撰写一篇高质量的文献综述。
+
+选定的文献信息（共${selectedLiterature.length}篇）：
+${literatureSummary}
+
+请根据以上文献，撰写一篇文献综述。满足如下要求：
+${requirements}
+
+请直接输出综述内容，不需要额外的说明文字。`;
+                
+                promptPreview.value = fullPrompt;
+            }
+            
+            // 监听文献综述要求输入变化
+            reviewRequirementsInput.addEventListener('input', function() {
+                updatePromptPreview();
+            });
             
             // 更新选定文献信息
             function updateSelectedLiteratureInfo() {
@@ -242,6 +331,9 @@
                     }).join('');
                     literatureSummary.innerHTML = summaryList;
                 }
+                
+                // 更新提示词预览
+                updatePromptPreview();
             }
             
             // HTML转义函数
@@ -277,6 +369,7 @@
                 return {
                     module3: {
                         review: reviewContent.value,
+                        requirements: reviewRequirementsInput.value.trim(),
                         timestamp: new Date().toISOString()
                     },
                     timestamp: new Date().toISOString()
@@ -380,15 +473,26 @@
 `;
                 }).join('\n');
                 
+                // 获取用户输入的要求，并清理格式
+                let requirements = reviewRequirementsInput.value.trim();
+                
+                // 如果用户输入包含"文献综述要求如下："等前缀，去掉它们
+                requirements = requirements.replace(/^文献综述要求如下[：:]\s*/i, '');
+                requirements = requirements.replace(/^请根据以上文献[，,]撰写一篇文献综述[。.]满足如下要求[：:]\s*/i, '');
+                
+                // 如果用户输入为空，使用默认要求
+                if (!requirements) {
+                    requirements = '内容结构清晰，逻辑严密\n准确引用所有文献，并在引用位置标记[文献序号]\n一段一段表述，不要分小点';
+                }
+                
+                // 构建完整提示词（与预览框中的一致）
                 const prompt = `你是一个专业的学术文献综述撰写助手。请根据选定的文献，撰写一篇高质量的文献综述。
 
 选定的文献信息（共${literatureList.length}篇）：
 ${literatureSummary}
 
 请根据以上文献，撰写一篇文献综述。满足如下要求：
-- 综述内容结构清晰，逻辑严密
-- 准确引用所有文献，并在引用位置标记[文献序号]
-- 一段一段表述，不要分小点
+${requirements}
 
 请直接输出综述内容，不需要额外的说明文字。`;
 
@@ -428,6 +532,119 @@ ${literatureSummary}
             function updateGenerateProgress(percent, text) {
                 generateProgressFill.style.width = `${percent}%`;
                 generateProgressText.textContent = text;
+            }
+            
+            // 修改文献综述
+            modifyReviewBtn.addEventListener('click', async function() {
+                const currentReview = reviewContent.value.trim();
+                
+                if (!currentReview) {
+                    showToast('请先生成文献综述', 'error');
+                    return;
+                }
+                
+                const modifyRequirements = modifyRequirementsInput.value.trim();
+                if (!modifyRequirements) {
+                    showToast('请输入修改要求', 'error');
+                    return;
+                }
+                
+                const apiKey = apiKeyInput.value.trim();
+                if (!apiKey) {
+                    showToast('请先输入DeepSeek API Key', 'error');
+                    return;
+                }
+                
+                modifyReviewBtn.disabled = true;
+                modifyProgress.style.display = 'block';
+                
+                try {
+                    updateModifyProgress(10, '正在准备修改综述...');
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    updateModifyProgress(30, '正在调用AI修改综述...');
+                    
+                    // 使用大模型修改文献综述
+                    const modifiedReview = await modifyReviewWithAI(currentReview, modifyRequirements, apiKey);
+                    
+                    updateModifyProgress(90, '正在保存修改后的综述...');
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    updateModifyProgress(100, '✅ 综述修改完成！已自动保存');
+                    
+                    // 显示修改后的综述内容
+                    reviewText = modifiedReview;
+                    reviewContent.value = modifiedReview;
+                    
+                    // 自动保存
+                    await autoSaveConfig();
+                    
+                    // 显示成功提示
+                    showToast('✅ 综述修改完成！已自动保存', 'success');
+                    
+                    // 清空修改要求输入框
+                    modifyRequirementsInput.value = '';
+                    
+                    // 进度条保持显示，不自动隐藏
+                    modifyReviewBtn.disabled = false;
+                    
+                } catch (error) {
+                    console.error('修改综述失败:', error);
+                    modifyProgress.style.display = 'none';
+                    modifyReviewBtn.disabled = false;
+                    showToast('修改综述失败: ' + error.message, 'error');
+                }
+            });
+            
+            // 使用大模型修改文献综述
+            async function modifyReviewWithAI(currentReview, modifyRequirements, apiKey) {
+                // 构建修改提示词（只发送当前综述和修改要求）
+                const prompt = `你是一个专业的学术文献综述修改助手。请根据用户的要求，对以下文献综述进行修改。
+
+当前文献综述内容：
+${currentReview}
+
+用户修改要求：
+${modifyRequirements}
+
+请根据用户的要求对文献综述进行修改，保持学术风格和引用格式（如[文献序号]）。请直接输出修改后的完整综述内容，不要额外的说明文字。`;
+
+                const response = await fetch('https://api.deepseek.com/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "deepseek-chat",
+                        messages: [
+                            {
+                                "role": "system",
+                                "content": "你是一个专业的学术文献综述修改助手。请根据用户的要求，对文献综述进行精准修改，保持学术风格和格式。"
+                            },
+                            {
+                                "role": "user",
+                                "content": prompt
+                            }
+                        ],
+                        stream: false
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API请求失败: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+                
+                return content.trim();
+            }
+            
+            // 更新修改进度
+            function updateModifyProgress(percent, text) {
+                modifyProgressFill.style.width = `${percent}%`;
+                modifyProgressText.textContent = text;
             }
             
             // 导出Word文档

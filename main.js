@@ -80,6 +80,7 @@ const createMainWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -100,6 +101,7 @@ const createSearchWindow = () => {
   searchWindow = new BrowserWindow({
     width: 1000,
     height: 700,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -117,6 +119,7 @@ const createOrganizeWindow = () => {
   organizeWindow = new BrowserWindow({
     width: 1000,
     height: 700,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -134,6 +137,7 @@ const createReviewWindow = () => {
   reviewWindow = new BrowserWindow({
     width: 1000,
     height: 700,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -172,6 +176,7 @@ function openScholarLoginWindow() {
       height: 800,
       show: true,
       title: 'Google Scholar - 请先登录并完成验证',
+      autoHideMenuBar: true,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true
@@ -437,6 +442,7 @@ function searchGoogleScholar(keyword, limit = 10) {
       height: 800,
       show: true, // 显示窗口，让用户看到搜索过程
       title: `Google Scholar 搜索中: ${keyword}`,
+      autoHideMenuBar: true,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true
@@ -888,6 +894,9 @@ function searchGoogleScholar(keyword, limit = 10) {
               
               console.log('找到结果块数量:', resultBlocks.length);
               
+              // 用于去重的Set，记录已提取的标题
+              const seenTitles = new Set();
+              
               for (let i = 0; i < Math.min(resultBlocks.length, limit * 3); i++) {
                 const block = resultBlocks[i];
                 const result = {
@@ -958,14 +967,89 @@ function searchGoogleScholar(keyword, limit = 10) {
                   }
                 }
                 
-                // 提取摘要（多种方式）
-                let abstractElement = block.querySelector('.gs_rs');
-                if (!abstractElement) {
-                  abstractElement = block.querySelector('[class*="gs_rs"]');
-                }
+                // 提取摘要（多种方式，尝试获取完整摘要）
+                let abstractElement = null;
+                let abstractText = '';
+                
+                // 方法1: 优先查找展开的完整摘要（单篇搜索时使用）
+                abstractElement = block.querySelector('.gs_fma_abs');
                 if (abstractElement) {
-                  result.abstract = abstractElement.textContent.trim();
+                  // 在 gs_fma_abs 中查找摘要文本
+                  const snpElement = abstractElement.querySelector('.gs_fma_snp');
+                  if (snpElement) {
+                    const divElement = snpElement.querySelector('div');
+                    if (divElement) {
+                      abstractText = divElement.textContent.trim();
+                    } else {
+                      abstractText = snpElement.textContent.trim();
+                    }
+                  } else {
+                    abstractText = abstractElement.textContent.trim();
+                  }
                 }
+                
+                // 方法2: 如果方法1没有找到，尝试标准摘要元素
+                if (!abstractText || abstractText.length < 50) {
+                  abstractElement = block.querySelector('.gs_rs');
+                  if (!abstractElement) {
+                    abstractElement = block.querySelector('[class*="gs_rs"]');
+                  }
+                  
+                  if (abstractElement) {
+                    abstractText = abstractElement.textContent.trim();
+                    
+                    // 检查是否有"查看更多"或展开的摘要
+                    const expandedAbstract = block.querySelector('.gs_rs[style*="display"]');
+                    if (expandedAbstract && expandedAbstract.textContent.trim().length > abstractText.length) {
+                      abstractText = expandedAbstract.textContent.trim();
+                    }
+                    
+                    // 尝试查找隐藏的摘要内容
+                    const hiddenAbstract = block.querySelector('.gs_rs[hidden], .gs_rs[aria-hidden="true"]');
+                    if (hiddenAbstract && hiddenAbstract.textContent.trim().length > abstractText.length) {
+                      abstractText = hiddenAbstract.textContent.trim();
+                    }
+                  }
+                }
+                
+                // 方法3: 如果摘要以省略号结尾，尝试获取更多内容
+                if (abstractText && (abstractText.endsWith('...') || abstractText.endsWith('…'))) {
+                  // 查找同一块中是否有更多文本
+                  const allText = block.textContent || '';
+                  const abstractIndex = allText.indexOf(abstractText);
+                  if (abstractIndex !== -1) {
+                    // 尝试获取摘要后的更多文本（可能是截断的摘要）
+                    const remainingText = allText.substring(abstractIndex + abstractText.length);
+                    // 如果后续文本看起来像摘要的延续（不是作者信息等），则追加
+                    if (remainingText.length > 0 && remainingText.length < 500) {
+                      // 检查是否包含作者、年份等信息（如果包含，则不是摘要延续）
+                      const hasMetadata = remainingText.match(/\\b(19|20)\\d{2}\\b/) || 
+                                        remainingText.includes('Cited by') || 
+                                        remainingText.includes('被引用');
+                      if (!hasMetadata) {
+                        abstractText += ' ' + remainingText.trim().substring(0, 200);
+                      }
+                    }
+                  }
+                }
+                
+                // 方法4: 如果还是没有找到摘要，尝试从整个块中提取可能的摘要文本
+                if (!abstractText || abstractText.length < 50) {
+                  const blockText = block.textContent || '';
+                  // 查找标题和作者之间的文本（可能是摘要）
+                  const titleMatch = blockText.match(/[^\\n]+/);
+                  if (titleMatch) {
+                    // 尝试提取标题后的文本片段作为摘要
+                    const possibleAbstract = blockText.substring(blockText.indexOf(titleMatch[0]) + titleMatch[0].length)
+                      .split(/\\n/)[0]
+                      .trim();
+                    if (possibleAbstract.length > 50 && possibleAbstract.length < 500) {
+                      abstractText = possibleAbstract;
+                    }
+                  }
+                }
+                
+                result.abstract = abstractText;
                 
                 // 提取引用数（多种方式）
                 let citedElement = block.querySelector('a[href*="cites"]');
@@ -995,16 +1079,23 @@ function searchGoogleScholar(keyword, limit = 10) {
                 }
                 
                 if (result.title && result.title.length > 0) {
-                  results.push({
-                    id: 'scholar_' + i + '_' + Date.now(),
-                    title: result.title,
-                    authors: result.authors,
-                    year: result.year,
-                    source: result.source,
-                    abstract: result.abstract,
-                    cited: result.cited,
-                    url: result.url || ('https://scholar.google.com/scholar?q=' + encodeURIComponent(result.title))
-                  });
+                  // 检查是否已提取过相同标题的论文（去重）
+                  const titleKey = result.title.toLowerCase().trim();
+                  if (!seenTitles.has(titleKey)) {
+                    seenTitles.add(titleKey);
+                    results.push({
+                      id: 'scholar_' + i + '_' + Date.now(),
+                      title: result.title,
+                      authors: result.authors,
+                      year: result.year,
+                      source: result.source,
+                      abstract: result.abstract,
+                      cited: result.cited,
+                      url: result.url || ('https://scholar.google.com/scholar?q=' + encodeURIComponent(result.title))
+                    });
+                  } else {
+                    console.log('跳过重复的论文:', result.title.substring(0, 50));
+                  }
                 }
                 
                 if (results.length >= limit) break;
@@ -1145,6 +1236,177 @@ function searchGoogleScholar(keyword, limit = 10) {
 
     // 加载URL
     searchWindow.loadURL(url);
+  });
+}
+
+// 访问单个文献链接并提取完整摘要
+function extractFullAbstractFromUrl(url) {
+  return new Promise((resolve, reject) => {
+    if (!url || !url.startsWith('http')) {
+      reject(new Error('无效的URL'));
+      return;
+    }
+    
+    console.log(`访问文献链接提取摘要: ${url}`);
+    
+    // 创建浏览器窗口访问文献详情页
+    const detailWindow = new BrowserWindow({
+      width: 1200,
+      height: 800,
+      show: true, // 显示窗口，让用户看到访问过程
+      title: `正在提取摘要...`,
+      autoHideMenuBar: true,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true
+      }
+    });
+    
+    detailWindow.center();
+    
+    // 设置超时
+    const timeout = setTimeout(() => {
+      if (!detailWindow.isDestroyed()) {
+        detailWindow.close();
+      }
+      reject(new Error('提取摘要超时（30秒）'));
+    }, 30000);
+    
+    // 页面加载完成后的处理
+    detailWindow.webContents.once('did-finish-load', () => {
+      setTimeout(() => {
+        if (detailWindow.isDestroyed()) {
+          clearTimeout(timeout);
+          reject(new Error('窗口已关闭'));
+          return;
+        }
+        
+        // 提取摘要的脚本
+        const extractAbstractScript = `
+          (function() {
+            let abstract = '';
+            
+            // 尝试多种方式查找摘要
+            // 方法1: Google Scholar详情页的摘要区域
+            const scholarAbstract = document.querySelector('.gsh_csp, .gs_rs, [data-clk-atid]');
+            if (scholarAbstract) {
+              abstract = scholarAbstract.textContent || scholarAbstract.innerText || '';
+            }
+            
+            // 方法2: 查找包含"abstract"或"摘要"的元素
+            if (!abstract || abstract.length < 50) {
+              const abstractElements = document.querySelectorAll('*');
+              for (let el of abstractElements) {
+                const text = el.textContent || '';
+                const className = el.className || '';
+                const id = el.id || '';
+                if ((className.toLowerCase().includes('abstract') || 
+                     id.toLowerCase().includes('abstract') ||
+                     text.toLowerCase().includes('abstract')) &&
+                    text.length > 50 && text.length < 2000) {
+                  // 提取摘要文本（去掉标签）
+                  abstract = text.replace(/\\s+/g, ' ').trim();
+                  break;
+                }
+              }
+            }
+            
+            // 方法3: 查找常见的摘要区域
+            if (!abstract || abstract.length < 50) {
+              const selectors = [
+                '.abstract',
+                '#abstract',
+                '[id*="abstract"]',
+                '[class*="abstract"]',
+                '.article-abstract',
+                '.paper-abstract',
+                '.summary'
+              ];
+              
+              for (let selector of selectors) {
+                const el = document.querySelector(selector);
+                if (el) {
+                  abstract = el.textContent || el.innerText || '';
+                  if (abstract.length > 50) break;
+                }
+              }
+            }
+            
+            // 方法4: 查找段落文本（作为最后手段）
+            if (!abstract || abstract.length < 50) {
+              const paragraphs = document.querySelectorAll('p');
+              let longestText = '';
+              for (let p of paragraphs) {
+                const text = (p.textContent || '').trim();
+                if (text.length > longestText.length && text.length > 100 && text.length < 2000) {
+                  longestText = text;
+                }
+              }
+              if (longestText.length > 50) {
+                abstract = longestText;
+              }
+            }
+            
+            // 清理摘要文本
+            if (abstract) {
+              abstract = abstract
+                .replace(/\\s+/g, ' ')
+                .replace(/Abstract[:：]?/gi, '')
+                .replace(/摘要[:：]?/gi, '')
+                .trim();
+              
+              // 如果摘要太长，截取前2000字符
+              if (abstract.length > 2000) {
+                abstract = abstract.substring(0, 2000) + '...';
+              }
+            }
+            
+            return abstract || '';
+          })();
+        `;
+        
+        detailWindow.webContents.executeJavaScript(extractAbstractScript)
+          .then((abstract) => {
+            clearTimeout(timeout);
+            
+            if (detailWindow.isDestroyed()) {
+              reject(new Error('窗口已关闭'));
+              return;
+            }
+            
+            // 更新窗口标题
+            detailWindow.setTitle(abstract ? '摘要提取成功' : '未找到摘要');
+            
+            // 延迟关闭窗口
+            setTimeout(() => {
+              if (!detailWindow.isDestroyed()) {
+                detailWindow.close();
+              }
+              resolve(abstract || '');
+            }, 1000);
+          })
+          .catch((error) => {
+            clearTimeout(timeout);
+            console.error('提取摘要失败:', error);
+            if (!detailWindow.isDestroyed()) {
+              detailWindow.close();
+            }
+            reject(error);
+          });
+      }, 2000); // 等待2秒让页面完全加载
+    });
+    
+    // 错误处理
+    detailWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+      clearTimeout(timeout);
+      if (!detailWindow.isDestroyed()) {
+        detailWindow.close();
+      }
+      reject(new Error(`页面加载失败 (错误码: ${errorCode}): ${errorDescription}`));
+    });
+    
+    // 加载URL
+    detailWindow.loadURL(url);
   });
 }
 
@@ -1456,6 +1718,24 @@ ipcMain.handle('search-google-scholar', async (event, keyword, limit) => {
   }
 });
 
+// IPC处理 - 从URL提取完整摘要
+ipcMain.handle('extract-abstract-from-url', async (event, url) => {
+  try {
+    const abstract = await extractFullAbstractFromUrl(url);
+    return {
+      success: true,
+      abstract: abstract
+    };
+  } catch (error) {
+    console.error('从URL提取摘要失败:', error);
+    return {
+      success: false,
+      error: error.message || '提取摘要失败',
+      abstract: ''
+    };
+  }
+});
+
 // IPC处理 - PDF解析（仅提取文本，不提取结构化信息）
 ipcMain.handle('parse-pdf', async (event, buffer, filename) => {
   try {
@@ -1697,6 +1977,37 @@ ipcMain.handle('list-projects', async () => {
   try {
     const projects = await listProjects();
     return { success: true, projects };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+// 删除项目（删除整个项目文件夹）
+async function deleteProject(projectName) {
+  try {
+    const folderPath = getProjectFolderPath(projectName);
+    // 检查文件夹是否存在
+    await fs.access(folderPath);
+    // 递归删除整个文件夹
+    await fs.rm(folderPath, { recursive: true, force: true });
+    return { success: true };
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      // 文件夹不存在，也算删除成功
+      return { success: true };
+    }
+    throw error;
+  }
+}
+
+ipcMain.handle('delete-project', async (event, projectName) => {
+  try {
+    await deleteProject(projectName);
+    // 如果删除的是当前打开的项目，清除当前项目
+    if (currentProjectName === projectName) {
+      currentProjectName = null;
+    }
+    return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
   }

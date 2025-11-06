@@ -335,11 +335,40 @@ header p {
     font-weight: 500;
 }
 
+.result-abstract {
+    position: relative;
+}
+
 .result-abstract p {
     color: var(--text-secondary);
     line-height: 1.7;
     margin-bottom: var(--spacing-sm);
     font-size: var(--font-size-base);
+}
+
+.btn-complete-abstract {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.btn-complete-abstract:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2563eb 0%, var(--primary-color) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-complete-abstract:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .result-url {

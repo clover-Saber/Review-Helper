@@ -91,6 +91,7 @@
                     <button id="select-all-btn">全选</button>
                     <button id="deselect-all-btn">全不选</button>
                     <button id="select-ai-recommended-btn">仅选AI推荐</button>
+                    <button id="init-from-module1-btn">初始化为模块1结果</button>
                     <button id="export-excel-btn">导出Excel</button>
                 </div>
                 <div class="literature-container" id="literature-container">
@@ -228,6 +229,7 @@
             const selectAllBtn = document.getElementById('select-all-btn');
             const deselectAllBtn = document.getElementById('deselect-all-btn');
             const selectAiRecommendedBtn = document.getElementById('select-ai-recommended-btn');
+            const initFromModule1Btn = document.getElementById('init-from-module1-btn');
             const exportExcelBtn = document.getElementById('export-excel-btn');
             const confirmBtn = document.getElementById('confirm-btn');
             const backBtn = document.getElementById('back-btn');
@@ -248,6 +250,7 @@
             let currentProject = null;
             let literatureList = []; // 文献列表，每篇包含 { ...literature, selected: boolean, aiRecommended: boolean, aiReason: string }
             let selectedPdfFiles = []; // 选中的PDF文件列表
+            let module1OriginalResults = []; // 保存模块1的原始结果，用于初始化
             
             // 显示Toast通知
             function showToast(message, type = 'success') {
@@ -313,6 +316,10 @@
                 
                 // 加载文献列表（模块1的最终结果）
                 const finalResults = data.finalResults || data.allLiterature || [];
+                
+                // 保存模块1的原始结果，用于初始化功能
+                module1OriginalResults = finalResults.length > 0 ? [...finalResults] : [];
+                
                 if (finalResults.length > 0) {
                     // 如果已有筛选结果，使用筛选结果；否则使用模块1的原始结果
                     const filteredResults = data.module2 && data.module2.filteredResults ? data.module2.filteredResults : null;
@@ -788,6 +795,58 @@
                 updateStatistics();
                 updateConfirmButton();
                 autoSaveConfig();
+            });
+            
+            // 初始化为模块1结果
+            initFromModule1Btn.addEventListener('click', async function() {
+                if (module1OriginalResults.length === 0) {
+                    // 如果没有保存的模块1结果，尝试重新加载项目数据
+                    if (!currentProject) {
+                        showToast('未绑定项目，无法初始化', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        const result = await window.electronAPI.loadProjectData(currentProject);
+                        if (result.success && result.data) {
+                            const finalResults = result.data.finalResults || result.data.allLiterature || [];
+                            module1OriginalResults = finalResults.length > 0 ? [...finalResults] : [];
+                        }
+                    } catch (error) {
+                        console.error('加载项目数据失败:', error);
+                        showToast('加载模块1结果失败: ' + error.message, 'error');
+                        return;
+                    }
+                }
+                
+                if (module1OriginalResults.length === 0) {
+                    showToast('模块1没有搜索结果，无法初始化', 'error');
+                    return;
+                }
+                
+                // 确认操作
+                const confirmed = confirm(`确定要将文献列表初始化为模块1的结果吗？\n这将重置所有当前操作（包括AI筛选结果、手动选择等），恢复到模块1的 ${module1OriginalResults.length} 篇文献。`);
+                
+                if (!confirmed) {
+                    return;
+                }
+                
+                // 重置为模块1的原始结果
+                literatureList = module1OriginalResults.map(item => ({
+                    ...item,
+                    selected: false,
+                    aiRecommended: false,
+                    aiReason: ''
+                }));
+                
+                displayLiteratureList();
+                updateStatistics();
+                updateConfirmButton();
+                
+                // 自动保存
+                await autoSaveConfig();
+                
+                showToast(`已初始化为模块1结果，共 ${literatureList.length} 篇文献`);
             });
             
             // 更新确认按钮状态

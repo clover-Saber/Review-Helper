@@ -1,8 +1,9 @@
 {
   "projectName": "2",
-  "researchTopic": "自动驾驶",
-  "createdAt": "2025-11-05T17:00:12.794Z",
-  "updatedAt": "2025-11-05T17:08:28.826Z",
+  "projectDescription": "混合交通流下的自动驾驶技术",
+  "status": "completed",
+  "createdAt": "2025-11-06T00:38:12.129Z",
+  "updatedAt": "2025-11-06T01:51:57.620Z",
   "step1": {
     "status": "pending"
   },
@@ -12,5 +13,170 @@
   "step3": {
     "status": "pending"
   },
-  "userNeeds": "自动驾驶"
+  "config": {
+    "apiKey": "sk-104bbee0909943399d1affcfdae8297e",
+    "searchPreferences": {
+      "keywordCount": 2,
+      "maxPerKeyword": 2,
+      "startYear": "",
+      "minCitations": ""
+    }
+  },
+  "keywords": [
+    "Autonomous Vehicles",
+    "Mixed Traffic Flow"
+  ],
+  "search": {
+    "results": {
+      "Autonomous Vehicles": [
+        {
+          "id": "scholar_0_1762393756952",
+          "title": "Understanding autonomous vehicles",
+          "authors": "A Faisal, M Kamruzzaman, T Yigitcanlar…",
+          "year": "2019",
+          "source": "Journal of transport and …, 2019  -  JSTOR",
+          "abstract": "… understand capability, impact, planning, and policy issues associated with autonomous \nvehicles… It concludes by advocating the necessity of preparing our cities for autonomous vehicles, …",
+          "cited": 661,
+          "url": "https://www.jstor.org/stable/26911258"
+        },
+        {
+          "id": "scholar_2_1762393756953",
+          "title": "A review on autonomous vehicles: Progress, methods and challenges",
+          "authors": "D Parekh, N Poddar, A Rajpurkar, M Chahal, N Kumar…",
+          "year": "2022",
+          "source": "Electronics, 2022  -  mdpi.com",
+          "abstract": "Vehicular technology has recently gained increasing popularity, and autonomous driving is a hot topic. To achieve safe and reliable intelligent transportation systems, accurate positioning technologies need to be built to factor in the different types of uncertainties such as pedestrian behavior, random objects, and types of roads and their settings. In this work, we look into the other domains and technologies required to build an autonomous vehicle and conduct a relevant literature analysis. In this work, we look into the current state of research and development in environment detection, pedestrian detection, path planning, motion control, and vehicle cybersecurity for autonomous vehicles. We aim to study the different proposed technologies and compare their approaches. For a car to become fully autonomous, these technologies need to be accurate enough to gain public trust and show immense accuracy in their approach to solving these problems. Public trust and perception of auto vehicles are also explored in this paper. By discussing the opportunities as well as the obstacles of autonomous driving technology, we aim to shed light on future possibilities.",
+          "cited": 624,
+          "url": "https://www.mdpi.com/2079-9292/11/14/2162"
+        }
+      ],
+      "Mixed Traffic Flow": [
+        {
+          "id": "scholar_0_1762393768087",
+          "title": "Analyzing the impact of automated vehicles on uncertainty and stability of the mixed traffic flow",
+          "authors": "F Zheng, C Liu, X Liu, SE Jabari, L Lu",
+          "year": "2020",
+          "source": "Transportation research part C …, 2020  -  Elsevier",
+          "abstract": "This paper proposes a stochastic model for mixed traffic flow with human-driven vehicles (HVs) and automated vehicles (AVs). The model is formulated in Lagrangian coordinates considering the heterogeneous behavior of human drivers. We further derive a first and second order approximation of the stochastic model describing the mean and the covariance dynamics, respectively, under different combinations of HVs and AVs in the traffic stream (e.g., randomly distributed in the stream, at the front of the stream, in the middle of the stream and in the rear of the stream). The proposed model allows us to explicitly investigate the interaction between AVs and HVs considering the uncertainty of human driving behavior. Six performance metrics are proposed to measure the impact of AVs on the uncertainty of HVs’ behavior, as well as on the stability of the system. The numerical experiment results show that AVs have significant impact on the uncertainty and stability of the mixed traffic flow system. Larger AV penetration rates can reduce the uncertainty inherent in HV behavior and improve the stability of the mixed flow substantially. Whereas AVs’ reaction time only has subtle impact on the uncertainty of the mixed stream; as well as the position of AVs in the traffic stream has marginal influence in terms of reducing uncertainty and improving stability.",
+          "cited": 265,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0968090X19308095"
+        },
+        {
+          "id": "scholar_2_1762393768087",
+          "title": "Impacts of autonomous vehicles on traffic flow characteristics under mixed traffic environment: Future perspectives",
+          "authors": "M Al",
+          "year": "2021",
+          "source": "Turki, NT Ratrout, SM Rahman, I Reza  -  Sustainability, 2021  -  mdpi.com",
+          "abstract": "Vehicle automation and communication technologies are considered promising approaches to improve operational driving behavior. The expected gradual implementation of autonomous vehicles (AVs) shortly will cause unique impacts on the traffic flow characteristics. This paper focuses on reviewing the expected impacts under a mixed traffic environment of AVs and regular vehicles (RVs) considering different AV characteristics. The paper includes a policy implication discussion for possible actual future practice and research interests. The AV implementation has positive impacts on the traffic flow, such as improved traffic capacity and stability. However, the impact depends on the factors including penetration rate of the AVs, characteristics, and operational settings of the AVs, traffic volume level, and human driving behavior. The critical penetration rate, which has a high potential to improve traffic characteristics, was higher than 40%. AV’s intelligent control of operational driving is a function of its operational settings, mainly car-following modeling. Different adjustments of these settings may improve some traffic flow parameters and may deteriorate others. The position and distribution of AVs and the type of their leading or following vehicles may play a role in maximizing their impacts.",
+          "cited": 83,
+          "url": "https://www.mdpi.com/2071-1050/13/19/11052"
+        }
+      ]
+    }
+  },
+  "finalResults": [
+    {
+      "id": "scholar_0_1762393756952",
+      "title": "Understanding autonomous vehicles",
+      "authors": "A Faisal, M Kamruzzaman, T Yigitcanlar…",
+      "year": "2019",
+      "source": "Journal of transport and …, 2019  -  JSTOR",
+      "abstract": "… understand capability, impact, planning, and policy issues associated with autonomous \nvehicles… It concludes by advocating the necessity of preparing our cities for autonomous vehicles, …",
+      "cited": 661,
+      "url": "https://www.jstor.org/stable/26911258"
+    },
+    {
+      "id": "scholar_2_1762393756953",
+      "title": "A review on autonomous vehicles: Progress, methods and challenges",
+      "authors": "D Parekh, N Poddar, A Rajpurkar, M Chahal, N Kumar…",
+      "year": "2022",
+      "source": "Electronics, 2022  -  mdpi.com",
+      "abstract": "Vehicular technology has recently gained increasing popularity, and autonomous driving is a hot topic. To achieve safe and reliable intelligent transportation systems, accurate positioning technologies need to be built to factor in the different types of uncertainties such as pedestrian behavior, random objects, and types of roads and their settings. In this work, we look into the other domains and technologies required to build an autonomous vehicle and conduct a relevant literature analysis. In this work, we look into the current state of research and development in environment detection, pedestrian detection, path planning, motion control, and vehicle cybersecurity for autonomous vehicles. We aim to study the different proposed technologies and compare their approaches. For a car to become fully autonomous, these technologies need to be accurate enough to gain public trust and show immense accuracy in their approach to solving these problems. Public trust and perception of auto vehicles are also explored in this paper. By discussing the opportunities as well as the obstacles of autonomous driving technology, we aim to shed light on future possibilities.",
+      "cited": 624,
+      "url": "https://www.mdpi.com/2079-9292/11/14/2162"
+    },
+    {
+      "id": "scholar_0_1762393768087",
+      "title": "Analyzing the impact of automated vehicles on uncertainty and stability of the mixed traffic flow",
+      "authors": "F Zheng, C Liu, X Liu, SE Jabari, L Lu",
+      "year": "2020",
+      "source": "Transportation research part C …, 2020  -  Elsevier",
+      "abstract": "This paper proposes a stochastic model for mixed traffic flow with human-driven vehicles (HVs) and automated vehicles (AVs). The model is formulated in Lagrangian coordinates considering the heterogeneous behavior of human drivers. We further derive a first and second order approximation of the stochastic model describing the mean and the covariance dynamics, respectively, under different combinations of HVs and AVs in the traffic stream (e.g., randomly distributed in the stream, at the front of the stream, in the middle of the stream and in the rear of the stream). The proposed model allows us to explicitly investigate the interaction between AVs and HVs considering the uncertainty of human driving behavior. Six performance metrics are proposed to measure the impact of AVs on the uncertainty of HVs’ behavior, as well as on the stability of the system. The numerical experiment results show that AVs have significant impact on the uncertainty and stability of the mixed traffic flow system. Larger AV penetration rates can reduce the uncertainty inherent in HV behavior and improve the stability of the mixed flow substantially. Whereas AVs’ reaction time only has subtle impact on the uncertainty of the mixed stream; as well as the position of AVs in the traffic stream has marginal influence in terms of reducing uncertainty and improving stability.",
+      "cited": 265,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0968090X19308095"
+    },
+    {
+      "id": "scholar_2_1762393768087",
+      "title": "Impacts of autonomous vehicles on traffic flow characteristics under mixed traffic environment: Future perspectives",
+      "authors": "M Al",
+      "year": "2021",
+      "source": "Turki, NT Ratrout, SM Rahman, I Reza  -  Sustainability, 2021  -  mdpi.com",
+      "abstract": "Vehicle automation and communication technologies are considered promising approaches to improve operational driving behavior. The expected gradual implementation of autonomous vehicles (AVs) shortly will cause unique impacts on the traffic flow characteristics. This paper focuses on reviewing the expected impacts under a mixed traffic environment of AVs and regular vehicles (RVs) considering different AV characteristics. The paper includes a policy implication discussion for possible actual future practice and research interests. The AV implementation has positive impacts on the traffic flow, such as improved traffic capacity and stability. However, the impact depends on the factors including penetration rate of the AVs, characteristics, and operational settings of the AVs, traffic volume level, and human driving behavior. The critical penetration rate, which has a high potential to improve traffic characteristics, was higher than 40%. AV’s intelligent control of operational driving is a function of its operational settings, mainly car-following modeling. Different adjustments of these settings may improve some traffic flow parameters and may deteriorate others. The position and distribution of AVs and the type of their leading or following vehicles may play a role in maximizing their impacts.",
+      "cited": 83,
+      "url": "https://www.mdpi.com/2071-1050/13/19/11052"
+    }
+  ],
+  "timestamp": "2025-11-06T01:51:49.068Z",
+  "module2": {
+    "filteredResults": [
+      {
+        "id": "scholar_0_1762393756952",
+        "title": "Understanding autonomous vehicles",
+        "authors": "A Faisal, M Kamruzzaman, T Yigitcanlar…",
+        "year": "2019",
+        "source": "Journal of transport and …, 2019  -  JSTOR",
+        "abstract": "… understand capability, impact, planning, and policy issues associated with autonomous \nvehicles… It concludes by advocating the necessity of preparing our cities for autonomous vehicles, …",
+        "cited": 661,
+        "url": "https://www.jstor.org/stable/26911258",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "高被引文献，全面覆盖自动驾驶车辆的关键议题，时效性强，适合综述研究"
+      },
+      {
+        "id": "scholar_2_1762393756953",
+        "title": "A review on autonomous vehicles: Progress, methods and challenges",
+        "authors": "D Parekh, N Poddar, A Rajpurkar, M Chahal, N Kumar…",
+        "year": "2022",
+        "source": "Electronics, 2022  -  mdpi.com",
+        "abstract": "Vehicular technology has recently gained increasing popularity, and autonomous driving is a hot topic. To achieve safe and reliable intelligent transportation systems, accurate positioning technologies need to be built to factor in the different types of uncertainties such as pedestrian behavior, random objects, and types of roads and their settings. In this work, we look into the other domains and technologies required to build an autonomous vehicle and conduct a relevant literature analysis. In this work, we look into the current state of research and development in environment detection, pedestrian detection, path planning, motion control, and vehicle cybersecurity for autonomous vehicles. We aim to study the different proposed technologies and compare their approaches. For a car to become fully autonomous, these technologies need to be accurate enough to gain public trust and show immense accuracy in their approach to solving these problems. Public trust and perception of auto vehicles are also explored in this paper. By discussing the opportunities as well as the obstacles of autonomous driving technology, we aim to shed light on future possibilities.",
+        "cited": 624,
+        "url": "https://www.mdpi.com/2079-9292/11/14/2162",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "2022年综述文献，被引624次，涵盖自动驾驶关键技术，适合作为综述基础。"
+      },
+      {
+        "id": "scholar_0_1762393768087",
+        "title": "Analyzing the impact of automated vehicles on uncertainty and stability of the mixed traffic flow",
+        "authors": "F Zheng, C Liu, X Liu, SE Jabari, L Lu",
+        "year": "2020",
+        "source": "Transportation research part C …, 2020  -  Elsevier",
+        "abstract": "This paper proposes a stochastic model for mixed traffic flow with human-driven vehicles (HVs) and automated vehicles (AVs). The model is formulated in Lagrangian coordinates considering the heterogeneous behavior of human drivers. We further derive a first and second order approximation of the stochastic model describing the mean and the covariance dynamics, respectively, under different combinations of HVs and AVs in the traffic stream (e.g., randomly distributed in the stream, at the front of the stream, in the middle of the stream and in the rear of the stream). The proposed model allows us to explicitly investigate the interaction between AVs and HVs considering the uncertainty of human driving behavior. Six performance metrics are proposed to measure the impact of AVs on the uncertainty of HVs’ behavior, as well as on the stability of the system. The numerical experiment results show that AVs have significant impact on the uncertainty and stability of the mixed traffic flow system. Larger AV penetration rates can reduce the uncertainty inherent in HV behavior and improve the stability of the mixed flow substantially. Whereas AVs’ reaction time only has subtle impact on the uncertainty of the mixed stream; as well as the position of AVs in the traffic stream has marginal influence in terms of reducing uncertainty and improving stability.",
+        "cited": 265,
+        "url": "https://www.sciencedirect.com/science/article/pii/S0968090X19308095",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "高被引文献，针对混合交通流稳定性与不确定性提供创新模型与量化分析"
+      },
+      {
+        "id": "scholar_2_1762393768087",
+        "title": "Impacts of autonomous vehicles on traffic flow characteristics under mixed traffic environment: Future perspectives",
+        "authors": "M Al",
+        "year": "2021",
+        "source": "Turki, NT Ratrout, SM Rahman, I Reza  -  Sustainability, 2021  -  mdpi.com",
+        "abstract": "Vehicle automation and communication technologies are considered promising approaches to improve operational driving behavior. The expected gradual implementation of autonomous vehicles (AVs) shortly will cause unique impacts on the traffic flow characteristics. This paper focuses on reviewing the expected impacts under a mixed traffic environment of AVs and regular vehicles (RVs) considering different AV characteristics. The paper includes a policy implication discussion for possible actual future practice and research interests. The AV implementation has positive impacts on the traffic flow, such as improved traffic capacity and stability. However, the impact depends on the factors including penetration rate of the AVs, characteristics, and operational settings of the AVs, traffic volume level, and human driving behavior. The critical penetration rate, which has a high potential to improve traffic characteristics, was higher than 40%. AV’s intelligent control of operational driving is a function of its operational settings, mainly car-following modeling. Different adjustments of these settings may improve some traffic flow parameters and may deteriorate others. The position and distribution of AVs and the type of their leading or following vehicles may play a role in maximizing their impacts.",
+        "cited": 83,
+        "url": "https://www.mdpi.com/2071-1050/13/19/11052",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "2021年较新文献，被引83次显示影响力，综述类文章适合文献综述，直接相关研究主题"
+      }
+    ],
+    "timestamp": "2025-11-06T01:51:00.463Z"
+  },
+  "module3": {
+    "review": "自动驾驶车辆作为智能交通系统的重要组成部分，近年来已成为学术界和产业界的研究热点。本文基于四篇相关文献，从技术发展、交通流影响及社会接受度等维度对自动驾驶车辆研究现状进行系统梳理。Faisal等人（2019）在研究中全面阐述了自动驾驶车辆的能力、影响、规划及政策问题[文献1]，强调城市需要为自动驾驶车辆的到来做好充分准备，这一研究为后续探讨奠定了理论基础。\n\n在技术发展方面，Parekh等人（2022）系统回顾了自动驾驶车辆的环境检测、行人检测、路径规划、运动控制和车辆网络安全等关键技术领域的研究进展[文献2]。该研究指出，要实现安全可靠的智能交通系统，需要建立能够考虑行人行为、随机障碍物和道路类型等多种不确定因素的精准定位技术。值得注意的是，该研究特别强调了技术准确性对建立公众信任的重要性，并深入探讨了公众对自动驾驶车辆的认知态度。\n\n关于自动驾驶车辆对交通流的影响，Zheng等人（2020）通过建立随机模型分析了混合交通流中自动驾驶车辆与人工驾驶车辆的相互作用[文献3]。研究发现，自动驾驶车辆的渗透率对降低人工驾驶行为的不确定性和提高混合交通流稳定性具有显著影响，而自动驾驶车辆的反应时间及其在交通流中的位置影响相对有限。这一研究为理解混合交通环境下的系统稳定性提供了重要理论依据。\n\nAl等人（2021）进一步探讨了混合交通环境下自动驾驶车辆对交通流特性的影响[文献4]。研究表明，自动驾驶车辆的实施对交通容量和稳定性具有积极影响，但这种影响取决于自动驾驶车辆的渗透率、特性、运行设置、交通流量水平和人类驾驶行为等多重因素。特别值得注意的是，该研究指出当自动驾驶车辆渗透率超过40%这一临界值时，其对交通特性的改善潜力将显著提升。\n\n综合现有研究可见，自动驾驶车辆的发展不仅涉及技术层面的突破，还需要考虑其对交通系统的整体影响和社会接受度。未来研究应继续深入探索自动驾驶车辆在复杂交通环境中的行为特征，同时加强政策制定和城市规划方面的协同研究，以促进自动驾驶技术的顺利落地和广泛应用。",
+    "requirements": "- 内容结构清晰，逻辑严密\n- 准确引用所有文献，并在引用位置标记[文献序号]\n- 一段一段表述，不要分小点",
+    "timestamp": "2025-11-06T01:51:49.068Z"
+  }
 }

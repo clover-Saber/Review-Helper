@@ -84,8 +84,25 @@ header p {
 .input-group {
     display: flex;
     gap: var(--spacing-md);
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
+    margin-bottom: var(--spacing-md);
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+    color: var(--text-secondary);
+    min-width: 120px;
+    align-self: flex-start;
+    padding-top: var(--spacing-xs);
+}
+
+.input-group textarea {
+    flex: 1;
+    min-width: 300px;
+    align-self: flex-start;
 }
 
 .api-key-section {
@@ -311,6 +328,88 @@ button:disabled {
 
 .review-container {
     margin-top: var(--spacing-lg);
+}
+
+.requirements-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-top: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    resize: vertical;
+    background-color: white;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    vertical-align: top;
+    text-align: left;
+}
+
+.requirements-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.prompt-textarea {
+    width: 100%;
+    min-height: 300px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-top: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    resize: vertical;
+    background-color: #f8f9fa;
+    color: var(--text-primary);
+    line-height: 1.6;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    vertical-align: top;
+    text-align: left;
+}
+
+.prompt-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modify-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-lg);
+}
+
+.modify-section h3 {
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+}
+
+.modify-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-top: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    resize: vertical;
+    background-color: white;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    vertical-align: top;
+    text-align: left;
+}
+
+.modify-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .review-textarea {
