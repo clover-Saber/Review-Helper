@@ -425,16 +425,22 @@ function openScholarLoginWindow() {
 }
 
 // Google Scholar 搜索函数（使用BrowserWindow加载页面，自动提取）
-function searchGoogleScholar(keyword, limit = 10) {
+function searchGoogleScholar(keyword, limit = 10, minYear = null) {
   return new Promise((resolve, reject) => {
     // 编码关键词
     const encodedKeyword = encodeURIComponent(keyword);
     const actualLimit = Math.min(parseInt(limit), 19);
     
-    // 构建搜索URL
-    const url = `https://scholar.google.com/scholar?hl=zh-CN&as_sdt=0%2C5&q=${encodedKeyword}&num=${actualLimit}`;
+    // 构建搜索URL，添加年份限制
+    let url = `https://scholar.google.com/scholar?hl=zh-CN&as_sdt=0%2C5&q=${encodedKeyword}&num=${actualLimit}`;
     
-    console.log(`搜索Google Scholar: ${keyword}, URL: ${url}`);
+    // 如果指定了起始年份，添加到URL参数中
+    if (minYear && !isNaN(minYear) && minYear > 1900) {
+      url += `&as_ylo=${minYear}`;
+      console.log(`添加年份限制: 从 ${minYear} 年开始`);
+    }
+    
+    console.log(`搜索Google Scholar: ${keyword}, 限制: ${actualLimit}, 年份: ${minYear || '无限制'}, URL: ${url}`);
     
     // 创建浏览器窗口（自动提取，不需要用户确认）
     const searchWindow = new BrowserWindow({
@@ -1691,9 +1697,9 @@ ipcMain.handle('open-scholar-login', async (event) => {
 });
 
 // IPC处理 - Google Scholar搜索
-ipcMain.handle('search-google-scholar', async (event, keyword, limit) => {
+ipcMain.handle('search-google-scholar', async (event, keyword, limit, minYear) => {
   try {
-    console.log(`搜索Google Scholar: ${keyword}, 限制: ${limit}`);
+    console.log(`搜索Google Scholar: ${keyword}, 限制: ${limit}, 年份: ${minYear || '无限制'}`);
     
     if (!keyword || typeof keyword !== 'string') {
       return {
@@ -1703,7 +1709,7 @@ ipcMain.handle('search-google-scholar', async (event, keyword, limit) => {
       };
     }
     
-    const results = await searchGoogleScholar(keyword, limit || 10);
+    const results = await searchGoogleScholar(keyword, limit || 10, minYear || null);
   return {
     success: true,
       results: results || []

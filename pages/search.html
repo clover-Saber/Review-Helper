@@ -476,24 +476,27 @@
                         const currentProgress = ((i) / keywords.length) * 100;
                         updateProgress(currentProgress, `正在搜索: ${keyword} (${i + 1}/${keywords.length})`);
                         
-                        // 搜索文献
+                        // 搜索文献（年份限制在搜索时应用，引用数限制在结果中过滤）
                         const perCount = Number(prefMaxPerKeywordInput.value) || 10;
                         const minYear = Number(prefStartYearInput.value) || null;
                         const minCitations = prefMinCitationsInput.value ? Number(prefMinCitationsInput.value) : null;
-                        let results = await searchGoogleScholar(keyword, perCount);
-                        console.log(`关键词 "${keyword}" 搜索返回 ${results ? results.length : 0} 条结果`);
                         
-                        // 过滤年份与引用数
+                        // 搜索时传递年份参数，让Google Scholar在搜索时就过滤年份
+                        let results = await searchGoogleScholar(keyword, perCount, minYear);
+                        console.log(`关键词 "${keyword}" 搜索返回 ${results ? results.length : 0} 条结果 (年份限制: ${minYear || '无'})`);
+                        
+                        // 只过滤引用数（年份已在搜索时过滤）
                         const beforeFilter = results.length;
-                        results = results.filter(item => {
-                            if (!item) return false;
-                            const y = Number(item.year);
-                            const c = Number(item.cited || 0);
-                            const passYear = minYear ? (y >= minYear) : true;
-                            const passCite = (minCitations !== null) ? (c >= minCitations) : true;
-                            return passYear && passCite;
-                        });
-                        console.log(`关键词 "${keyword}" 过滤后剩余 ${results.length} 条结果 (过滤前: ${beforeFilter})`);
+                        if (minCitations !== null && minCitations > 0) {
+                            results = results.filter(item => {
+                                if (!item) return false;
+                                const c = Number(item.cited || 0);
+                                return c >= minCitations;
+                            });
+                            console.log(`关键词 "${keyword}" 引用数过滤后剩余 ${results.length} 条结果 (过滤前: ${beforeFilter}, 最小引用数: ${minCitations})`);
+                        } else {
+                            console.log(`关键词 "${keyword}" 未设置引用数限制，保留所有 ${results.length} 条结果`);
+                        }
                         
                         searchResults[keyword] = results || [];
                         totalFound += results.length;
@@ -543,11 +546,11 @@
                     if (finalResultsSection) {
                         finalResultsSection.style.display = 'block';
                         console.log('finalResultsSection 已显示');
-                    } else {
+                        } else {
                         console.error('finalResultsSection 不存在！');
-                    }
+                        }
                     
-                    updateConfirmButton();
+                        updateConfirmButton();
                     
                     // 如果结果为空，给用户提示
                     if (allLiterature.length === 0) {
@@ -640,13 +643,14 @@
             }
             
             // 搜索Google Scholar（真实实现，通过IPC调用主进程）
-            async function searchGoogleScholar(keyword, limit = 3) {
+            async function searchGoogleScholar(keyword, limit = 3, minYear = null) {
                 if (!window.electronAPI || !window.electronAPI.searchGoogleScholar) {
                     throw new Error('Google Scholar搜索功能不可用');
                 }
                 
                 try {
-                    const result = await window.electronAPI.searchGoogleScholar(keyword, limit);
+                    // 传递年份参数到IPC调用
+                    const result = await window.electronAPI.searchGoogleScholar(keyword, limit, minYear);
                     if (result.success && result.results) {
                         return result.results;
                     } else {
@@ -713,7 +717,7 @@
                     
                     if (Array.isArray(results)) {
                         let validCount = 0;
-                        results.forEach(item => {
+                    results.forEach(item => {
                             if (item && item.title) {
                                 all.push(item);
                                 validCount++;
@@ -1223,10 +1227,10 @@
                     return ipcRenderer.invoke('get-current-project');
                 }
             },
-            searchGoogleScholar: (keyword, limit) => {
+            searchGoogleScholar: (keyword, limit, minYear) => {
                 if (window.require) {
                     const { ipcRenderer } = window.require('electron');
-                    return ipcRenderer.invoke('search-google-scholar', keyword, limit);
+                    return ipcRenderer.invoke('search-google-scholar', keyword, limit, minYear);
                 }
             },
             openScholarLogin: () => {

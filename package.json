@@ -1,16 +1,69 @@
 {
   "name": "my-electron-app",
   "version": "1.0.0",
-  "description": "Hello World!",
+  "description": "文献项目",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "dist": "electron-builder --publish=never"
   },
   "author": "Hao Yu",
   "license": "MIT",
+  "build": {
+    "appId": "com.haoyu.literature-review",
+    "productName": "文献综述助手",
+    "directories": {
+      "output": "dist"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "files": [
+      "main.js",
+      "pages/**/*",
+      "projects/**/*",
+      "!**/node_modules/@napi-rs/**/*android*",
+      "!**/node_modules/@napi-rs/**/*darwin*",
+      "!**/node_modules/@napi-rs/**/*linux*",
+      "node_modules/**/*"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/@napi-rs/canvas-win32-x64-msvc/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "sign": null,
+      "signingHashAlgorithms": [],
+      "verifyUpdateCodeSignature": false
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.png"
+    }
+  },
   "devDependencies": {
-    "electron": "^39.1.0"
+    "electron": "^39.1.0",
+    "electron-builder": "^26.0.12"
   },
   "dependencies": {
     "electron-prompt": "^1.7.0",

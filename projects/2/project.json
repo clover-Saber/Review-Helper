@@ -1,9 +1,9 @@
 {
   "projectName": "2",
   "projectDescription": "混合交通流下的自动驾驶技术",
-  "status": "completed",
+  "status": "module2",
   "createdAt": "2025-11-06T00:38:12.129Z",
-  "updatedAt": "2025-11-06T01:51:57.620Z",
+  "updatedAt": "2025-11-06T11:35:29.018Z",
   "step1": {
     "status": "pending"
   },
@@ -16,124 +16,634 @@
   "config": {
     "apiKey": "sk-104bbee0909943399d1affcfdae8297e",
     "searchPreferences": {
-      "keywordCount": 2,
-      "maxPerKeyword": 2,
-      "startYear": "",
+      "keywordCount": 3,
+      "maxPerKeyword": 10,
+      "startYear": "2020",
       "minCitations": ""
     }
   },
   "keywords": [
     "Autonomous Vehicles",
-    "Mixed Traffic Flow"
+    "Mixed Traffic Flow",
+    "Connected and Automated Vehicles"
   ],
   "search": {
     "results": {
       "Autonomous Vehicles": [
         {
-          "id": "scholar_0_1762393756952",
-          "title": "Understanding autonomous vehicles",
-          "authors": "A Faisal, M Kamruzzaman, T Yigitcanlar…",
-          "year": "2019",
-          "source": "Journal of transport and …, 2019  -  JSTOR",
-          "abstract": "… understand capability, impact, planning, and policy issues associated with autonomous \nvehicles… It concludes by advocating the necessity of preparing our cities for autonomous vehicles, …",
-          "cited": 661,
-          "url": "https://www.jstor.org/stable/26911258"
-        },
-        {
-          "id": "scholar_2_1762393756953",
+          "id": "scholar_1_1762430194646",
           "title": "A review on autonomous vehicles: Progress, methods and challenges",
           "authors": "D Parekh, N Poddar, A Rajpurkar, M Chahal, N Kumar…",
           "year": "2022",
           "source": "Electronics, 2022  -  mdpi.com",
-          "abstract": "Vehicular technology has recently gained increasing popularity, and autonomous driving is a hot topic. To achieve safe and reliable intelligent transportation systems, accurate positioning technologies need to be built to factor in the different types of uncertainties such as pedestrian behavior, random objects, and types of roads and their settings. In this work, we look into the other domains and technologies required to build an autonomous vehicle and conduct a relevant literature analysis. In this work, we look into the current state of research and development in environment detection, pedestrian detection, path planning, motion control, and vehicle cybersecurity for autonomous vehicles. We aim to study the different proposed technologies and compare their approaches. For a car to become fully autonomous, these technologies need to be accurate enough to gain public trust and show immense accuracy in their approach to solving these problems. Public trust and perception of auto vehicles are also explored in this paper. By discussing the opportunities as well as the obstacles of autonomous driving technology, we aim to shed light on future possibilities.",
+          "abstract": "… We can conclude that autonomous vehicles are the way of the future, and vehicles with … \nDespite the enormous advances in these past years with autonomous technology, we think it is …",
           "cited": 624,
           "url": "https://www.mdpi.com/2079-9292/11/14/2162"
+        },
+        {
+          "id": "scholar_3_1762430194646",
+          "title": "Safety of autonomous vehicles",
+          "authors": "J Wang, L Zhang, Y Huang…",
+          "year": "2020",
+          "source": "Journal of advanced …, 2020  -  Wiley Online Library",
+          "abstract": "… and emissions, autonomous driving … autonomous vehicle (AV, ie, automated or self-driving \nvehicle) equipped with advanced technologies assists a human driver or to control the vehicle …",
+          "cited": 392,
+          "url": "https://onlinelibrary.wiley.com/doi/abs/10.1155/2020/8867757"
+        },
+        {
+          "id": "scholar_5_1762430194646",
+          "title": "Autonomous vehicles",
+          "authors": "Y Wiseman",
+          "year": "2022",
+          "source": "Research anthology on cross - disciplinary designs and …, 2022  -  igi - global.com",
+          "abstract": "… vehicles into autonomous vehicles was not just one step. The first step was just 28 years after \nthe invention of cars, that is to say 1898. This step's concept was moving a vehicle … vehicles …",
+          "cited": 184,
+          "url": "https://www.igi-global.com/chapter/autonomous-vehicles/291671"
+        },
+        {
+          "id": "scholar_7_1762430194646",
+          "title": "An overview of sensors in Autonomous Vehicles",
+          "authors": "HA Ignatious, M Khan",
+          "year": "2022",
+          "source": "Procedia Computer Science, 2022  -  Elsevier",
+          "abstract": "… Autonomous driving is a rapidly developing technology that is also a source of debate. \nPeople believe that autonomous vehicles will provide a better future by increasing road safety, …",
+          "cited": 257,
+          "url": "https://www.sciencedirect.com/science/article/pii/S1877050921025540"
+        },
+        {
+          "id": "scholar_9_1762430194646",
+          "title": "connected autonomous vehicles",
+          "authors": "",
+          "year": "",
+          "source": "",
+          "abstract": "",
+          "cited": 0,
+          "url": "https://scholar.google.com/scholar?hl=zh-CN&as_sdt=0,5&qsp=1&q=connected+autonomous+vehicles&qst=ib"
+        },
+        {
+          "id": "scholar_10_1762430194646",
+          "title": "Autonomous vehicles and intelligent automation: Applications, challenges, and opportunities",
+          "authors": "G Bathla, K Bhadane, RK Singh…",
+          "year": "2022",
+          "source": "Mobile Information …, 2022  -  Wiley Online Library",
+          "abstract": "… with autonomous vehicles in context of object detection, cybersecurity, and V2X privacy. \nAdditionally, the conceptual autonomous … factor in handling futuristic vehicles. Researchers and …",
+          "cited": 350,
+          "url": "https://onlinelibrary.wiley.com/doi/abs/10.1155/2022/7632892"
+        },
+        {
+          "id": "scholar_12_1762430194646",
+          "title": "Autonomous vehicles and public health",
+          "authors": "D Rojas",
+          "year": "2020",
+          "source": "Rueda, MJ Nieuwenhuijsen…  -  Annual review of …, 2020  -  annualreviews.org",
+          "abstract": "… as highly automated vehicles) (69, 92). A fully autonomous vehicle is a vehicle that has a \nfull-… More than 1,400 self-driving cars, trucks, and other vehicles are currently being tested by …",
+          "cited": 176,
+          "url": "https://www.annualreviews.org/content/journals/10.1146/annurev-publhealth-040119-094035"
+        },
+        {
+          "id": "scholar_14_1762430194646",
+          "title": "Exploring the implications of autonomous vehicles: A comprehensive review",
+          "authors": "K Othman",
+          "year": "2022",
+          "source": "Innovative Infrastructure Solutions, 2022  -  Springer",
+          "abstract": "… to autonomous vehicles (AVs), as vehicle automation … fight against pandemics as autonomous \nvehicles can be used to … the development of autonomous vehicles instead of taking the …",
+          "cited": 218,
+          "url": "https://link.springer.com/article/10.1007/s41062-022-00763-6"
+        },
+        {
+          "id": "scholar_16_1762430194646",
+          "title": "Artificial intelligence applications in the development of autonomous vehicles: A survey",
+          "authors": "Y Ma, Z Wang, H Yang, L Yang",
+          "year": "2020",
+          "source": "IEEE/CAA Journal of …, 2020  -  ieeexplore.ieee.org",
+          "abstract": "The advancement of artificial intelligence ( AI ) has truly stimulated the development and \ndeployment of autonomous vehicles ( AVs ) in the transportation industry. Fueled by big data …",
+          "cited": 751,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9016391/"
+        },
+        {
+          "id": "scholar_18_1762430194646",
+          "title": "A survey of autonomous vehicles: Enabling communication technologies and challenges",
+          "authors": "MN Ahangar, QZ Ahmed, FA Khan, M Hafeez",
+          "year": "2021",
+          "source": "Sensors, 2021  -  mdpi.com",
+          "abstract": "… Kingdom recorded 25,080 motor vehicle fatalities in 2019. … errors with the use of autonomous \nvehicles (AVs). Therefore, this … technologies for AVs to facilitate vehicle to everything (V2X) …",
+          "cited": 469,
+          "url": "https://www.mdpi.com/1424-8220/21/3/706"
         }
       ],
       "Mixed Traffic Flow": [
         {
-          "id": "scholar_0_1762393768087",
-          "title": "Analyzing the impact of automated vehicles on uncertainty and stability of the mixed traffic flow",
-          "authors": "F Zheng, C Liu, X Liu, SE Jabari, L Lu",
-          "year": "2020",
-          "source": "Transportation research part C …, 2020  -  Elsevier",
-          "abstract": "This paper proposes a stochastic model for mixed traffic flow with human-driven vehicles (HVs) and automated vehicles (AVs). The model is formulated in Lagrangian coordinates considering the heterogeneous behavior of human drivers. We further derive a first and second order approximation of the stochastic model describing the mean and the covariance dynamics, respectively, under different combinations of HVs and AVs in the traffic stream (e.g., randomly distributed in the stream, at the front of the stream, in the middle of the stream and in the rear of the stream). The proposed model allows us to explicitly investigate the interaction between AVs and HVs considering the uncertainty of human driving behavior. Six performance metrics are proposed to measure the impact of AVs on the uncertainty of HVs’ behavior, as well as on the stability of the system. The numerical experiment results show that AVs have significant impact on the uncertainty and stability of the mixed traffic flow system. Larger AV penetration rates can reduce the uncertainty inherent in HV behavior and improve the stability of the mixed flow substantially. Whereas AVs’ reaction time only has subtle impact on the uncertainty of the mixed stream; as well as the position of AVs in the traffic stream has marginal influence in terms of reducing uncertainty and improving stability.",
-          "cited": 265,
-          "url": "https://www.sciencedirect.com/science/article/pii/S0968090X19308095"
+          "id": "scholar_1_1762430205679",
+          "title": "Urban traffic signal control under mixed traffic flows: Literature review",
+          "authors": "Ž Majstorović, L Tišljarić, E Ivanjko, T Carić",
+          "year": "2023",
+          "source": "Applied Sciences, 2023  -  mdpi.com",
+          "abstract": "… rarely considers mixed traffic flow containing … Traffic Signal Control (TSC) and mixed traffic \nflows. Best practices for intersection state estimation and TSC in the case of mixed traffic flows …",
+          "cited": 39,
+          "url": "https://www.mdpi.com/2076-3417/13/7/4484"
         },
         {
-          "id": "scholar_2_1762393768087",
+          "id": "scholar_3_1762430205679",
           "title": "Impacts of autonomous vehicles on traffic flow characteristics under mixed traffic environment: Future perspectives",
           "authors": "M Al",
           "year": "2021",
           "source": "Turki, NT Ratrout, SM Rahman, I Reza  -  Sustainability, 2021  -  mdpi.com",
-          "abstract": "Vehicle automation and communication technologies are considered promising approaches to improve operational driving behavior. The expected gradual implementation of autonomous vehicles (AVs) shortly will cause unique impacts on the traffic flow characteristics. This paper focuses on reviewing the expected impacts under a mixed traffic environment of AVs and regular vehicles (RVs) considering different AV characteristics. The paper includes a policy implication discussion for possible actual future practice and research interests. The AV implementation has positive impacts on the traffic flow, such as improved traffic capacity and stability. However, the impact depends on the factors including penetration rate of the AVs, characteristics, and operational settings of the AVs, traffic volume level, and human driving behavior. The critical penetration rate, which has a high potential to improve traffic characteristics, was higher than 40%. AV’s intelligent control of operational driving is a function of its operational settings, mainly car-following modeling. Different adjustments of these settings may improve some traffic flow parameters and may deteriorate others. The position and distribution of AVs and the type of their leading or following vehicles may play a role in maximizing their impacts.",
+          "abstract": "… traffic flow characteristics. This paper focuses on reviewing the expected impacts under a \nmixed traffic … that connect traffic flow and AV driving behavior under a mixed traffic environment …",
           "cited": 83,
           "url": "https://www.mdpi.com/2071-1050/13/19/11052"
+        },
+        {
+          "id": "scholar_5_1762430205679",
+          "title": "Analysis of the impact of maximum platoon size of CAVs on mixed traffic flow: An analytical and simulation method",
+          "authors": "Z Yao, Y Wu, Y Wang, B Zhao, Y Jiang",
+          "year": "2023",
+          "source": "Transportation Research Part C …, 2023  -  Elsevier",
+          "abstract": "… This paper analyzes the characteristics of mixed traffic flow … and headway types of mixed \ntraffic flows with human-driven … stability condition of mixed traffic flow are proposed based on …",
+          "cited": 168,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0968090X22004028"
+        },
+        {
+          "id": "scholar_7_1762430205679",
+          "title": "Analysis on traffic stability and capacity for mixed traffic flow with platoons of intelligent connected vehicles",
+          "authors": "X Chang, H Li, J Rong, X Zhao, A Li",
+          "year": "2020",
+          "source": "Physica A: Statistical Mechanics and …, 2020  -  Elsevier",
+          "abstract": "… In this paper, the traffic flow configurations and the spatial distributions of various types of … \n, when the mixed traffic flow is in equilibrium. To model the mixed traffic flow with platoons of …",
+          "cited": 162,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0378437120304295"
+        },
+        {
+          "id": "scholar_9_1762430205679",
+          "title": "Stability and safety evaluation of mixed traffic flow with connected automated vehicles on expressways",
+          "authors": "Z Yao, R Hu, Y Jiang, T Xu",
+          "year": "2020",
+          "source": "Journal of safety research, 2020  -  Elsevier",
+          "abstract": "… the safety of mixed traffic flow on expressways. Finally, the sensitivity of traffic demand, the \n… has no significant impact on the SD of mixed traffic flows, but it leads to the deterioration of …",
+          "cited": 154,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0022437520301183"
+        },
+        {
+          "id": "scholar_11_1762430205679",
+          "title": "Analyzing the impact of automated vehicles on uncertainty and stability of the mixed traffic flow",
+          "authors": "F Zheng, C Liu, X Liu, SE Jabari, L Lu",
+          "year": "2020",
+          "source": "Transportation research part C …, 2020  -  Elsevier",
+          "abstract": "This paper proposes a stochastic model for mixed traffic flow with human-driven vehicles (HVs) \nand automated vehicles (AVs). The model is formulated in Lagrangian coordinates …",
+          "cited": 265,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0968090X19308095"
+        },
+        {
+          "id": "scholar_13_1762430205679",
+          "title": "Assessing traffic disturbance, efficiency, and safety of the mixed traffic flow of connected vehicles and traditional vehicles by considering human factors",
+          "authors": "A Sharma, Z Zheng, J Kim, A Bhaskar…",
+          "year": "2021",
+          "source": "… research part C: emerging …, 2021  -  Elsevier",
+          "abstract": "… depend on the characteristics of this mixed traffic. Therefore, before the … mixed traffic. To \nachieve this aim, this study models the mixed traffic of TVs and CVs, and examines the traffic flow …",
+          "cited": 153,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0968090X20308329"
+        },
+        {
+          "id": "scholar_15_1762430205679",
+          "title": "Controllability analysis and optimal control of mixed traffic flow with human-driven and autonomous vehicles",
+          "authors": "J Wang, Y Zheng, Q Xu, J Wang…",
+          "year": "2020",
+          "source": "IEEE Transactions on …, 2020  -  ieeexplore.ieee.org",
+          "abstract": "… Based on the reachability analysis, we derive an upper bound of reachable velocity of \nmixed traffic flow and show how to design the desired system state in the controller. Extensive …",
+          "cited": 179,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9127876/"
+        },
+        {
+          "id": "scholar_17_1762430205679",
+          "title": "Linear internal stability for mixed traffic flow of CAVs with different automation levels",
+          "authors": "Z Yao, H Deng, Z Chen, X He, Y Ai, Y Wu",
+          "year": "2024",
+          "source": "Physica A: Statistical Mechanics …, 2024  -  Elsevier",
+          "abstract": "… on mixed traffic flow, this paper proposes a stability analysis framework for mixed traffic flow \nthat … The influence of automation level classification on the composition of mixed traffic flow is …",
+          "cited": 19,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0378437124002681"
+        },
+        {
+          "id": "scholar_19_1762430205680",
+          "title": "Traffic flow characteristics and lane use strategies for connected and automated vehicles in mixed traffic conditions",
+          "authors": "Z Zhong, J Lee, L Zhao",
+          "year": "2021",
+          "source": "Journal of Advanced Transportation, 2021  -  Wiley Online Library",
+          "abstract": "… This study focuses on analyzing mixed traffic flow characteristics at a corridor level \nconsidering different CAV MRPs and managed lane strategies. In this section, the integrated …",
+          "cited": 29,
+          "url": "https://onlinelibrary.wiley.com/doi/abs/10.1155/2021/8816540"
+        }
+      ],
+      "Connected and Automated Vehicles": [
+        {
+          "id": "scholar_1_1762430216950",
+          "title": "Connected and automated vehicles: Infrastructure, applications, security, critical challenges, and future aspects",
+          "authors": "M Sadaf, Z Iqbal, AR Javed, I Saba, M Krichen…",
+          "year": "2023",
+          "source": "Technologies, 2023  -  mdpi.com",
+          "abstract": "… , and solar power usage in automated vehicles. It also presents forensics … vehicles. Moreover, \nthis research provides an overview of cyber attacks affecting autonomous vehicles, attack …",
+          "cited": 171,
+          "url": "https://www.mdpi.com/2227-7080/11/5/117"
+        },
+        {
+          "id": "scholar_3_1762430216950",
+          "title": "Impacts of connected and automated vehicles on road safety and efficiency: A systematic literature review",
+          "authors": "A Matin, H Dia",
+          "year": "2022",
+          "source": "IEEE Transactions on Intelligent Transportation …, 2022  -  ieeexplore.ieee.org",
+          "abstract": "Connected and automated vehicles (CAVs), in the context of cooperative intelligent \ntransportation systems (C-ITS), are capable of exchanging information with each other and the …",
+          "cited": 116,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9989507/"
+        },
+        {
+          "id": "scholar_5_1762430216950",
+          "title": "Design and operation of dedicated lanes for connected and automated vehicles on motorways: A conceptual framework and research agenda",
+          "authors": "SR Rad, H Farah, H Taale, B van Arem…",
+          "year": "2020",
+          "source": "… research part C …, 2020  -  Elsevier",
+          "abstract": "Dedicated Lanes (DLs) have been proposed as a potential scenario for the deployment of \nAutomated and/or Connected Vehicles (C/AVs) on the road network. However, evidence-…",
+          "cited": 153,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0968090X20305799"
+        },
+        {
+          "id": "scholar_7_1762430216950",
+          "title": "A systematic survey of control techniques and applications in connected and automated vehicles",
+          "authors": "W Liu, M Hua, Z Deng, Z Meng, Y Huang…",
+          "year": "2023",
+          "source": "IEEE Internet of …, 2023  -  ieeexplore.ieee.org",
+          "abstract": "… vehicles (AVs) and connected and automated vehicles (CAVs) as the key instantiation of \nautomated driving and collaborative driving automation become … connected automated vehicle …",
+          "cited": 178,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10225497/"
+        },
+        {
+          "id": "scholar_9_1762430216950",
+          "title": "Can the impacts of connected and automated vehicles be predicted?",
+          "authors": "R Elvik",
+          "year": "2021",
+          "source": "Danish Journal of Transportation Research - Dansk …, 2021  -  somaesthetics.aau.dk",
+          "abstract": "… to develop connected and automated vehicles. Small-scale trials of automated vehicles in \nreal … Can the societal impacts of a transition to fully connected and automated vehicles be …",
+          "cited": 19,
+          "url": "https://somaesthetics.aau.dk/index.php/djtr/article/view/6113"
+        },
+        {
+          "id": "scholar_11_1762430216950",
+          "title": "Safety evaluation of connected and automated vehicles in mixed traffic with conventional vehicles at intersections",
+          "authors": "R Arvin, AJ Khattak, M Kamrani…",
+          "year": "2020",
+          "source": "Journal of Intelligent …, 2020  -  Taylor & Francis",
+          "abstract": "… impact of automated vehicles in a mixed traffic environment involving conventional vehicles. \n… the driver behavior of conventional vehicles, the real-world connected vehicle data from the …",
+          "cited": 201,
+          "url": "https://www.tandfonline.com/doi/abs/10.1080/15472450.2020.1834392"
+        },
+        {
+          "id": "scholar_13_1762430216950",
+          "title": "Testing scenario library generation for connected and automated vehicles, part I: Methodology",
+          "authors": "S Feng, Y Feng, C Yu, Y Zhang…",
+          "year": "2020",
+          "source": "IEEE Transactions on …, 2020  -  ieeexplore.ieee.org",
+          "abstract": "Testing and evaluation is a critical step in the development and deployment of connected \nand automated vehicles (CAVs), and yet there is no systematic framework to generate testing …",
+          "cited": 287,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8998589/"
+        },
+        {
+          "id": "scholar_15_1762430216950",
+          "title": "Testing scenario library generation for connected and automated vehicles, part II: Case studies",
+          "authors": "S Feng, Y Feng, H Sun, S Bao…",
+          "year": "2020",
+          "source": "IEEE Transactions on …, 2020  -  ieeexplore.ieee.org",
+          "abstract": "Testing scenario library generation (TSLG) is a critical step for the development and deployment \nof connected and automated vehicles (CAVs). In Part I of this study, a general method …",
+          "cited": 160,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9086089/"
+        },
+        {
+          "id": "scholar_17_1762430216950",
+          "title": "Federated learning for connected and automated vehicles: A survey of existing approaches and challenges",
+          "authors": "VP Chellapandi, L Yuan, CG Brinton…",
+          "year": "2023",
+          "source": "… Intelligent Vehicles, 2023  -  ieeexplore.ieee.org",
+          "abstract": "… ) is widely used for key tasks in Connected and Automated Vehicles (CAV), including perception, \n… avoidance of multiple connected automated vehicles,” IEEE Transactions on Intelligent …",
+          "cited": 205,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10316635/"
+        },
+        {
+          "id": "scholar_19_1762430216951",
+          "title": "The role of digital twins in connected and automated vehicles",
+          "authors": "C Schwarz, Z Wang",
+          "year": "2022",
+          "source": "IEEE Intelligent Transportation Systems …, 2022  -  ieeexplore.ieee.org",
+          "abstract": "… This paper reviews digital twins and their use in connected and automated vehicles (CAVs). … \nKnoll, “Fortuna: Presenting the 5G-connected automated vehicle prototype of the project …",
+          "cited": 144,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9670454/"
         }
       ]
     }
   },
   "finalResults": [
     {
-      "id": "scholar_0_1762393756952",
-      "title": "Understanding autonomous vehicles",
-      "authors": "A Faisal, M Kamruzzaman, T Yigitcanlar…",
-      "year": "2019",
-      "source": "Journal of transport and …, 2019  -  JSTOR",
-      "abstract": "… understand capability, impact, planning, and policy issues associated with autonomous \nvehicles… It concludes by advocating the necessity of preparing our cities for autonomous vehicles, …",
-      "cited": 661,
-      "url": "https://www.jstor.org/stable/26911258"
-    },
-    {
-      "id": "scholar_2_1762393756953",
+      "id": "scholar_1_1762430194646",
       "title": "A review on autonomous vehicles: Progress, methods and challenges",
       "authors": "D Parekh, N Poddar, A Rajpurkar, M Chahal, N Kumar…",
       "year": "2022",
       "source": "Electronics, 2022  -  mdpi.com",
-      "abstract": "Vehicular technology has recently gained increasing popularity, and autonomous driving is a hot topic. To achieve safe and reliable intelligent transportation systems, accurate positioning technologies need to be built to factor in the different types of uncertainties such as pedestrian behavior, random objects, and types of roads and their settings. In this work, we look into the other domains and technologies required to build an autonomous vehicle and conduct a relevant literature analysis. In this work, we look into the current state of research and development in environment detection, pedestrian detection, path planning, motion control, and vehicle cybersecurity for autonomous vehicles. We aim to study the different proposed technologies and compare their approaches. For a car to become fully autonomous, these technologies need to be accurate enough to gain public trust and show immense accuracy in their approach to solving these problems. Public trust and perception of auto vehicles are also explored in this paper. By discussing the opportunities as well as the obstacles of autonomous driving technology, we aim to shed light on future possibilities.",
+      "abstract": "… We can conclude that autonomous vehicles are the way of the future, and vehicles with … \nDespite the enormous advances in these past years with autonomous technology, we think it is …",
       "cited": 624,
       "url": "https://www.mdpi.com/2079-9292/11/14/2162"
     },
     {
-      "id": "scholar_0_1762393768087",
-      "title": "Analyzing the impact of automated vehicles on uncertainty and stability of the mixed traffic flow",
-      "authors": "F Zheng, C Liu, X Liu, SE Jabari, L Lu",
+      "id": "scholar_3_1762430194646",
+      "title": "Safety of autonomous vehicles",
+      "authors": "J Wang, L Zhang, Y Huang…",
       "year": "2020",
-      "source": "Transportation research part C …, 2020  -  Elsevier",
-      "abstract": "This paper proposes a stochastic model for mixed traffic flow with human-driven vehicles (HVs) and automated vehicles (AVs). The model is formulated in Lagrangian coordinates considering the heterogeneous behavior of human drivers. We further derive a first and second order approximation of the stochastic model describing the mean and the covariance dynamics, respectively, under different combinations of HVs and AVs in the traffic stream (e.g., randomly distributed in the stream, at the front of the stream, in the middle of the stream and in the rear of the stream). The proposed model allows us to explicitly investigate the interaction between AVs and HVs considering the uncertainty of human driving behavior. Six performance metrics are proposed to measure the impact of AVs on the uncertainty of HVs’ behavior, as well as on the stability of the system. The numerical experiment results show that AVs have significant impact on the uncertainty and stability of the mixed traffic flow system. Larger AV penetration rates can reduce the uncertainty inherent in HV behavior and improve the stability of the mixed flow substantially. Whereas AVs’ reaction time only has subtle impact on the uncertainty of the mixed stream; as well as the position of AVs in the traffic stream has marginal influence in terms of reducing uncertainty and improving stability.",
-      "cited": 265,
-      "url": "https://www.sciencedirect.com/science/article/pii/S0968090X19308095"
+      "source": "Journal of advanced …, 2020  -  Wiley Online Library",
+      "abstract": "… and emissions, autonomous driving … autonomous vehicle (AV, ie, automated or self-driving \nvehicle) equipped with advanced technologies assists a human driver or to control the vehicle …",
+      "cited": 392,
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1155/2020/8867757"
     },
     {
-      "id": "scholar_2_1762393768087",
+      "id": "scholar_5_1762430194646",
+      "title": "Autonomous vehicles",
+      "authors": "Y Wiseman",
+      "year": "2022",
+      "source": "Research anthology on cross - disciplinary designs and …, 2022  -  igi - global.com",
+      "abstract": "… vehicles into autonomous vehicles was not just one step. The first step was just 28 years after \nthe invention of cars, that is to say 1898. This step's concept was moving a vehicle … vehicles …",
+      "cited": 184,
+      "url": "https://www.igi-global.com/chapter/autonomous-vehicles/291671"
+    },
+    {
+      "id": "scholar_7_1762430194646",
+      "title": "An overview of sensors in Autonomous Vehicles",
+      "authors": "HA Ignatious, M Khan",
+      "year": "2022",
+      "source": "Procedia Computer Science, 2022  -  Elsevier",
+      "abstract": "… Autonomous driving is a rapidly developing technology that is also a source of debate. \nPeople believe that autonomous vehicles will provide a better future by increasing road safety, …",
+      "cited": 257,
+      "url": "https://www.sciencedirect.com/science/article/pii/S1877050921025540"
+    },
+    {
+      "id": "scholar_9_1762430194646",
+      "title": "connected autonomous vehicles",
+      "authors": "",
+      "year": "",
+      "source": "",
+      "abstract": "",
+      "cited": 0,
+      "url": "https://scholar.google.com/scholar?hl=zh-CN&as_sdt=0,5&qsp=1&q=connected+autonomous+vehicles&qst=ib"
+    },
+    {
+      "id": "scholar_10_1762430194646",
+      "title": "Autonomous vehicles and intelligent automation: Applications, challenges, and opportunities",
+      "authors": "G Bathla, K Bhadane, RK Singh…",
+      "year": "2022",
+      "source": "Mobile Information …, 2022  -  Wiley Online Library",
+      "abstract": "… with autonomous vehicles in context of object detection, cybersecurity, and V2X privacy. \nAdditionally, the conceptual autonomous … factor in handling futuristic vehicles. Researchers and …",
+      "cited": 350,
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1155/2022/7632892"
+    },
+    {
+      "id": "scholar_12_1762430194646",
+      "title": "Autonomous vehicles and public health",
+      "authors": "D Rojas",
+      "year": "2020",
+      "source": "Rueda, MJ Nieuwenhuijsen…  -  Annual review of …, 2020  -  annualreviews.org",
+      "abstract": "… as highly automated vehicles) (69, 92). A fully autonomous vehicle is a vehicle that has a \nfull-… More than 1,400 self-driving cars, trucks, and other vehicles are currently being tested by …",
+      "cited": 176,
+      "url": "https://www.annualreviews.org/content/journals/10.1146/annurev-publhealth-040119-094035"
+    },
+    {
+      "id": "scholar_14_1762430194646",
+      "title": "Exploring the implications of autonomous vehicles: A comprehensive review",
+      "authors": "K Othman",
+      "year": "2022",
+      "source": "Innovative Infrastructure Solutions, 2022  -  Springer",
+      "abstract": "… to autonomous vehicles (AVs), as vehicle automation … fight against pandemics as autonomous \nvehicles can be used to … the development of autonomous vehicles instead of taking the …",
+      "cited": 218,
+      "url": "https://link.springer.com/article/10.1007/s41062-022-00763-6"
+    },
+    {
+      "id": "scholar_16_1762430194646",
+      "title": "Artificial intelligence applications in the development of autonomous vehicles: A survey",
+      "authors": "Y Ma, Z Wang, H Yang, L Yang",
+      "year": "2020",
+      "source": "IEEE/CAA Journal of …, 2020  -  ieeexplore.ieee.org",
+      "abstract": "The advancement of artificial intelligence ( AI ) has truly stimulated the development and \ndeployment of autonomous vehicles ( AVs ) in the transportation industry. Fueled by big data …",
+      "cited": 751,
+      "url": "https://ieeexplore.ieee.org/abstract/document/9016391/"
+    },
+    {
+      "id": "scholar_18_1762430194646",
+      "title": "A survey of autonomous vehicles: Enabling communication technologies and challenges",
+      "authors": "MN Ahangar, QZ Ahmed, FA Khan, M Hafeez",
+      "year": "2021",
+      "source": "Sensors, 2021  -  mdpi.com",
+      "abstract": "… Kingdom recorded 25,080 motor vehicle fatalities in 2019. … errors with the use of autonomous \nvehicles (AVs). Therefore, this … technologies for AVs to facilitate vehicle to everything (V2X) …",
+      "cited": 469,
+      "url": "https://www.mdpi.com/1424-8220/21/3/706"
+    },
+    {
+      "id": "scholar_1_1762430205679",
+      "title": "Urban traffic signal control under mixed traffic flows: Literature review",
+      "authors": "Ž Majstorović, L Tišljarić, E Ivanjko, T Carić",
+      "year": "2023",
+      "source": "Applied Sciences, 2023  -  mdpi.com",
+      "abstract": "… rarely considers mixed traffic flow containing … Traffic Signal Control (TSC) and mixed traffic \nflows. Best practices for intersection state estimation and TSC in the case of mixed traffic flows …",
+      "cited": 39,
+      "url": "https://www.mdpi.com/2076-3417/13/7/4484"
+    },
+    {
+      "id": "scholar_3_1762430205679",
       "title": "Impacts of autonomous vehicles on traffic flow characteristics under mixed traffic environment: Future perspectives",
       "authors": "M Al",
       "year": "2021",
       "source": "Turki, NT Ratrout, SM Rahman, I Reza  -  Sustainability, 2021  -  mdpi.com",
-      "abstract": "Vehicle automation and communication technologies are considered promising approaches to improve operational driving behavior. The expected gradual implementation of autonomous vehicles (AVs) shortly will cause unique impacts on the traffic flow characteristics. This paper focuses on reviewing the expected impacts under a mixed traffic environment of AVs and regular vehicles (RVs) considering different AV characteristics. The paper includes a policy implication discussion for possible actual future practice and research interests. The AV implementation has positive impacts on the traffic flow, such as improved traffic capacity and stability. However, the impact depends on the factors including penetration rate of the AVs, characteristics, and operational settings of the AVs, traffic volume level, and human driving behavior. The critical penetration rate, which has a high potential to improve traffic characteristics, was higher than 40%. AV’s intelligent control of operational driving is a function of its operational settings, mainly car-following modeling. Different adjustments of these settings may improve some traffic flow parameters and may deteriorate others. The position and distribution of AVs and the type of their leading or following vehicles may play a role in maximizing their impacts.",
+      "abstract": "… traffic flow characteristics. This paper focuses on reviewing the expected impacts under a \nmixed traffic … that connect traffic flow and AV driving behavior under a mixed traffic environment …",
       "cited": 83,
       "url": "https://www.mdpi.com/2071-1050/13/19/11052"
+    },
+    {
+      "id": "scholar_5_1762430205679",
+      "title": "Analysis of the impact of maximum platoon size of CAVs on mixed traffic flow: An analytical and simulation method",
+      "authors": "Z Yao, Y Wu, Y Wang, B Zhao, Y Jiang",
+      "year": "2023",
+      "source": "Transportation Research Part C …, 2023  -  Elsevier",
+      "abstract": "… This paper analyzes the characteristics of mixed traffic flow … and headway types of mixed \ntraffic flows with human-driven … stability condition of mixed traffic flow are proposed based on …",
+      "cited": 168,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0968090X22004028"
+    },
+    {
+      "id": "scholar_7_1762430205679",
+      "title": "Analysis on traffic stability and capacity for mixed traffic flow with platoons of intelligent connected vehicles",
+      "authors": "X Chang, H Li, J Rong, X Zhao, A Li",
+      "year": "2020",
+      "source": "Physica A: Statistical Mechanics and …, 2020  -  Elsevier",
+      "abstract": "… In this paper, the traffic flow configurations and the spatial distributions of various types of … \n, when the mixed traffic flow is in equilibrium. To model the mixed traffic flow with platoons of …",
+      "cited": 162,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0378437120304295"
+    },
+    {
+      "id": "scholar_9_1762430205679",
+      "title": "Stability and safety evaluation of mixed traffic flow with connected automated vehicles on expressways",
+      "authors": "Z Yao, R Hu, Y Jiang, T Xu",
+      "year": "2020",
+      "source": "Journal of safety research, 2020  -  Elsevier",
+      "abstract": "… the safety of mixed traffic flow on expressways. Finally, the sensitivity of traffic demand, the \n… has no significant impact on the SD of mixed traffic flows, but it leads to the deterioration of …",
+      "cited": 154,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0022437520301183"
+    },
+    {
+      "id": "scholar_11_1762430205679",
+      "title": "Analyzing the impact of automated vehicles on uncertainty and stability of the mixed traffic flow",
+      "authors": "F Zheng, C Liu, X Liu, SE Jabari, L Lu",
+      "year": "2020",
+      "source": "Transportation research part C …, 2020  -  Elsevier",
+      "abstract": "This paper proposes a stochastic model for mixed traffic flow with human-driven vehicles (HVs) \nand automated vehicles (AVs). The model is formulated in Lagrangian coordinates …",
+      "cited": 265,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0968090X19308095"
+    },
+    {
+      "id": "scholar_13_1762430205679",
+      "title": "Assessing traffic disturbance, efficiency, and safety of the mixed traffic flow of connected vehicles and traditional vehicles by considering human factors",
+      "authors": "A Sharma, Z Zheng, J Kim, A Bhaskar…",
+      "year": "2021",
+      "source": "… research part C: emerging …, 2021  -  Elsevier",
+      "abstract": "… depend on the characteristics of this mixed traffic. Therefore, before the … mixed traffic. To \nachieve this aim, this study models the mixed traffic of TVs and CVs, and examines the traffic flow …",
+      "cited": 153,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0968090X20308329"
+    },
+    {
+      "id": "scholar_15_1762430205679",
+      "title": "Controllability analysis and optimal control of mixed traffic flow with human-driven and autonomous vehicles",
+      "authors": "J Wang, Y Zheng, Q Xu, J Wang…",
+      "year": "2020",
+      "source": "IEEE Transactions on …, 2020  -  ieeexplore.ieee.org",
+      "abstract": "… Based on the reachability analysis, we derive an upper bound of reachable velocity of \nmixed traffic flow and show how to design the desired system state in the controller. Extensive …",
+      "cited": 179,
+      "url": "https://ieeexplore.ieee.org/abstract/document/9127876/"
+    },
+    {
+      "id": "scholar_17_1762430205679",
+      "title": "Linear internal stability for mixed traffic flow of CAVs with different automation levels",
+      "authors": "Z Yao, H Deng, Z Chen, X He, Y Ai, Y Wu",
+      "year": "2024",
+      "source": "Physica A: Statistical Mechanics …, 2024  -  Elsevier",
+      "abstract": "… on mixed traffic flow, this paper proposes a stability analysis framework for mixed traffic flow \nthat … The influence of automation level classification on the composition of mixed traffic flow is …",
+      "cited": 19,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0378437124002681"
+    },
+    {
+      "id": "scholar_19_1762430205680",
+      "title": "Traffic flow characteristics and lane use strategies for connected and automated vehicles in mixed traffic conditions",
+      "authors": "Z Zhong, J Lee, L Zhao",
+      "year": "2021",
+      "source": "Journal of Advanced Transportation, 2021  -  Wiley Online Library",
+      "abstract": "… This study focuses on analyzing mixed traffic flow characteristics at a corridor level \nconsidering different CAV MRPs and managed lane strategies. In this section, the integrated …",
+      "cited": 29,
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1155/2021/8816540"
+    },
+    {
+      "id": "scholar_1_1762430216950",
+      "title": "Connected and automated vehicles: Infrastructure, applications, security, critical challenges, and future aspects",
+      "authors": "M Sadaf, Z Iqbal, AR Javed, I Saba, M Krichen…",
+      "year": "2023",
+      "source": "Technologies, 2023  -  mdpi.com",
+      "abstract": "… , and solar power usage in automated vehicles. It also presents forensics … vehicles. Moreover, \nthis research provides an overview of cyber attacks affecting autonomous vehicles, attack …",
+      "cited": 171,
+      "url": "https://www.mdpi.com/2227-7080/11/5/117"
+    },
+    {
+      "id": "scholar_3_1762430216950",
+      "title": "Impacts of connected and automated vehicles on road safety and efficiency: A systematic literature review",
+      "authors": "A Matin, H Dia",
+      "year": "2022",
+      "source": "IEEE Transactions on Intelligent Transportation …, 2022  -  ieeexplore.ieee.org",
+      "abstract": "Connected and automated vehicles (CAVs), in the context of cooperative intelligent \ntransportation systems (C-ITS), are capable of exchanging information with each other and the …",
+      "cited": 116,
+      "url": "https://ieeexplore.ieee.org/abstract/document/9989507/"
+    },
+    {
+      "id": "scholar_5_1762430216950",
+      "title": "Design and operation of dedicated lanes for connected and automated vehicles on motorways: A conceptual framework and research agenda",
+      "authors": "SR Rad, H Farah, H Taale, B van Arem…",
+      "year": "2020",
+      "source": "… research part C …, 2020  -  Elsevier",
+      "abstract": "Dedicated Lanes (DLs) have been proposed as a potential scenario for the deployment of \nAutomated and/or Connected Vehicles (C/AVs) on the road network. However, evidence-…",
+      "cited": 153,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0968090X20305799"
+    },
+    {
+      "id": "scholar_7_1762430216950",
+      "title": "A systematic survey of control techniques and applications in connected and automated vehicles",
+      "authors": "W Liu, M Hua, Z Deng, Z Meng, Y Huang…",
+      "year": "2023",
+      "source": "IEEE Internet of …, 2023  -  ieeexplore.ieee.org",
+      "abstract": "… vehicles (AVs) and connected and automated vehicles (CAVs) as the key instantiation of \nautomated driving and collaborative driving automation become … connected automated vehicle …",
+      "cited": 178,
+      "url": "https://ieeexplore.ieee.org/abstract/document/10225497/"
+    },
+    {
+      "id": "scholar_9_1762430216950",
+      "title": "Can the impacts of connected and automated vehicles be predicted?",
+      "authors": "R Elvik",
+      "year": "2021",
+      "source": "Danish Journal of Transportation Research - Dansk …, 2021  -  somaesthetics.aau.dk",
+      "abstract": "… to develop connected and automated vehicles. Small-scale trials of automated vehicles in \nreal … Can the societal impacts of a transition to fully connected and automated vehicles be …",
+      "cited": 19,
+      "url": "https://somaesthetics.aau.dk/index.php/djtr/article/view/6113"
+    },
+    {
+      "id": "scholar_11_1762430216950",
+      "title": "Safety evaluation of connected and automated vehicles in mixed traffic with conventional vehicles at intersections",
+      "authors": "R Arvin, AJ Khattak, M Kamrani…",
+      "year": "2020",
+      "source": "Journal of Intelligent …, 2020  -  Taylor & Francis",
+      "abstract": "… impact of automated vehicles in a mixed traffic environment involving conventional vehicles. \n… the driver behavior of conventional vehicles, the real-world connected vehicle data from the …",
+      "cited": 201,
+      "url": "https://www.tandfonline.com/doi/abs/10.1080/15472450.2020.1834392"
+    },
+    {
+      "id": "scholar_13_1762430216950",
+      "title": "Testing scenario library generation for connected and automated vehicles, part I: Methodology",
+      "authors": "S Feng, Y Feng, C Yu, Y Zhang…",
+      "year": "2020",
+      "source": "IEEE Transactions on …, 2020  -  ieeexplore.ieee.org",
+      "abstract": "Testing and evaluation is a critical step in the development and deployment of connected \nand automated vehicles (CAVs), and yet there is no systematic framework to generate testing …",
+      "cited": 287,
+      "url": "https://ieeexplore.ieee.org/abstract/document/8998589/"
+    },
+    {
+      "id": "scholar_15_1762430216950",
+      "title": "Testing scenario library generation for connected and automated vehicles, part II: Case studies",
+      "authors": "S Feng, Y Feng, H Sun, S Bao…",
+      "year": "2020",
+      "source": "IEEE Transactions on …, 2020  -  ieeexplore.ieee.org",
+      "abstract": "Testing scenario library generation (TSLG) is a critical step for the development and deployment \nof connected and automated vehicles (CAVs). In Part I of this study, a general method …",
+      "cited": 160,
+      "url": "https://ieeexplore.ieee.org/abstract/document/9086089/"
+    },
+    {
+      "id": "scholar_17_1762430216950",
+      "title": "Federated learning for connected and automated vehicles: A survey of existing approaches and challenges",
+      "authors": "VP Chellapandi, L Yuan, CG Brinton…",
+      "year": "2023",
+      "source": "… Intelligent Vehicles, 2023  -  ieeexplore.ieee.org",
+      "abstract": "… ) is widely used for key tasks in Connected and Automated Vehicles (CAV), including perception, \n… avoidance of multiple connected automated vehicles,” IEEE Transactions on Intelligent …",
+      "cited": 205,
+      "url": "https://ieeexplore.ieee.org/abstract/document/10316635/"
+    },
+    {
+      "id": "scholar_19_1762430216951",
+      "title": "The role of digital twins in connected and automated vehicles",
+      "authors": "C Schwarz, Z Wang",
+      "year": "2022",
+      "source": "IEEE Intelligent Transportation Systems …, 2022  -  ieeexplore.ieee.org",
+      "abstract": "… This paper reviews digital twins and their use in connected and automated vehicles (CAVs). … \nKnoll, “Fortuna: Presenting the 5G-connected automated vehicle prototype of the project …",
+      "cited": 144,
+      "url": "https://ieeexplore.ieee.org/abstract/document/9670454/"
     }
   ],
-  "timestamp": "2025-11-06T01:51:49.068Z",
+  "timestamp": "2025-11-06T11:57:11.957Z",
   "module2": {
     "filteredResults": [
       {
-        "id": "scholar_0_1762393756952",
-        "title": "Understanding autonomous vehicles",
-        "authors": "A Faisal, M Kamruzzaman, T Yigitcanlar…",
-        "year": "2019",
-        "source": "Journal of transport and …, 2019  -  JSTOR",
-        "abstract": "… understand capability, impact, planning, and policy issues associated with autonomous \nvehicles… It concludes by advocating the necessity of preparing our cities for autonomous vehicles, …",
-        "cited": 661,
-        "url": "https://www.jstor.org/stable/26911258",
-        "selected": true,
-        "aiRecommended": true,
-        "aiReason": "高被引文献，全面覆盖自动驾驶车辆的关键议题，时效性强，适合综述研究"
-      },
-      {
-        "id": "scholar_2_1762393756953",
+        "id": "scholar_2_1762428447628",
         "title": "A review on autonomous vehicles: Progress, methods and challenges",
         "authors": "D Parekh, N Poddar, A Rajpurkar, M Chahal, N Kumar…",
         "year": "2022",
@@ -143,10 +653,36 @@
         "url": "https://www.mdpi.com/2079-9292/11/14/2162",
         "selected": true,
         "aiRecommended": true,
-        "aiReason": "2022年综述文献，被引624次，涵盖自动驾驶关键技术，适合作为综述基础。"
+        "aiReason": "2022年高被引综述，全面涵盖自动驾驶关键技术，适合作为文献综述基础。"
       },
       {
-        "id": "scholar_0_1762393768087",
+        "id": "scholar_4_1762428447628",
+        "title": "Safety of autonomous vehicles",
+        "authors": "J Wang, L Zhang, Y Huang…",
+        "year": "2020",
+        "source": "Journal of advanced …, 2020  -  Wiley Online Library",
+        "abstract": "… therefore, to systematically analyze the safety issues related to autonomous technology \napplied to vehicular applications. The levels of automation in vehicles are reviewed in Chapter 2, …",
+        "cited": 392,
+        "url": "https://onlinelibrary.wiley.com/doi/abs/10.1155/2020/8867757",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "2020年发表，被引392次，系统分析自动驾驶安全，时效性与权威性俱佳"
+      },
+      {
+        "id": "scholar_6_1762428447628",
+        "title": "Autonomous vehicles",
+        "authors": "Y Wiseman",
+        "year": "2022",
+        "source": "Research anthology on cross - disciplinary designs and …, 2022  -  igi - global.com",
+        "abstract": "… It concludes by advocating the necessity of preparing our cities for autonomous vehicles, … \ntag of (“autonomous vehicle” OR “automated vehicle” OR “driverless car” OR “self-driving car”) …",
+        "cited": 184,
+        "url": "https://www.igi-global.com/chapter/autonomous-vehicles/291671",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "高被引次数(184)，2022年发表，主题高度相关，来自权威出版社"
+      },
+      {
+        "id": "scholar_0_1762428458686",
         "title": "Analyzing the impact of automated vehicles on uncertainty and stability of the mixed traffic flow",
         "authors": "F Zheng, C Liu, X Liu, SE Jabari, L Lu",
         "year": "2020",
@@ -156,10 +692,10 @@
         "url": "https://www.sciencedirect.com/science/article/pii/S0968090X19308095",
         "selected": true,
         "aiRecommended": true,
-        "aiReason": "高被引文献，针对混合交通流稳定性与不确定性提供创新模型与量化分析"
+        "aiReason": "高被引文献，针对混合交通流建模，方法新颖，结论对自动驾驶研究有重要参考价值"
       },
       {
-        "id": "scholar_2_1762393768087",
+        "id": "scholar_2_1762428458686",
         "title": "Impacts of autonomous vehicles on traffic flow characteristics under mixed traffic environment: Future perspectives",
         "authors": "M Al",
         "year": "2021",
@@ -169,10 +705,88 @@
         "url": "https://www.mdpi.com/2071-1050/13/19/11052",
         "selected": true,
         "aiRecommended": true,
-        "aiReason": "2021年较新文献，被引83次显示影响力，综述类文章适合文献综述，直接相关研究主题"
+        "aiReason": "2021年较新文献，被引83次显示影响力，综述类文章适合文献综述，聚焦混合交通环境具有代表性"
+      },
+      {
+        "id": "scholar_4_1762428458686",
+        "title": "The impacts of connected autonomous vehicles on mixed traffic flow: A comprehensive review",
+        "authors": "Y Pan, Y Wu, L Xu, C Xia, DL Olson",
+        "year": "2024",
+        "source": "Physica A: Statistical Mechanics and …, 2024  -  Elsevier",
+        "abstract": "The rapid improvements in communication and self-driving technology in recent years have made connected autonomous cars an essential component of urban road transit. Connected autonomous vehicles excel in eliminating uncertainties arising from human driving behaviors. Consequently, they alleviate the issue of 'phantom congestion', a phenomenon that significantly impacts traffic efficiency, safety and sustainability while simultaneously enhancing overall traffic flow stability and safety. Moreover, the increasing adoption of connected autonomous vehicles has led to improved driving efficiency, resulting in reduced energy emissions and decreased environmental pollution. This paper endeavors to conduct an extensive review concerning the effects of CAVs on mixed traffic flows, with a primary emphasis on their impact on traffic efficiency and congestion. Additionally, secondary aspects such as stability, safety, and environmental repercussions will be addressed. The article begins with a concise historical account of connected autonomous vehicles and their related technologies. Subsequently, an investigation was conducted into their impact on the mixed traffic environment, along with corresponding policy recommendations. Finally, potential avenues for future research were identified.",
+        "cited": 58,
+        "url": "https://www.sciencedirect.com/science/article/pii/S0378437123010099",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "2024年最新综述，被引58次，全面涵盖CAV对混合交通流的影响，时效性强且权威性高"
+      },
+      {
+        "id": "scholar_6_1762428458686",
+        "title": "Urban traffic signal control under mixed traffic flows: Literature review",
+        "authors": "Ž Majstorović, L Tišljarić, E Ivanjko, T Carić",
+        "year": "2023",
+        "source": "Applied Sciences, 2023  -  mdpi.com",
+        "abstract": "Mixed traffic flows are opening up new areas for research and are seen as key drivers in the field of data and services that will make roads safer and more environmentally friendly. Understanding the effects of Connected Vehicles (CVs) and Connected Autonomous Vehicles (CAVs), as one of the vehicle components of mixed traffic flows, will make it easier to avoid traffic congestion and contribute to the creation of innovative applications and solutions. It is notable that the literature related to the analysis of the impact of mixed traffic flows on traffic signal control in urban areas rarely considers mixed traffic flow containing CVs, CAVs, and Human Driven Vehicles (HDVs). Therefore, this paper provides an overview of the relevant research papers covering the topic of urban Traffic Signal Control (TSC) and mixed traffic flows. Best practices for intersection state estimation and TSC in the case of mixed traffic flows in an urban environment are summarized and possible approaches for utilizing CVs and CAVs as mobile sensors and actuators are discussed.",
+        "cited": 39,
+        "url": "https://www.mdpi.com/2076-3417/13/7/4484",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "2023年最新综述，聚焦混合交通流信号控制，被引39次，时效性强且权威性高"
+      },
+      {
+        "id": "scholar_15_1762428458686",
+        "title": "Analysis of the impact of maximum platoon size of CAVs on mixed traffic flow: An analytical and simulation method",
+        "authors": "Z Yao, Y Wu, Y Wang, B Zhao, Y Jiang",
+        "year": "2023",
+        "source": "Transportation Research Part C …, 2023  -  Elsevier",
+        "abstract": "This paper analyzes the characteristics of mixed traffic flow with maximum platoon size of connected automated vehicles (CAVs) based on analytical and simulation methods. First, we discuss the car-following and headway types of mixed traffic flows with human-driven vehicles (HDVs), connected human-driven vehicles (CHVs), automated vehicles (AVs), and CAVs. Second, the probability distribution of the CAVs platoon size is derived based on the Markov chain model. Subsequently, the capacity model and stability condition of mixed traffic flow are proposed based on the probability distribution of the CAVs platoon size, and some characteristics of the influence of the maximum platoon size on traffic capacity and stability are analyzed. A numerical experiment based on car-following models was conducted to investigate the effect of the maximum platoon size on capacity, stability, safety, fuel consumption, and emission of mixed traffic flow. The results show that (1) the capacity of mixed traffic flow increases with the maximum platoon size of CAVs; (2) the stability of mixed traffic flow deteriorates with the increase in the maximum platoon size of CAVs; (3) the safety risk of vehicles in mixed traffic flow increases with the maximum platoon size of CAVs; (4) the fuel consumption and emissions (e.g., CO, HC, and NOx) increase with the maximum platoon size of CAVs. This indicates that the larger maximum platoon size can only improve traffic capacity, which is not conducive to the stability, safety, fuel consumption, and emissions of mixed traffic flow.",
+        "cited": 168,
+        "url": "https://www.sciencedirect.com/science/article/pii/S0968090X22004028",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "高被引、权威期刊、研究主题聚焦CAV编队规模对混合交通流的多维影响"
+      },
+      {
+        "id": "scholar_8_1762428469771",
+        "title": "Connected and automated vehicles: Infrastructure, applications, security, critical challenges, and future aspects",
+        "authors": "M Sadaf, Z Iqbal, AR Javed, I Saba, M Krichen…",
+        "year": "2023",
+        "source": "Technologies, 2023  -  mdpi.com",
+        "abstract": "Autonomous vehicles (AV) are game-changing innovations that promise a safer, more convenient, and environmentally friendly mode of transportation than traditional vehicles. Therefore, understanding AV technologies and their impact on society is critical as we continue this revolutionary journey. Generally, there needs to be a detailed study available to assist a researcher in understanding AV and its challenges. This research presents a comprehensive survey encompassing various aspects of AVs, such as public adoption, driverless city planning, traffic management, environmental impact, public health, social implications, international standards, safety, and security. Furthermore, it presents emerging technologies such as artificial intelligence (AI), integration of cloud computing, and solar power usage in automated vehicles. It also presents forensics approaches, tools used, standards involved, and challenges associated with conducting digital forensics in the context of autonomous vehicles. Moreover, this research provides an overview of cyber attacks affecting autonomous vehicles, attack management, traditional security devices, threat modeling, authentication schemes, over-the-air updates, zero-trust architectures, data privacy, and the corresponding defensive strategies to mitigate such risks. It also presents international standards, guidelines, and best practices for AVs. Finally, it outlines the future directions of AVs and the challenges that must be addressed to achieve widespread adoption.",
+        "cited": 171,
+        "url": "https://www.mdpi.com/2227-7080/11/5/117",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "2023年综述文献，涵盖自动驾驶多领域，被引171次，权威性强"
+      },
+      {
+        "id": "scholar_12_1762428469772",
+        "title": "A systematic survey of control techniques and applications in connected and automated vehicles",
+        "authors": "W Liu, M Hua, Z Deng, Z Meng, Y Huang…",
+        "year": "2023",
+        "source": "IEEE Internet of …, 2023  -  ieeexplore.ieee.org",
+        "abstract": "Vehicle control is one of the most critical challenges in autonomous vehicles (AVs) and connected and automated vehicles (CAVs), and it is paramount in vehicle safety, passenger comfort, transportation efficiency, and energy saving. This survey attempts to provide a comprehensive and thorough overview of the current state of vehicle control technology, focusing on the evolution from vehicle state estimation and trajectory tracking control in AVs at the microscopic level to collaborative control in CAVs at the macroscopic level. First, this review starts with vehicle key state estimation, specifically vehicle sideslip angle, which is the most pivotal state for vehicle trajectory control, to discuss representative approaches. Then, we present symbolic vehicle trajectory tracking control approaches for AVs. On top of that, we further review the collaborative control frameworks for CAVs and corresponding applications. Finally, this survey concludes with a discussion of future research directions and the challenges. This survey aims to provide a contextualized and in-depth look at the state-of-the-art in vehicle control for AVs and CAVs, identifying critical areas of focus and pointing out the potential areas for further exploration.",
+        "cited": 178,
+        "url": "https://ieeexplore.ieee.org/abstract/document/10225497/",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "2023年最新系统综述，被引178次，全面覆盖自动驾驶车辆控制技术现状与未来方向"
+      },
+      {
+        "id": "scholar_14_1762428469772",
+        "title": "Safety evaluation of connected and automated vehicles in mixed traffic with conventional vehicles at intersections",
+        "authors": "R Arvin, AJ Khattak, M Kamrani…",
+        "year": "2020",
+        "source": "Journal of Intelligent …, 2020  -  Taylor & Francis",
+        "abstract": "Connected and Automated Vehicles (CAVs) can potentially improve the performance of the transportation system by reducing human errors. This paper investigates the safety impact of CAVs in a mixed traffic with conventional vehicles at intersections. Analyzing real-world AV crashes in California revealed that rear-end crashes at intersections are the dominant crash type. Therefore, to enhance our understanding of the future interactions between human-driven vehicles with CAVs at intersections, a simulation framework was developed to model the mixed traffic environment of Automated Vehicles (AV), cooperative AVs, and conventional human-driven vehicles. In order to model AVs driving behavior, Adaptive Cruise Control (ACC) and cooperative ACC (CACC) models are utilized. Particularly, this study explores system improvements due to automation and connectivity across varying CAV market penetration scenarios. ACC and CACC car following models are used to mimic the behavior of AVs and cooperative AVs. Real-world connected vehicle data are utilized to modify and tune the acceleration/deceleration regimes of the Wiedemann model. Next, the driving volatility concept capturing variability in vehicle speeds was utilized to calibrate the simulation to represent the safety performance of a real-world environment. Two surrogate safety measures are used to evaluate the safety performance of a representative intersection under different market penetration rate of CAVs: the number of longitudinal conflicts and driving volatility. At low levels of ACC market penetration, the safety improvements were found to be marginal, but safety improved substantially with more than 40% ACC penetration. Additional safety improvements can be achieved more quickly through the addition of cooperation and connectivity through CACC. Furthermore, ACC/CACC vehicles were found to improve mobility performance in terms of average speed and travel time at intersections.",
+        "cited": 201,
+        "url": "https://www.tandfonline.com/doi/abs/10.1080/15472450.2020.1834392",
+        "selected": true,
+        "aiRecommended": true,
+        "aiReason": "2020年高被引文献，研究CAV安全性能，方法系统，结论对智能交通研究有重要参考价值"
       }
     ],
-    "timestamp": "2025-11-06T01:51:00.463Z"
+    "timestamp": "2025-11-06T11:35:13.411Z"
   },
   "module3": {
     "review": "自动驾驶车辆作为智能交通系统的重要组成部分，近年来已成为学术界和产业界的研究热点。本文基于四篇相关文献，从技术发展、交通流影响及社会接受度等维度对自动驾驶车辆研究现状进行系统梳理。Faisal等人（2019）在研究中全面阐述了自动驾驶车辆的能力、影响、规划及政策问题[文献1]，强调城市需要为自动驾驶车辆的到来做好充分准备，这一研究为后续探讨奠定了理论基础。\n\n在技术发展方面，Parekh等人（2022）系统回顾了自动驾驶车辆的环境检测、行人检测、路径规划、运动控制和车辆网络安全等关键技术领域的研究进展[文献2]。该研究指出，要实现安全可靠的智能交通系统，需要建立能够考虑行人行为、随机障碍物和道路类型等多种不确定因素的精准定位技术。值得注意的是，该研究特别强调了技术准确性对建立公众信任的重要性，并深入探讨了公众对自动驾驶车辆的认知态度。\n\n关于自动驾驶车辆对交通流的影响，Zheng等人（2020）通过建立随机模型分析了混合交通流中自动驾驶车辆与人工驾驶车辆的相互作用[文献3]。研究发现，自动驾驶车辆的渗透率对降低人工驾驶行为的不确定性和提高混合交通流稳定性具有显著影响，而自动驾驶车辆的反应时间及其在交通流中的位置影响相对有限。这一研究为理解混合交通环境下的系统稳定性提供了重要理论依据。\n\nAl等人（2021）进一步探讨了混合交通环境下自动驾驶车辆对交通流特性的影响[文献4]。研究表明，自动驾驶车辆的实施对交通容量和稳定性具有积极影响，但这种影响取决于自动驾驶车辆的渗透率、特性、运行设置、交通流量水平和人类驾驶行为等多重因素。特别值得注意的是，该研究指出当自动驾驶车辆渗透率超过40%这一临界值时，其对交通特性的改善潜力将显著提升。\n\n综合现有研究可见，自动驾驶车辆的发展不仅涉及技术层面的突破，还需要考虑其对交通系统的整体影响和社会接受度。未来研究应继续深入探索自动驾驶车辆在复杂交通环境中的行为特征，同时加强政策制定和城市规划方面的协同研究，以促进自动驾驶技术的顺利落地和广泛应用。",
