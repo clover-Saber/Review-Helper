@@ -1,0 +1,59 @@
+{
+  "name": "my-electron-app",
+  "version": "1.0.0",
+  "description": "文献项目",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "set CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "dist": "set CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --publish=never"
+  },
+  "author": "Hao Yu",
+  "license": "MIT",
+  "build": {
+    "appId": "com.haoyu.literature-review",
+    "productName": "Review Helper",
+    "directories": {
+      "output": "dist"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "files": [
+      "main.js",
+      "pages/**/*",
+      "projects/**/*",
+      "!**/node_modules/@napi-rs/**/*android*",
+      "!**/node_modules/@napi-rs/**/*darwin*",
+      "!**/node_modules/@napi-rs/**/*linux*",
+      "node_modules/**/*"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/@napi-rs/canvas-win32-x64-msvc/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "forceCodeSigning": false
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}

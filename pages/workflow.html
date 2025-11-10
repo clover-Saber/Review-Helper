@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Helper - 文献综述工作流</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .project-header {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .project-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .project-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* 主内容区域：左右分栏布局 */
+        .main-content {
+            display: flex;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* 左侧主区域 */
+        .main-left {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* 需求设置区域 */
+        .requirement-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .requirement-section h2 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        /* 工作流区域 */
+        .workflow-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* 右侧节点内容区域 */
+        .main-right {
+            width: 500px;
+            background: #f8f9fa;
+            border-left: 1px solid #e9ecef;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .main-right.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 16px;
+        }
+
+        .workflow-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .workflow-title h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .workflow-title p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* 节点流程可视化 */
+        .workflow-nodes {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 50px;
+            position: relative;
+            padding: 0 50px;
+        }
+
+        .workflow-line {
+            position: absolute;
+            top: 60px;
+            left: 100px;
+            right: 100px;
+            height: 3px;
+            background: #e9ecef;
+            z-index: 0;
+        }
+
+        .workflow-line-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .node {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .node:hover {
+            transform: translateY(-5px);
+        }
+
+        .node-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 15px;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .node-icon::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        /* 节点状态样式 */
+        .node[data-status="pending"] .node-icon {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .node[data-status="active"] .node-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: pulse 2s infinite;
+        }
+
+        .node[data-status="active"] .node-icon::after {
+            border-color: #667eea;
+            animation: ripple 2s infinite;
+        }
+
+        .node[data-status="completed"] .node-icon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .node[data-status="completed"] .node-icon::before {
+            content: '✓';
+            position: absolute;
+            font-size: 50px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+
+        .node-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .node-desc {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .node-status-badge {
+            margin-top: 10px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .node[data-status="pending"] .node-status-badge {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .node[data-status="active"] .node-status-badge {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .node[data-status="completed"] .node-status-badge {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* 节点内容区域（右侧显示） */
+        .node-content {
+            display: block; /* 节点容器始终显示（包括标题） */
+            margin-bottom: 20px;
+        }
+
+        .node-content.active {
+            /* 激活状态，用于标识当前活动的节点 */
+            opacity: 1;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .node-content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .node-content-header h3 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .close-node-btn {
+            background: #e9ecef;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .close-node-btn:hover {
+            background: #dee2e6;
+        }
+
+        .toggle-node-btn {
+            background: transparent;
+            border: none;
+            color: #3b82f6;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            border-radius: 4px;
+            text-decoration: underline;
+        }
+
+        .toggle-node-btn:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+
+        .toggle-text {
+            display: inline-block;
+        }
+
+        /* 通用表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        /* 文献列表 */
+        .literature-list {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .literature-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s;
+        }
+
+        .literature-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .literature-item.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        /* Toast通知 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 总览视图样式 */
+        #overview-container {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .overview-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e9ecef;
+        }
+
+        .overview-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .overview-header p {
+            color: #64748b;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .overview-node-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overview-node-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .overview-node-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+        }
+
+        .overview-node-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .overview-node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .overview-node-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .overview-node-header h3::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            display: inline-block;
+        }
+
+        .overview-node-status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .overview-node-status.pending {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #6b7280;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .overview-node-status.active {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            animation: pulse-badge 2s infinite;
+        }
+
+        .overview-node-status.completed {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .overview-node-content {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.7;
+            animation: slideDown 0.3s ease;
+        }
+
+        .overview-node-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 16px 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .overview-node-content p {
+            margin: 8px 0;
+            color: #475569;
+        }
+
+        .overview-node-content p strong {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .overview-node-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .overview-node-content table thead {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .overview-node-content table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 13px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .overview-node-content table td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .overview-node-content table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .overview-node-content table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .overview-node-content .literature-item {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .overview-node-content .literature-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+
+        .overview-node-content .literature-item h5 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0 0 8px 0;
+            line-height: 1.4;
+        }
+
+        .overview-node-content .literature-item p {
+            margin: 4px 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .overview-node-content .literature-item p strong {
+            color: #475569;
+            font-weight: 600;
+        }
+
+        /* 总览中的预览文本区域 */
+        .overview-node-content > div[style*="padding: 15px"] {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%) !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 10px !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+            padding: 20px !important;
+            margin-top: 12px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .workflow-nodes {
+                flex-wrap: wrap;
+                gap: 30px;
+            }
+
+            .workflow-line {
+                display: none;
+            }
+
+            .overview-node-card {
+                padding: 20px;
+            }
+
+            .overview-node-header h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Review Helper - 文献综述智能助手</h1>
+            <p>一键式完成文献综述撰写</p>
+        </header>
+
+        <div class="project-header">
+            <div class="project-info">
+                <span class="project-name" id="current-project-name">未选择项目</span>
+                <span class="project-status status-active" id="project-status">就绪</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="btn btn-success" id="start-auto-generate-btn" style="display: none;">一键生成</button>
+                <button class="btn btn-danger" id="stop-auto-generate-btn" style="display: none;">停止生成</button>
+                <button class="btn btn-primary" id="overview-btn">总览</button>
+                <button class="btn btn-secondary" id="back-to-index-btn">返回项目管理</button>
+            </div>
+        </div>
+
+        <!-- 主内容区域：左右分栏 -->
+        <div class="main-content">
+            <!-- 左侧：需求设置和工作流 -->
+            <div class="main-left">
+                <!-- 需求设置区域 -->
+                <div class="requirement-section">
+                    <h2>项目需求设置</h2>
+                    <p style="color: #666; margin-bottom: 20px;">请填写以下信息，系统将自动分析需求并生成文献综述</p>
+                    
+                    <div class="form-group">
+                        <label>DeepSeek API Key:</label>
+                        <input type="password" id="main-api-key-input" placeholder="请输入您的DeepSeek API Key">
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            <a href="https://api-docs.deepseek.com/zh-cn/api/deepseek-api/" target="_blank" 
+                               style="color: #3b82f6; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s;"
+                               onmouseover="this.style.color='#2563eb'" 
+                               onmouseout="this.style.color='#3b82f6'">
+                                🔗 DeepSeek API 申请地址
+                            </a>
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Google Scholar 验证:</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button type="button" id="verify-google-scholar-btn" class="btn" 
+                                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s;">
+                                🔐 进行Google Scholar验证
+                            </button>
+                            <span id="google-scholar-verify-status" style="color: #666; font-size: 14px; display: none;">
+                                <span style="color: #10b981; font-weight: 600;">✓ 已验证</span>
+                            </span>
+                        </div>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            请先完成Google Scholar的人机验证，以确保后续文献搜索功能正常使用
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>需求描述:</label>
+                        <textarea id="main-requirement-input" rows="5" placeholder="请详细描述您的文献综述需求，包括研究主题、研究范围、关注的重点等。例如：&#10;我需要撰写一篇关于'共享自动驾驶汽车以及mass系统'的文献综述，重点关注技术实现、系统架构、安全性和用户体验等方面。"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>目标文献数量:</label>
+                        <input type="number" id="main-target-count" value="50" min="10" max="500" placeholder="最终需要的文献数量">
+                        <small id="main-target-hint" style="color: #666; display: block; margin-top: 5px;">提示：将搜索此数量的文献</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>输出语言:</label>
+                        <select id="main-language-select" style="width: 100%; padding: 10px; border: 1px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                            <option value="zh">中文</option>
+                            <option value="en">English</option>
+                        </select>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            选择综述的输出语言，将影响AI提示词和最终生成的综述内容
+                        </small>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="analyze-main-requirement-btn">生成大纲</button>
+                    
+                    <div id="main-requirement-progress" style="margin-top: 20px; display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="main-progress-fill"></div>
+                        </div>
+                        <p id="main-progress-text" style="text-align: center; margin-top: 10px;">正在分析需求...</p>
+                    </div>
+                    
+                    <div id="main-outline-result" style="margin-top: 20px; display: none;">
+                        <h3>综述大纲（可编辑）:</h3>
+                        <textarea id="main-outline-editor" rows="12" style="width: 100%; padding: 15px; border: 1px solid #e9ecef; border-radius: 6px; font-family: inherit; line-height: 1.6;"></textarea>
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button class="btn btn-primary" id="save-requirement-btn">保存</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工作流区域 -->
+                <div class="workflow-section">
+                    <div class="workflow-title">
+                        <h2>文献综述工作流程</h2>
+                        <p>点击节点查看详情，完成所有步骤即可生成文献综述</p>
+                    </div>
+
+            <!-- 节点流程可视化 -->
+            <div class="workflow-nodes">
+                <div class="workflow-line">
+                    <div class="workflow-line-progress" id="workflow-progress"></div>
+                </div>
+
+                <!-- 节点1: 关键词分析 -->
+                <div class="node" data-node="1" data-status="pending" id="node-1">
+                    <div class="node-icon">1</div>
+                    <div class="node-title">关键词分析</div>
+                    <div class="node-desc">AI提取搜索关键词</div>
+                    <div class="node-status-badge">待开始</div>
+                </div>
+
+                <!-- 节点2: 文献搜索 -->
+                <div class="node" data-node="2" data-status="pending" id="node-2">
+                    <div class="node-icon">2</div>
+                    <div class="node-title">文献搜索</div>
+                    <div class="node-desc">Google Scholar搜索</div>
+                    <div class="node-status-badge">待开始</div>
+                </div>
+
+                <!-- 节点3: 文献补全 -->
+                <div class="node" data-node="3" data-status="pending" id="node-3">
+                    <div class="node-icon">3</div>
+                    <div class="node-title">文献补全</div>
+                    <div class="node-desc">补充文献摘要信息</div>
+                    <div class="node-status-badge">待开始</div>
+                </div>
+
+                <!-- 节点4: 精选文献 -->
+                <div class="node" data-node="4" data-status="pending" id="node-4">
+                    <div class="node-icon">4</div>
+                    <div class="node-title">精选文献</div>
+                    <div class="node-desc">AI筛选与手动选择</div>
+                    <div class="node-status-badge">待开始</div>
+                </div>
+
+                <!-- 节点5: 综述撰写 -->
+                <div class="node" data-node="5" data-status="pending" id="node-5">
+                    <div class="node-icon">5</div>
+                    <div class="node-title">综述撰写</div>
+                    <div class="node-desc">生成文献综述</div>
+                    <div class="node-status-badge">待开始</div>
+                </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- 右侧：节点内容区域 -->
+            <div class="main-right" id="node-content-panel">
+                <div class="main-right empty" id="node-content-empty">
+                    点击左侧节点查看详情，或点击"总览"查看所有节点信息
+                </div>
+                
+                <!-- 总览视图 -->
+                <div id="overview-container" style="display: none;">
+                    <div class="overview-header">
+                        <h2>项目总览</h2>
+                        <p>查看所有节点的完成情况和关键信息（只读模式）</p>
+                    </div>
+                    
+                    <!-- 节点1总览 -->
+                    <div class="overview-node-card" data-node="1">
+                        <div class="overview-node-header">
+                            <h3>节点1：关键词分析</h3>
+                            <span class="overview-node-status" id="overview-status-1">未开始</span>
+                        </div>
+                        <div class="overview-node-content" id="overview-content-1">
+                            <p style="color: #999;">尚未开始</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 节点2总览 -->
+                    <div class="overview-node-card" data-node="2">
+                        <div class="overview-node-header">
+                            <h3>节点2：文献搜索</h3>
+                            <span class="overview-node-status" id="overview-status-2">未开始</span>
+                        </div>
+                        <div class="overview-node-content" id="overview-content-2">
+                            <p style="color: #999;">尚未开始</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 节点3总览 -->
+                    <div class="overview-node-card" data-node="3">
+                        <div class="overview-node-header">
+                            <h3>节点3：文献补全</h3>
+                            <span class="overview-node-status" id="overview-status-3">未开始</span>
+                        </div>
+                        <div class="overview-node-content" id="overview-content-3">
+                            <p style="color: #999;">尚未开始</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 节点4总览 -->
+                    <div class="overview-node-card" data-node="4">
+                        <div class="overview-node-header">
+                            <h3>节点4：精选文献</h3>
+                            <span class="overview-node-status" id="overview-status-4">未开始</span>
+                        </div>
+                        <div class="overview-node-content" id="overview-content-4">
+                            <p style="color: #999;">尚未开始</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 节点5总览 -->
+                    <div class="overview-node-card" data-node="5">
+                        <div class="overview-node-header">
+                            <h3>节点5：综述撰写</h3>
+                            <span class="overview-node-status" id="overview-status-5">未开始</span>
+                        </div>
+                        <div class="overview-node-content" id="overview-content-5">
+                            <p style="color: #999;">尚未开始</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="node-content-container">
+                <!-- 节点1内容: 关键词分析（自动执行，无需用户操作） -->
+                <div class="node-content" id="content-node-1">
+                    <div class="node-content-header">
+                        <h3>关键词分析</h3>
+                        <button class="toggle-node-btn" data-node="1">
+                            <span class="toggle-text">隐藏</span>
+                        </button>
+                    </div>
+                    <div class="node-content-body" id="node-body-1" style="display: block;">
+                    <div id="keywords-auto-progress" style="text-align: center; padding: 40px;">
+                        <div class="progress-bar" style="max-width: 400px; margin: 0 auto;">
+                            <div class="progress-fill" id="keywords-progress-fill"></div>
+                        </div>
+                        <p id="keywords-progress-text" style="margin-top: 15px;">正在自动分析关键词...</p>
+                    </div>
+                    <div id="keywords-result" style="margin-top: 20px; display: none;">
+                        <label>提取的关键词:</label>
+                        <div id="keywords-list" style="margin-top: 10px;"></div>
+                        <button class="btn btn-primary" id="regenerate-keywords-btn" style="margin-top: 15px; display: none;">重新分析</button>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- 节点2内容: 文献搜索 -->
+                <div class="node-content" id="content-node-2">
+                    <div class="node-content-header">
+                        <h3>文献搜索</h3>
+                        <button class="toggle-node-btn" data-node="2">
+                            <span class="toggle-text">隐藏</span>
+                        </button>
+                    </div>
+                    <div class="node-content-body" id="node-body-2" style="display: block;">
+                    <div id="search-params-section" class="form-group" style="display: none;">
+                        <!-- 搜索参数已隐藏，不再需要 -->
+                    </div>
+                    <button class="btn btn-primary" id="search-literature-btn" style="display: none;">开始搜索文献</button>
+                    <div id="search-progress" style="margin-top: 20px; display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="search-progress-fill"></div>
+                        </div>
+                        <p id="search-progress-text" style="text-align: center; margin-top: 10px;"></p>
+                    </div>
+                    <div id="search-results" style="margin-top: 20px; display: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="margin: 0;">搜索结果 (<span id="search-count">0</span> 篇)</h4>
+                            <button class="btn btn-success" id="save-search-results-btn" style="display: none;">保存修改</button>
+                        </div>
+                        <div class="literature-list" id="search-results-list" style="max-height: 1000px; overflow-y: auto; padding-right: 10px;"></div>
+                        <button class="btn btn-primary" id="regenerate-node2-btn" style="margin-top: 15px; display: none;">重新搜索文献</button>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- 节点3内容: 文献补全 -->
+                <div class="node-content" id="content-node-3">
+                    <div class="node-content-header">
+                        <h3>文献补全</h3>
+                        <button class="toggle-node-btn" data-node="3">
+                            <span class="toggle-text">隐藏</span>
+                        </button>
+                    </div>
+                    <div class="node-content-body" id="node-body-3" style="display: block;">
+                    <p style="color: #666; margin-bottom: 20px;">为搜索结果中的文献补充摘要信息</p>
+                    <div id="complete-progress" style="margin-top: 20px; display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="complete-progress-fill"></div>
+                        </div>
+                        <p id="complete-progress-text" style="text-align: center; margin-top: 10px;"></p>
+                    </div>
+                    <div id="complete-results" style="margin-top: 20px; display: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="margin: 0;">已补全文献 (<span id="complete-count">0</span> 篇)</h4>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-warning" id="clear-completion-btn" style="display: none;">清空补全状态</button>
+                                <button class="btn btn-success" id="save-completion-btn" style="display: none;">保存修改</button>
+                            </div>
+                        </div>
+                        <div class="literature-list" id="complete-results-list" style="max-height: 1000px; overflow-y: auto; padding-right: 10px;"></div>
+                        <button class="btn btn-primary" id="regenerate-completion-btn" style="margin-top: 15px; display: none;">重新补全文献</button>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- 节点4内容: 精选文献 -->
+                <div class="node-content" id="content-node-4">
+                    <div class="node-content-header">
+                        <h3>精选文献</h3>
+                        <button class="toggle-node-btn" data-node="4">
+                            <span class="toggle-text">隐藏</span>
+                        </button>
+                    </div>
+                    <div class="node-content-body" id="node-body-4" style="display: block;">
+                    <!-- 顶部统计信息 -->
+                    <div id="filter-statistics-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 20px; 
+                                background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); 
+                                border-radius: 12px; 
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                                border: 1px solid #e2e8f0;">
+                        <div id="filter-statistics-header" style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 24px;">📚</span>
+                            <h3 style="margin: 0; color: #1e293b; font-size: 20px; font-weight: 700;">文献列表</h3>
+                        </div>
+                        <div id="filter-statistics" style="display: flex; gap: 24px; font-size: 14px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; padding: 8px 16px; 
+                                       background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <span style="color: #64748b; font-size: 12px; margin-bottom: 4px;">总计</span>
+                                <strong style="color: #3b82f6; font-size: 18px; font-weight: 700;">0</strong>
+                                <span style="color: #94a3b8; font-size: 11px; margin-top: 2px;">篇</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; padding: 8px 16px; 
+                                       background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); 
+                                       border-radius: 8px; box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);">
+                                <span style="color: #1e40af; font-size: 12px; margin-bottom: 4px; font-weight: 600;">已选用</span>
+                                <strong style="color: #1e40af; font-size: 18px; font-weight: 700;">0</strong>
+                                <span style="color: #3b82f6; font-size: 11px; margin-top: 2px;">篇</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; padding: 8px 16px; 
+                                       background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                <span style="color: #64748b; font-size: 12px; margin-bottom: 4px;">未选用</span>
+                                <strong style="color: #64748b; font-size: 18px; font-weight: 700;">0</strong>
+                                <span style="color: #94a3b8; font-size: 11px; margin-top: 2px;">篇</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 操作按钮行 -->
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <button class="btn btn-warning" id="export-excel-btn">导出Excel</button>
+                        <button class="btn btn-warning" id="clear-filter-status-btn" style="display: none;">清空AI判断状态</button>
+                        <button class="btn btn-success" id="save-filter-btn" style="display: none;">保存修改</button>
+                    </div>
+                    
+                    <!-- 进度条 -->
+                    <div id="filter-progress" style="margin-top: 20px; display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="filter-progress-fill"></div>
+                        </div>
+                        <p id="filter-progress-text" style="text-align: center; margin-top: 10px;"></p>
+                    </div>
+                    
+                    <!-- 文献列表 -->
+                    <div id="filter-results" style="margin-top: 20px;">
+                        <div class="literature-list" id="filter-results-list" style="max-height: 1000px; overflow-y: auto; padding-right: 10px;"></div>
+                        <button class="btn btn-primary" id="regenerate-filter-btn" style="margin-top: 15px; display: none;">重新精选文献</button>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- 节点5内容: 综述撰写 -->
+                <div class="node-content" id="content-node-5">
+                    <div class="node-content-header">
+                        <h3>综述撰写</h3>
+                        <button class="toggle-node-btn" data-node="5">
+                            <span class="toggle-text">隐藏</span>
+                        </button>
+                    </div>
+                    <div class="node-content-body" id="node-body-5" style="display: block;">
+                    <div id="selected-literature-summary" style="margin-bottom: 20px; padding: 15px; background: #f0f4ff; border-radius: 8px;">
+                        <h4>已选文献 (<span id="selected-count">0</span> 篇)</h4>
+                        <div id="selected-list" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+                    </div>
+                    <button class="btn btn-primary" id="generate-review-btn">生成综述</button>
+                    <div id="generate-progress" style="margin-top: 20px; display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="generate-progress-fill"></div>
+                        </div>
+                        <p id="generate-progress-text" style="text-align: center; margin-top: 10px;"></p>
+                    </div>
+                    <div id="review-result" style="margin-top: 20px; display: none;">
+                        <h4>生成的综述:</h4>
+                        <textarea id="review-content" rows="20" style="width: 100%; padding: 15px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; line-height: 1.6;"></textarea>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-success" id="save-review-btn">保存综述</button>
+                            <button class="btn btn-secondary" id="export-word-btn" style="margin-left: 10px;">导出Word</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast通知 -->
+        <div class="toast" id="toast">
+            <span id="toast-message"></span>
+        </div>
+
+        <!-- 文献编辑模态框 -->
+        <div id="literature-edit-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+            <div style="position: relative; max-width: 800px; margin: 50px auto; background: white; border-radius: 8px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: #333;">编辑文献</h3>
+                    <button id="close-edit-modal-btn" style="background: transparent; border: none; font-size: 24px; cursor: pointer; color: #999; padding: 0; width: 30px; height: 30px; line-height: 30px;">&times;</button>
+                </div>
+                <div id="edit-modal-content" style="max-height: 70vh; overflow-y: auto;">
+                    <!-- 编辑表单内容将动态插入这里 -->
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                    <button class="btn btn-secondary" id="cancel-edit-btn">取消</button>
+                    <button class="btn btn-success" id="save-edit-btn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载模块 -->
+    <script src="modules/api.js"></script>
+    <script src="modules/data-manager.js"></script>
+    <script src="modules/ui-utils.js"></script>
+    <script src="modules/requirement-manager.js"></script>
+    <script src="modules/node1-keywords.js"></script>
+    <script src="modules/node2-search.js"></script>
+    <script src="modules/node3-complete.js"></script>
+    <script src="modules/node4-filter.js"></script>
+    <script src="modules/node5-review.js"></script>
+    <script src="modules/workflow-manager.js"></script>
+    <script src="workflow.js"></script>
+</body>
+</html>
+

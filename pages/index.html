@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Helper</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Review Helper - AI驱动的文献综述智能助手</h1>
+            <p>Review Helper 现已开源，欢迎大家使用！GitHub地址：<a href="https://github.com/clover-Saber/Review-Helper.git" target="_blank">Review Helper</a></p>
+        </header>
+        
+        <main>
+            <section class="project-section">
+                <h2>项目管理</h2>
+                <div class="project-controls">
+                    <div class="input-group">
+                        <button id="new-project-btn">新建项目</button>
+                    </div>
+                    <div class="current-project" id="current-project" style="display: none;">
+                        <p>当前项目: <span id="current-project-name"></span></p>
+                    </div>
+                </div>
+                <!-- 项目列表区域 -->
+                <div class="projects-list-section" id="projects-list-section">
+                    <h3>项目列表</h3>
+                    <div class="projects-grid" id="projects-grid">
+                        <div class="loading-projects">正在加载项目列表...</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="input-section" id="topic-section" style="display: none;">
+                <h2>项目简介</h2>
+                <p style="color: var(--text-muted); margin-bottom: var(--spacing-md); font-size: var(--font-size-base);">
+                    （可选）为项目添加简介说明，便于后续查看和识别
+                </p>
+                <div class="input-group">
+                    <textarea id="research-topic" placeholder=""></textarea>
+                </div>
+            </section>
+            
+            <section class="workflow-section" id="workflow-section" style="display: none;">
+                <h2>处理流程</h2>
+                <div class="steps">
+                    <div class="step" id="step1" data-status="pending">
+                        <div class="step-icon">1</div>
+                        <div class="step-content">
+                            <h3>文献查询</h3>
+                            <p>根据综述主题提取关键词，在Google Scholar等学术数据库中搜索相关文献</p>
+                            <div class="step-status">
+                                <span class="status-pending">待开始</span>
+                                <span class="status-in-progress">进行中</span>
+                                <span class="status-completed">已完成</span>
+                            </div>
+                            <button class="step-btn" data-module="search">进入模块</button>
+                            <button class="step-confirm-btn" data-module="search" style="display: none;">确认完成</button>
+                        </div>
+                    </div>
+                    
+                    <div class="step" id="step2" data-status="pending">
+                        <div class="step-icon">2</div>
+                        <div class="step-content">
+                            <h3>文献补充及整理</h3>
+                            <p>补充文献，整理文献，校正文献，筛选文献。</p>
+                            <div class="step-status">
+                                <span class="status-pending">待开始</span>
+                                <span class="status-in-progress">进行中</span>
+                                <span class="status-completed">已完成</span>
+                            </div>
+                            <button class="step-btn" data-module="organize" disabled>进入模块</button>
+                            <button class="step-confirm-btn" data-module="organize" style="display: none;">确认完成</button>
+                        </div>
+                    </div>
+                    
+                    <div class="step" id="step3" data-status="pending">
+                        <div class="step-icon">3</div>
+                        <div class="step-content">
+                            <h3>综述撰写</h3>
+                            <p>基于整理的文献信息，生成献综述报告</p>
+                            <div class="step-status">
+                                <span class="status-pending">待开始</span>
+                                <span class="status-in-progress">进行中</span>
+                                <span class="status-completed">已完成</span>
+                            </div>
+                            <button class="step-btn" data-module="review" disabled>进入模块</button>
+                            <button class="step-confirm-btn" data-module="review" style="display: none;">确认完成</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="progress-section" id="progress-section" style="display: none;">
+                <h2>整体进度</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-text" id="progress-text">项目已就绪，可以开始处理</div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>© 2025 Review Helper - 助力科研工作者高效完成文献综述</p>
+        </footer>
+        
+        <!-- Toast通知 -->
+        <div id="toast" class="toast" style="display: none;">
+            <div class="toast-content">
+                <span class="toast-message" id="toast-message"></span>
+            </div>
+        </div>
+        
+        <!-- 新建项目弹窗 -->
+        <div class="modal" id="new-project-modal" style="display: none;">
+            <div class="modal-content">
+                <h3>新建项目</h3>
+                <input type="text" id="new-project-name-input" placeholder="请输入项目名称">
+                <div class="modal-actions">
+                    <button id="new-project-confirm">创建</button>
+                    <button id="new-project-cancel">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 打开项目弹窗 -->
+        <div class="modal" id="open-project-modal" style="display: none;">
+            <div class="modal-content">
+                <h3>打开项目</h3>
+                <select id="open-project-select"></select>
+                <div class="modal-actions">
+                    <button id="open-project-confirm">打开</button>
+                    <button id="open-project-cancel">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM元素
+            const newProjectBtn = document.getElementById('new-project-btn');
+            const currentProject = document.getElementById('current-project');
+            const currentProjectName = document.getElementById('current-project-name');
+            const topicSection = document.getElementById('topic-section');
+            const workflowSection = document.getElementById('workflow-section');
+            const progressSection = document.getElementById('progress-section');
+            const researchTopic = document.getElementById('research-topic');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            const stepButtons = document.querySelectorAll('.step-btn');
+            const confirmButtons = document.querySelectorAll('.step-confirm-btn');
+            
+            // 当前项目数据
+            let currentProjectData = null;
+            
+            // 页面加载时自动恢复当前项目和加载项目列表
+            initCurrentProject();
+            loadProjectsList();
+            
+            async function initCurrentProject() {
+                if (!window.electronAPI) return;
+                try {
+                    const { success, currentProject: cp } = await window.electronAPI.getCurrentProject();
+                    if (success && cp) {
+                        // 有当前项目，自动切换到工作流界面
+                        if (window.electronAPI.switchToWorkflow) {
+                            await window.electronAPI.switchToWorkflow();
+                        }
+                    }
+                } catch (e) {
+                    console.error('初始化当前项目失败:', e);
+                }
+            }
+            
+            // 工具：显示/隐藏弹窗
+            function showModal(el) { el.style.display = 'flex'; }
+            function hideModal(el) { 
+                el.style.display = 'none';
+                // 移除模态框的焦点，确保焦点能正确转移
+                if (document.activeElement && el.contains(document.activeElement)) {
+                    document.activeElement.blur();
+                }
+            }
+
+            async function askNewProjectName() {
+                return new Promise(resolve => {
+                    const modal = document.getElementById('new-project-modal');
+                    const input = document.getElementById('new-project-name-input');
+                    const ok = document.getElementById('new-project-confirm');
+                    const cancel = document.getElementById('new-project-cancel');
+                    input.value = '';
+                    // 确保输入框可以编辑
+                    input.disabled = false;
+                    input.readOnly = false;
+                    showModal(modal);
+                    const cleanup = () => {
+                        ok.removeEventListener('click', onOk);
+                        cancel.removeEventListener('click', onCancel);
+                    };
+                    const onOk = () => {
+                        const val = input.value.trim();
+                        hideModal(modal);
+                        cleanup();
+                        resolve(val || null);
+                    };
+                    const onCancel = () => {
+                        hideModal(modal);
+                        cleanup();
+                        resolve(null);
+                    };
+                    ok.addEventListener('click', onOk);
+                    cancel.addEventListener('click', onCancel);
+                    // 延迟一下再focus，确保modal已显示
+                    setTimeout(() => {
+                        input.focus();
+                    }, 100);
+                });
+            }
+
+            async function pickProjectFromList(projects) {
+                return new Promise(resolve => {
+                    const modal = document.getElementById('open-project-modal');
+                    const select = document.getElementById('open-project-select');
+                    const ok = document.getElementById('open-project-confirm');
+                    const cancel = document.getElementById('open-project-cancel');
+                    select.innerHTML = '';
+                    projects.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p; opt.textContent = p; select.appendChild(opt);
+                    });
+                    showModal(modal);
+                    const cleanup = () => {
+                        ok.removeEventListener('click', onOk);
+                        cancel.removeEventListener('click', onCancel);
+                    };
+                    const onOk = () => {
+                        const val = select.value || null;
+                        hideModal(modal);
+                        cleanup();
+                        resolve(val);
+                    };
+                    const onCancel = () => {
+                        hideModal(modal);
+                        cleanup();
+                        resolve(null);
+                    };
+                    ok.addEventListener('click', onOk);
+                    cancel.addEventListener('click', onCancel);
+                    select.focus();
+                });
+            }
+
+            // 新建项目（输入名称，保存在 projects/项目名/）
+            newProjectBtn.addEventListener('click', async function() {
+                
+                if (window.electronAPI) {
+                    try {
+                        const projectName = await askNewProjectName();
+                        if (!projectName) return;
+                        
+                        // 检查项目是否已存在
+                        const projectList = await window.electronAPI.listProjects();
+                        if (projectList.success && projectList.projects.includes(projectName)) {
+                            if (!confirm(`项目 "${projectName}" 已存在，是否要覆盖?`)) {
+                                return;
+                            }
+                        }
+                        
+                        // 创建新项目
+                        const projectData = {
+                            projectName: projectName,
+                            projectDescription: researchTopic.value.trim() || '',
+                            status: 'initial',
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString(),
+                            step1: { status: 'pending' },
+                            step2: { status: 'pending' },
+                            step3: { status: 'pending' }
+                        };
+                        
+                        const result = await window.electronAPI.saveProjectData(projectName, projectData);
+                        if (result.success) {
+                            // 设置当前项目
+                            await window.electronAPI.setCurrentProject(projectName);
+                            
+                            // 切换到工作流界面
+                            if (window.electronAPI.switchToWorkflow) {
+                                await window.electronAPI.switchToWorkflow();
+                            } else {
+                                showToast('项目创建成功，但无法切换到工作流界面', 'error');
+                            }
+                            
+                            // 强制转移焦点到项目简介输入框
+                            // 使用多重方式确保焦点转移成功
+                            requestAnimationFrame(() => {
+                                // 先移除所有可能占据焦点的元素
+                                if (document.activeElement && document.activeElement.blur) {
+                                    document.activeElement.blur();
+                                }
+                                
+                                // 确保DOM已更新后再聚焦
+                                setTimeout(() => {
+                                    researchTopic.focus();
+                                    researchTopic.click(); // 额外的点击确保激活
+                                }, 100);
+                            });
+                        } else {
+                            alert('创建项目失败: ' + result.error);
+                        }
+                    } catch (error) {
+                        console.error('创建项目失败:', error);
+                        alert('创建项目失败: ' + error.message);
+                    }
+                }
+            });
+            
+            // 加载项目列表
+            async function loadProjectsList() {
+                if (!window.electronAPI) return;
+                try {
+                    const list = await window.electronAPI.listProjects();
+                    if (!list.success) {
+                        document.getElementById('projects-grid').innerHTML = '<div class="empty-projects">加载项目列表失败</div>';
+                        return;
+                    }
+                    if (!list.projects || list.projects.length === 0) {
+                        document.getElementById('projects-grid').innerHTML = '<div class="empty-projects">暂无项目，请点击"新建项目"创建</div>';
+                        return;
+                    }
+                    
+                    // 加载每个项目的详细信息
+                    const projectsWithData = await Promise.all(
+                        list.projects.map(async (projectName) => {
+                            try {
+                                const result = await window.electronAPI.loadProjectData(projectName);
+                                if (result.success && result.data) {
+                                    return {
+                                        name: projectName,
+                                        data: result.data
+                                    };
+                                }
+                                return { name: projectName, data: null };
+                            } catch (e) {
+                                console.error(`加载项目 ${projectName} 数据失败:`, e);
+                                return { name: projectName, data: null };
+                            }
+                        })
+                    );
+                    
+                    displayProjectsList(projectsWithData);
+                } catch (e) {
+                    console.error('加载项目列表失败:', e);
+                    document.getElementById('projects-grid').innerHTML = '<div class="empty-projects">加载项目列表失败</div>';
+                }
+            }
+            
+            // 显示项目列表
+            function displayProjectsList(projects) {
+                const grid = document.getElementById('projects-grid');
+                if (projects.length === 0) {
+                    grid.innerHTML = '<div class="empty-projects">暂无项目，请点击"新建项目"创建</div>';
+                    return;
+                }
+                
+                grid.innerHTML = projects.map(project => {
+                    const data = project.data || {};
+                    const status = data.status || 'initial';
+                    const statusText = {
+                        'initial': '待开始',
+                        'module1': '文献查询中',
+                        'module2': '文献整理中',
+                        'module3': '综述撰写中',
+                        'completed': '已完成'
+                    }[status] || '未知';
+                    
+                    const statusClass = {
+                        'initial': 'status-pending',
+                        'module1': 'status-progress',
+                        'module2': 'status-progress',
+                        'module3': 'status-progress',
+                        'completed': 'status-completed'
+                    }[status] || 'status-pending';
+                    
+                    const topic = data.projectDescription || data.reviewDescription || data.userNeeds || data.researchTopic || '未设置项目简介';
+                    const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleDateString('zh-CN') : '未知';
+                    const updatedAt = data.updatedAt ? new Date(data.updatedAt).toLocaleDateString('zh-CN') : '未知';
+                    
+                    return `
+                        <div class="project-card" data-project-name="${project.name}">
+                            <div class="project-card-header">
+                                <h4 class="project-name">${escapeHtml(project.name)}</h4>
+                                <span class="project-status ${statusClass}" style="${status === 'initial' ? 'visibility: hidden;' : ''}">${statusText}</span>
+                            </div>
+                            <div class="project-card-body">
+                                <p class="project-topic">${escapeHtml(topic.substring(0, 50))}${topic.length > 50 ? '...' : ''}</p>
+                                <div class="project-meta">
+                                    <span class="project-date">创建: ${createdAt}</span>
+                                    <span class="project-date">更新: ${updatedAt}</span>
+                                </div>
+                            </div>
+                            <div class="project-card-footer">
+                                <button class="project-open-btn" data-project-name="${project.name}">打开项目</button>
+                                <button class="project-delete-btn" data-project-name="${project.name}" title="删除项目">×</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // 绑定打开项目事件
+                document.querySelectorAll('.project-open-btn').forEach(btn => {
+                    btn.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        const projectName = this.getAttribute('data-project-name');
+                        await openProject(projectName);
+                    });
+                });
+                
+                // 绑定删除项目事件
+                document.querySelectorAll('.project-delete-btn').forEach(btn => {
+                    btn.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        const projectName = this.getAttribute('data-project-name');
+                        await deleteProject(projectName);
+                    });
+                });
+                
+                // 点击卡片也可以打开
+                document.querySelectorAll('.project-card').forEach(card => {
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('click', async function(e) {
+                        // 如果点击的是按钮，不触发卡片点击
+                        if (e.target.classList.contains('project-open-btn') || e.target.classList.contains('project-delete-btn')) return;
+                        const projectName = this.getAttribute('data-project-name');
+                        await openProject(projectName);
+                    });
+                });
+            }
+            
+            // HTML转义
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            // 删除项目
+            async function deleteProject(projectName) {
+                // 确认删除
+                const confirmed = confirm(`确定要删除项目"${projectName}"吗？\n\n此操作不可恢复，将删除项目文件夹及其所有数据。`);
+                
+                if (!confirmed) {
+                    return;
+                }
+                
+                try {
+                    // 如果当前打开的是要删除的项目，先关闭项目
+                    if (currentProjectData && currentProjectData.projectName === projectName) {
+                        // 清除当前项目
+                        currentProjectData = null;
+                        currentProjectName.textContent = '';
+                        currentProject.style.display = 'none';
+                        
+                        // 重置界面
+                        resetUI();
+                        
+                        // 清除当前项目设置
+                        await window.electronAPI.setCurrentProject(null);
+                    }
+                    
+                    // 调用主进程删除项目
+                    const result = await window.electronAPI.deleteProject(projectName);
+                    
+                    if (result.success) {
+                        showToast(`项目"${projectName}"已删除`);
+                        // 重新加载项目列表
+                        await loadProjectsList();
+                    } else {
+                        showToast('删除项目失败: ' + (result.error || '未知错误'), 'error');
+                    }
+                } catch (error) {
+                    console.error('删除项目失败:', error);
+                    showToast('删除项目失败: ' + error.message, 'error');
+                }
+            }
+            
+            // 打开项目
+            async function openProject(projectName) {
+                if (!window.electronAPI) return;
+                try {
+                    const result = await window.electronAPI.loadProjectData(projectName);
+                    if (result.success && result.data) {
+                        // 设置当前项目
+                        await window.electronAPI.setCurrentProject(projectName);
+                        
+                        // 切换到工作流界面
+                        if (window.electronAPI.switchToWorkflow) {
+                            await window.electronAPI.switchToWorkflow();
+                        } else {
+                            alert('无法切换到工作流界面');
+                        }
+                    } else {
+                        alert('加载项目失败: ' + (result.error || '未知错误'));
+                    }
+                } catch (e) {
+                    console.error('打开项目失败:', e);
+                    alert('打开项目失败: ' + e.message);
+                }
+            }
+            
+            // 获取当前项目需要保存的数据
+            function getProjectDataToSave() {
+                if (!currentProjectData) return null;
+                
+                return {
+                    projectDescription: researchTopic.value.trim(),
+                    updatedAt: new Date().toISOString()
+                };
+            }
+            
+            // 显示Toast通知
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toast-message');
+                
+                if (!toast || !toastMessage) return;
+                
+                // 设置消息
+                toastMessage.textContent = message;
+                
+                // 根据类型设置样式
+                if (type === 'success') {
+                    toast.style.background = 'linear-gradient(135deg, var(--success-color) 0%, #059669 100%)';
+                } else if (type === 'error') {
+                    toast.style.background = 'linear-gradient(135deg, var(--error-color) 0%, #dc2626 100%)';
+                }
+                
+                // 显示toast
+                toast.style.display = 'block';
+                toast.style.opacity = '0';
+                
+                // 触发动画
+                setTimeout(() => {
+                    toast.style.opacity = '1';
+                }, 10);
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 300);
+                }, 3000);
+            }
+            
+            // 注意：关闭项目的功能现在在工作流界面中（返回项目管理按钮）
+            // 项目管理界面只负责新建和打开项目，打开后自动切换到工作流界面
+            
+            // 重置UI的辅助函数
+            async function resetUI() {
+                // 重置界面
+                currentProject.style.display = 'none';
+                topicSection.style.display = 'none';
+                workflowSection.style.display = 'none';
+                progressSection.style.display = 'none';
+                
+                // 重置按钮显示
+                newProjectBtn.style.display = 'inline-block';
+                
+                // 显示项目列表
+                document.getElementById('projects-list-section').style.display = 'block';
+                
+                // 清空项目简介
+                researchTopic.value = '';
+                
+                // 重置步骤状态
+                document.querySelectorAll('.step').forEach(step => {
+                    step.setAttribute('data-status', 'pending');
+                });
+                
+                // 重置进度条
+                progressFill.style.width = '0%';
+                progressText.textContent = '项目已就绪，可以开始处理';
+                
+                // 重置按钮状态
+                document.querySelector('.step-btn[data-module="organize"]').disabled = true;
+                document.querySelector('.step-btn[data-module="review"]').disabled = true;
+                
+                // 隐藏确认按钮
+                document.querySelectorAll('.step-confirm-btn').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+                
+                // 显示新建按钮和项目列表
+                newProjectBtn.style.display = 'inline-block';
+                document.getElementById('projects-list-section').style.display = 'block';
+                await loadProjectsList();
+                
+                // 清空当前项目数据
+                currentProjectData = null;
+                // 清理当前项目
+                if (window.electronAPI) {
+                    await window.electronAPI.setCurrentProject(null);
+                }
+            }
+            
+            // 根据项目状态更新UI（优先使用status字段）
+            function updateUIBasedOnSteps() {
+                if (!currentProjectData) return;
+                const status = currentProjectData.status || 'initial';
+                // 复位UI
+                document.querySelectorAll('.step').forEach(step => step.setAttribute('data-status', 'pending'));
+                document.querySelectorAll('.step-confirm-btn').forEach(btn => btn.style.display = 'none');
+                document.querySelector('.step-btn[data-module="organize"]').disabled = true;
+                document.querySelector('.step-btn[data-module="review"]').disabled = true;
+                progressText.textContent = '项目已就绪，可以开始处理';
+                progressFill.style.width = '0%';
+
+                if (status === 'initial') {
+                    // 初始状态，保持默认
+                } else if (status === 'module1') {
+                    updateStepStatus(1, 'in-progress');
+                    document.querySelector('.step-confirm-btn[data-module="search"]').style.display = 'inline-block';
+                    updateProgress(1, 3);
+                    progressText.textContent = '正在进行文献查询...';
+                } else if (status === 'module2') {
+                    updateStepStatus(1, 'completed');
+                    updateStepStatus(2, 'in-progress');
+                    document.querySelector('.step-btn[data-module="organize"]').disabled = false;
+                    document.querySelector('.step-confirm-btn[data-module="organize"]').style.display = 'inline-block';
+                    updateProgress(2, 3);
+                    progressText.textContent = '文献查询完成，正在进行文献整理...';
+                } else if (status === 'module3') {
+                    updateStepStatus(1, 'completed');
+                    updateStepStatus(2, 'completed');
+                    updateStepStatus(3, 'in-progress');
+                    document.querySelector('.step-btn[data-module="organize"]').disabled = false;
+                    document.querySelector('.step-btn[data-module="review"]').disabled = false;
+                    document.querySelector('.step-confirm-btn[data-module="review"]').style.display = 'inline-block';
+                    updateProgress(3, 3);
+                    progressText.textContent = '文献整理完成，正在生成综述...';
+                } else if (status === 'completed') {
+                    updateStepStatus(1, 'completed');
+                    updateStepStatus(2, 'completed');
+                    updateStepStatus(3, 'completed');
+                    document.querySelector('.step-btn[data-module="organize"]').disabled = false;
+                    document.querySelector('.step-btn[data-module="review"]').disabled = false;
+                    updateProgress(3, 3);
+                    progressText.textContent = '文献综述生成完成！';
+                }
+            }
+            
+            // 项目简介自动保存（失焦时保存）
+            let saveTimeout = null;
+            researchTopic.addEventListener('input', function() {
+                // 清除之前的定时器
+                if (saveTimeout) clearTimeout(saveTimeout);
+                // 延迟500ms保存，避免频繁保存
+                saveTimeout = setTimeout(async () => {
+                    if (currentProjectData) {
+                        await mergeAndSave(currentProjectData.projectName, {
+                            projectDescription: researchTopic.value.trim(),
+                            updatedAt: new Date().toISOString()
+                        });
+                    }
+                }, 500);
+            });
+            
+            researchTopic.addEventListener('blur', async function() {
+                // 失焦时立即保存
+                if (saveTimeout) clearTimeout(saveTimeout);
+                if (currentProjectData) {
+                    await mergeAndSave(currentProjectData.projectName, {
+                        projectDescription: researchTopic.value.trim(),
+                        updatedAt: new Date().toISOString()
+                    });
+                }
+            });
+            
+            // 模块按钮点击事件（页面跳转）
+            stepButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const module = this.getAttribute('data-module');
+                    // 注意：旧模块已移除，所有功能已整合到 workflow.html 中
+                    // 如果需要使用这些功能，请打开项目后进入工作流界面
+                    console.log('模块功能已整合到工作流界面，请打开项目后使用');
+                });
+            });
+            
+            // 确认按钮点击事件
+            confirmButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const module = this.getAttribute('data-module');
+                    switch(module) {
+                        case 'search':
+                            // 确认第一步完成，进入第二步
+                            updateStepStatus(1, 'completed');
+                            updateStepStatus(2, 'in-progress');
+                            updateProgress(2, 3);
+                            progressText.textContent = '文献查询完成，正在进行文献整理...';
+                            
+                            // 更新项目数据（合并保存）
+                            if (currentProjectData) {
+                                await mergeAndSave(currentProjectData.projectName, {
+                                    step1: { status: 'completed' },
+                                    step2: { status: 'in-progress' },
+                                    status: 'module2',
+                                    updatedAt: new Date().toISOString()
+                                });
+                                const reload = await window.electronAPI.loadProjectData(currentProjectData.projectName);
+                                if (reload.success) currentProjectData = reload.data || currentProjectData;
+                            }
+                            
+                            // 启用第二步的按钮
+                            document.querySelector('.step-btn[data-module="organize"]').disabled = false;
+                            document.querySelector('.step-confirm-btn[data-module="organize"]').style.display = 'inline-block';
+                            break;
+                            
+                        case 'organize':
+                            // 确认第二步完成，进入第三步
+                            updateStepStatus(2, 'completed');
+                            updateStepStatus(3, 'in-progress');
+                            updateProgress(3, 3);
+                            progressText.textContent = '文献整理完成，正在生成综述...';
+                            
+                            // 更新项目数据（合并保存）
+                            if (currentProjectData) {
+                                await mergeAndSave(currentProjectData.projectName, {
+                                    step2: { status: 'completed' },
+                                    step3: { status: 'in-progress' },
+                                    status: 'module3',
+                                    updatedAt: new Date().toISOString()
+                                });
+                                const reload = await window.electronAPI.loadProjectData(currentProjectData.projectName);
+                                if (reload.success) currentProjectData = reload.data || currentProjectData;
+                            }
+                            
+                            // 启用第三步的按钮
+                            document.querySelector('.step-btn[data-module="review"]').disabled = false;
+                            document.querySelector('.step-confirm-btn[data-module="review"]').style.display = 'inline-block';
+                            break;
+                            
+                        case 'review':
+                            // 确认第三步完成
+                            updateStepStatus(3, 'completed');
+                            progressText.textContent = '文献综述生成完成！';
+                            
+                            // 更新项目数据（合并保存）
+                            if (currentProjectData) {
+                                await mergeAndSave(currentProjectData.projectName, {
+                                    step3: { status: 'completed' },
+                                    status: 'completed',
+                                    updatedAt: new Date().toISOString()
+                                });
+                                const reload = await window.electronAPI.loadProjectData(currentProjectData.projectName);
+                                if (reload.success) currentProjectData = reload.data || currentProjectData;
+                            }
+                            break;
+                    }
+                });
+            });
+            
+            // 更新步骤状态
+            function updateStepStatus(stepNumber, status) {
+                const step = document.getElementById(`step${stepNumber}`);
+                if (step) {
+                    step.setAttribute('data-status', status);
+                }
+            }
+            
+            // 更新进度条
+            function updateProgress(current, total) {
+                const percentage = (current / total) * 100;
+                progressFill.style.width = `${percentage}%`;
+            }
+
+            // 深合并保存，避免覆盖旧字段
+            async function mergeAndSave(projectName, patch) {
+                const existing = await window.electronAPI.loadProjectData(projectName);
+                const base = (existing && existing.success && existing.data) ? existing.data : {};
+                const merged = deepMerge(base, patch || {});
+                return await window.electronAPI.saveProjectData(projectName, merged);
+            }
+
+            function deepMerge(target, source) {
+                if (!source || typeof source !== 'object') return target;
+                const out = Array.isArray(target) ? [...target] : { ...target };
+                Object.keys(source).forEach(key => {
+                    const srcVal = source[key];
+                    const tgtVal = out[key];
+                    if (srcVal && typeof srcVal === 'object' && !Array.isArray(srcVal)) {
+                        out[key] = deepMerge(tgtVal && typeof tgtVal === 'object' ? tgtVal : {}, srcVal);
+                    } else {
+                        out[key] = srcVal;
+                    }
+                });
+                return out;
+            }
+        });
+        
+        // Electron IPC API
+        window.electronAPI = {
+            deleteProject: (projectName) => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('delete-project', projectName);
+                }
+            },
+            // 注意：openSearchWindow 已移除，搜索功能已整合到 workflow.html 中
+            // 注意：openOrganizeWindow 和 openReviewWindow 已移除，功能已整合到workflow.html中
+            openWorkflowWindow: () => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('open-workflow-window');
+                }
+            },
+            switchToWorkflow: () => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('switch-to-workflow');
+                }
+            },
+            switchToIndex: () => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('switch-to-index');
+                }
+            },
+            saveProjectData: (projectName, data) => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('save-project-data', projectName, data);
+                }
+            },
+            loadProjectData: (projectName) => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('load-project-data', projectName);
+                }
+            },
+            listProjects: () => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('list-projects');
+                }
+            },
+            // 添加目录选择功能
+            selectDirectory: () => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('select-directory');
+                }
+            },
+            setCurrentProject: (projectName) => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('set-current-project', projectName);
+                }
+            },
+            getCurrentProject: () => {
+                if (window.require) {
+                    const { ipcRenderer } = window.require('electron');
+                    return ipcRenderer.invoke('get-current-project');
+                }
+            }
+        };
+
+    </script>
+</body>
+</html>
+

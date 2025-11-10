@@ -1,0 +1,987 @@
+{
+  "projectName": "1",
+  "projectDescription": "",
+  "status": "initial",
+  "createdAt": "2025-11-10T09:27:22.697Z",
+  "updatedAt": "2025-11-10T09:27:22.697Z",
+  "step1": {
+    "status": "pending"
+  },
+  "step2": {
+    "status": "pending"
+  },
+  "step3": {
+    "status": "pending"
+  },
+  "config": {
+    "apiKey": "sk-104bbee0909943399d1affcfdae8297e",
+    "googleScholarVerified": true
+  },
+  "requirementData": {
+    "requirement": "自动驾驶",
+    "targetCount": 3,
+    "outline": "1. 环境感知技术\n   基于视觉的感知方法\n   多传感器融合技术\n2. 决策与路径规划\n   行为决策算法\n   动态路径规划\n3. 控制系统与执行\n   车辆横向控制\n   纵向运动控制",
+    "keywordsPlan": [
+      {
+        "keyword": "vision-based environment perception",
+        "count": 1
+      },
+      {
+        "keyword": "autonomous vehicle decision making",
+        "count": 1
+      },
+      {
+        "keyword": "vehicle lateral control",
+        "count": 1
+      }
+    ],
+    "language": "zh"
+  },
+  "keywords": [
+    "vision-based environment perception",
+    "autonomous vehicle decision making",
+    "vehicle lateral control"
+  ],
+  "search": {
+    "results": {
+      "Sensor Fusion LiDAR Camera Radar": [
+        {
+          "id": "scholar_0_1762769109985",
+          "title": "Sensors and sensor fusion in autonomous vehicles",
+          "authors": "J Kocić, N Jovičić, V Drndarević",
+          "year": "2018",
+          "source": "2018 26th …, 2018  -  ieeexplore.ieee.org",
+          "abstract": "… the sensors as lidar or radar. For that reason, sensor fusion of camera with lidar or radar data \nis … On the other hand, combining information from lidar and radar will provide more certain …",
+          "cited": 438,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8612054/"
+        },
+        {
+          "id": "scholar_2_1762769109985",
+          "title": "Camera, LiDAR, and radar sensor fusion based on Bayesian neural network (CLR-BNN)",
+          "authors": "R Ravindran, MJ Santora, MM Jamali",
+          "year": "2022",
+          "source": "IEEE Sensors Journal, 2022  -  ieeexplore.ieee.org",
+          "abstract": "… a camera, LiDAR and RADAR sensor fusion Bayesian neural … using these three primary \nsensing devices. The experiments … better than its deterministic sensor fusion model (CLR-DNN) …",
+          "cited": 61,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9721916/"
+        }
+      ],
+      "Object Detection and Tracking Autonomous Driving": [
+        {
+          "id": "scholar_0_1762768625879",
+          "title": "Multiple road-objects detection and tracking for autonomous driving",
+          "authors": "W Farag",
+          "year": "2022",
+          "source": "Journal of Engineering Research, 2022  -  kuwaitjournals.org",
+          "abstract": "… road-object detection and tracking (LR_ODT) method for autonomous driving is proposed. … \ndata, where they are installed on the ego car, and a customized unscented Kalman filter (UKF…",
+          "cited": 16,
+          "url": "https://kuwaitjournals.org/jer/index.php/JER/article/view/10993"
+        },
+        {
+          "id": "scholar_2_1762768625879",
+          "title": "Real-time adaptive object detection and tracking for autonomous vehicles",
+          "authors": "JE Hoffmann, HG Tosso, MMD Santos…",
+          "year": "2020",
+          "source": "… Intelligent Vehicles, 2020  -  ieeexplore.ieee.org",
+          "abstract": "… object localization like object … on object detection and tracking approaches [1]–[10] and \ntheir suitability for real-time systems, we propose a multistage model for real-time multiple object …",
+          "cited": 64,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9259200/"
+        }
+      ],
+      "Scene Understanding Semantic Segmentation": [
+        {
+          "id": "scholar_0_1762769128899",
+          "title": "Visual scene understanding for autonomous driving using semantic segmentation",
+          "authors": "M Hofmarcher, T Unterthiner, J Arjona",
+          "year": "2019",
+          "source": "Medina…  -  … and Visualizing Deep …, 2019  -  Springer",
+          "abstract": "… semantic segmentation … semantic segmentation with a focus on autonomous driving \napplications. In Sect. 15.3 we present our proposed architecture for efficient semantic segmentation …",
+          "cited": 68,
+          "url": "https://link.springer.com/chapter/10.1007/978-3-030-28954-6_15"
+        }
+      ],
+      "Path Planning Motion Planning": [
+        {
+          "id": "scholar_0_1762768645545",
+          "title": "Sampling-based algorithms for optimal motion planning",
+          "authors": "S Karaman, E Frazzoli",
+          "year": "2011",
+          "source": "The international journal of robotics …, 2011  -  journals.sagepub.com",
+          "abstract": "… of planning a path through a … motion planning algorithms such as Kuffner and LaValle (2000), \nno differential constraints are considered (ie the focus of the paper is on path planning …",
+          "cited": 6681,
+          "url": "https://journals.sagepub.com/doi/abs/10.1177/0278364911406761"
+        },
+        {
+          "id": "scholar_2_1762768645545",
+          "title": "Motion planning",
+          "authors": "LE Kavraki, SM LaValle",
+          "year": "2016",
+          "source": "Springer handbook of robotics, 2016  -  Springer",
+          "abstract": "… This chapter first provides a formulation of the geometric path planning problem in Sect. \n7.2 and then introduces sampling-based planning in Sect. 7.3. Sampling-based planners are …",
+          "cited": 179,
+          "url": "https://link.springer.com/chapter/10.1007/978-3-319-32552-1_7"
+        }
+      ],
+      "Behavioral Decision-Making Risk Assessment": [
+        {
+          "id": "scholar_0_1762768655011",
+          "title": "Behavioral decision‐making model of the intelligent vehicle based on driving risk assessment",
+          "authors": "X Zheng, H Huang, J Wang, X Zhao…",
+          "year": "2021",
+          "source": "Computer‐Aided Civil …, 2021  -  Wiley Online Library",
+          "abstract": "… This paper presents a new behavioral decision-making … a combined spring model for \nassessing driving risk. Thus, we … function is established for the decision-making model. Finally, we …",
+          "cited": 73,
+          "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/mice.12507"
+        }
+      ],
+      "Lateral Longitudinal Vehicle Control": [
+        {
+          "id": "scholar_0_1762769157272",
+          "title": "Lateral and longitudinal vehicle control coupling for automated vehicle operation",
+          "authors": "EHM Lim, JK Hedrick",
+          "year": "1999",
+          "source": "… of the 1999 American Control …, 1999  -  ieeexplore.ieee.org",
+          "abstract": "… However, lateral and longitudinal controls are, in reality, not decoupled. In the Control \nIntegration project we investigate possibilities for combined lateral and longitudinal controller …",
+          "cited": 143,
+          "url": "https://ieeexplore.ieee.org/abstract/document/782452/"
+        }
+      ],
+      "Verification Validation Safety Assurance Autonomous Vehicles": [
+        {
+          "id": "scholar_0_1762768673919",
+          "title": "Challenges in autonomous vehicle testing and validation",
+          "authors": "P Koopman, M Wagner",
+          "year": "2016",
+          "source": "SAE International Journal of Transportation Safety, 2016  -  JSTOR",
+          "abstract": "… to check how the left side turned out (verification and validation). However, this notion of \nchecking is … This paper discusses ways to fit autonomous vehicle safety assurance within an ISO …",
+          "cited": 943,
+          "url": "https://www.jstor.org/stable/26167741"
+        }
+      ],
+      "Object Detection and Tracking Autonomous Vehicles": [
+        {
+          "id": "scholar_0_1762769119432",
+          "title": "Real-time adaptive object detection and tracking for autonomous vehicles",
+          "authors": "JE Hoffmann, HG Tosso, MMD Santos…",
+          "year": "2020",
+          "source": "… Intelligent Vehicles, 2020  -  ieeexplore.ieee.org",
+          "abstract": "… object localization like object … on object detection and tracking approaches [1]–[10] and \ntheir suitability for real-time systems, we propose a multistage model for real-time multiple object …",
+          "cited": 64,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9259200/"
+        },
+        {
+          "id": "scholar_2_1762769119433",
+          "title": "Multi-object detection and tracking, based on DNN, for autonomous vehicles: A review",
+          "authors": "R Ravindran, MJ Santora, MM Jamali",
+          "year": "2020",
+          "source": "IEEE Sensors Journal, 2020  -  ieeexplore.ieee.org",
+          "abstract": "… In this work we review the multi-object detection and multi-object tracking with camera, … The \nuse of DNN-based image-processing techniques are widely studied for object detection and …",
+          "cited": 220,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9274366/"
+        }
+      ],
+      "Path Planning Motion Planning Autonomous Driving": [
+        {
+          "id": "scholar_0_1762769138344",
+          "title": "Real-time motion planning methods for autonomous on-road driving: State-of-the-art and future research directions",
+          "authors": "C Katrakazas, M Quddus, WH Chen, L Deka",
+          "year": "2015",
+          "source": "Transportation Research Part …, 2015  -  Elsevier",
+          "abstract": "… with the aim of reducing the total cost of driverless vehicles. This critical review on planning \n… in accelerating development in the emerging field of autonomous vehicle research. …",
+          "cited": 1121,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0968090X15003447"
+        },
+        {
+          "id": "scholar_2_1762769138345",
+          "title": "Motion planning for autonomous driving: The state of the art and future perspectives",
+          "authors": "S Teng, X Hu, P Deng, B Li, Y Li, Y Ai…",
+          "year": "2023",
+          "source": "… Intelligent Vehicles, 2023  -  ieeexplore.ieee.org",
+          "abstract": "… tracking controllers and motion planners being essential … motion planning methods for IVs, \nincluding pipeline planning … global route planning and local behavior/trajectory planning. …",
+          "cited": 605,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10122127/"
+        }
+      ],
+      "Behavioral Decision Making Risk Assessment Autonomous Vehicles": [
+        {
+          "id": "scholar_0_1762769147795",
+          "title": "Decision-making and planning method for autonomous vehicles based on motivation and risk assessment",
+          "authors": "Y Wang, C Wang, W Zhao, C Xu",
+          "year": "2021",
+          "source": "IEEE Transactions on …, 2021  -  ieeexplore.ieee.org",
+          "abstract": "… Abstract—In order to improve the real-time and computational efficiency of autonomous \nvehicles’ decision-making process, this paper draws on the decision-making behavior of human …",
+          "cited": 105,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9316903/"
+        }
+      ],
+      "Verification Validation Safety Assurance Autonomous Systems": [
+        {
+          "id": "scholar_0_1762769166854",
+          "title": "A review of verification and validation for space autonomous systems",
+          "authors": "RC Cardoso, G Kourtis, LA Dennis, C Dixon…",
+          "year": "2021",
+          "source": "Current Robotics …, 2021  -  Springer",
+          "abstract": "… , and so it must be recognized that an autonomous system will have to make a decision that \n… a space autonomous system as a vehicle/machine deployed in orbit (such as an unmanned …",
+          "cited": 30,
+          "url": "https://link.springer.com/article/10.1007/s43154-021-00058-1"
+        }
+      ],
+      "Sensor Fusion Autonomous Vehicles": [
+        {
+          "id": "scholar_0_1762770463141",
+          "title": "Sensor and sensor fusion technology in autonomous vehicles: A review",
+          "authors": "DJ Yeong, G Velasco",
+          "year": "2021",
+          "source": "Hernandez, J Barry, J Walsh  -  Sensors, 2021  -  mdpi.com",
+          "abstract": "… sensors. We also summarize the three main approaches to sensor fusion and review \ncurrent state-of-the-art multi-sensor fusion techniques and algorithms for object detection in …",
+          "cited": 1245,
+          "url": "https://www.mdpi.com/1424-8220/21/6/2140"
+        }
+      ],
+      "Object Detection Tracking LiDAR": [
+        {
+          "id": "scholar_0_1762770473232",
+          "title": "Dynamic multi-lidar based multiple object detection and tracking",
+          "authors": "M Sualeh, GW Kim",
+          "year": "2019",
+          "source": "Sensors, 2019  -  mdpi.com",
+          "abstract": "… Object Detection and Tracking (MODT) algorithm for a non-stationary base is presented, using \nmultiple 3D LiDARs for perception. The merged LiDAR … developed to detect objects under …",
+          "cited": 130,
+          "url": "https://www.mdpi.com/1424-8220/19/6/1474"
+        }
+      ],
+      "Autonomous Vehicle Localization HD Maps": [
+        {
+          "id": "scholar_0_1762770483833",
+          "title": "Autonomous vehicle localization without prior high-definition map",
+          "authors": "S Lee, JH Ryu",
+          "year": "2024",
+          "source": "IEEE Transactions on Robotics, 2024  -  ieeexplore.ieee.org",
+          "abstract": "… , thereby enabling autonomous vehicles to localize even without prior HD maps. … autonomous \nvehicles to perform maximally decimeter-level accurate localization without using HD maps…",
+          "cited": 11,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10506654/"
+        }
+      ],
+      "Behavioral Decision Making Autonomous Driving": [
+        {
+          "id": "scholar_0_1762770494279",
+          "title": "Research on driving behavior decision making system of autonomous driving vehicle based on benefit evaluation model",
+          "authors": "P Wang, S Gao, L Li, S Cheng, H Zhao",
+          "year": "2020",
+          "source": "Archives of transport, 2020  -  yadda.icm.edu.pl",
+          "abstract": "… Therefore, it is necessary to study and verify the behavior decision making of autonomous \ndriving vehicle in real traffic environment. The real time performance and adaptability will be …",
+          "cited": 25,
+          "url": "https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-a807552e-718e-47b8-aac3-13096228776c"
+        }
+      ],
+      "Motion Planning Trajectory Optimization": [
+        {
+          "id": "scholar_0_1762770503779",
+          "title": "STOMP: Stochastic trajectory optimization for motion planning",
+          "authors": "M Kalakrishnan, S Chitta, E Theodorou…",
+          "year": "2011",
+          "source": "… on robotics and …, 2011  -  ieeexplore.ieee.org",
+          "abstract": "… MOTION PLANNING FOR A ROBOT ARM In this section, we discuss the application of the \nstochastic trajectory optimization algorithm in Table I to the problem of motion planning of a …",
+          "cited": 1273,
+          "url": "https://ieeexplore.ieee.org/abstract/document/5980280/"
+        }
+      ],
+      "Autonomous driving sensor fusion": [
+        {
+          "id": "scholar_0_1762770758718",
+          "title": "Multi-sensor fusion and cooperative perception for autonomous driving: A review",
+          "authors": "C Xiang, C Feng, X Xie, B Shi, H Lu…",
+          "year": "2023",
+          "source": "IEEE Intelligent …, 2023  -  ieeexplore.ieee.org",
+          "abstract": "… different fusion strategies. In this article, we study multiple papers on multi-sensor fusion in \n… that the category division in current multi-sensor fusion perception is not detailed and clear …",
+          "cited": 149,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10208208/",
+          "completionStatus": "completed",
+          "journal": "IEEE Intelligent …, 2023  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "The literature is highly relevant as it provides a comprehensive review of multi-sensor fusion and cooperative perception, which are core technologies for environmental perception and decision-making in autonomous driving systems. The 2023 publication ensures the review includes recent advancements, making it a valuable resource for understanding current methodologies and challenges in the field."
+        }
+      ],
+      "LiDAR camera fusion object detection": [
+        {
+          "id": "scholar_0_1762770768246",
+          "title": "Deepfusion: Lidar-camera deep fusion for multi-modal 3d object detection",
+          "authors": "Y Li, AW Yu, T Meng, B Caine…",
+          "year": "2022",
+          "source": "… pattern recognition, 2022  -  openaccess.thecvf.com",
+          "abstract": "… This paper studies how to effectively fuse lidar and camera data for multi-modal 3D object \ndetection. Our study shows deep feature fusion in late stage can be more effective when they …",
+          "cited": 609,
+          "url": "http://openaccess.thecvf.com/content/CVPR2022/html/Li_DeepFusion_Lidar-Camera_Deep_Fusion_for_Multi-Modal_3D_Object_Detection_CVPR_2022_paper.html",
+          "completionStatus": "completed",
+          "journal": "Proceedings of the …, 2022  -  openaccess.thecvf.com",
+          "selected": true,
+          "aiRecommendReason": "The literature directly addresses a core technical challenge in autonomous driving: 3D object detection. It focuses on fusing LiDAR and camera data, which are two critical sensor modalities used by autonomous vehicles to perceive their environment. The study's investigation into deep feature fusion for improving detection performance is highly relevant to the research and development of robust perception systems for self-driving cars."
+        }
+      ],
+      "Autonomous vehicle localization HD maps": [
+        {
+          "id": "scholar_0_1762770777920",
+          "title": "Autonomous vehicle localization without prior high-definition map",
+          "authors": "S Lee, JH Ryu",
+          "year": "2024",
+          "source": "IEEE Transactions on Robotics, 2024  -  ieeexplore.ieee.org",
+          "abstract": "… , thereby enabling autonomous vehicles to localize even without prior HD maps. … autonomous \nvehicles to perform maximally decimeter-level accurate localization without using HD maps…",
+          "cited": 11,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10506654/",
+          "completionStatus": "completed",
+          "journal": "IEEE Transactions on Robotics, 2024  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "The literature is highly relevant as it directly addresses a key challenge in autonomous driving (自动驾驶) by proposing a method for vehicle localization without relying on prior high-definition (HD) maps. This aligns with the research topic's focus on enabling autonomous vehicles to operate in environments where HD maps may be unavailable or outdated, contributing to the robustness and scalability of autonomous driving systems."
+        }
+      ],
+      "Motion planning trajectory optimization autonomous vehicles": [
+        {
+          "id": "scholar_0_1762770787662",
+          "title": "A real-time motion planner with trajectory optimization for autonomous vehicles",
+          "authors": "W Xu, J Wei, JM Dolan, H Zhao…",
+          "year": "2012",
+          "source": "2012 IEEE international …, 2012  -  ieeexplore.ieee.org",
+          "abstract": "… efficient real-time autonomous driving motion planner with trajectory optimization is proposed. \nThe … In this paper, a practical real-time autonomous driving motion planner with trajectory …",
+          "cited": 375,
+          "url": "https://ieeexplore.ieee.org/abstract/document/6225063/",
+          "completionStatus": "completed",
+          "journal": "2012 IEEE international …, 2012  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "The literature directly addresses the core problem of motion planning and trajectory optimization for autonomous vehicles, which is a fundamental component of autonomous driving (自动驾驶) systems. The paper's focus on real-time performance and practical implementation aligns closely with the research needs in this field."
+        }
+      ],
+      "Autonomous vehicle control system verification": [
+        {
+          "id": "scholar_0_1762770797416",
+          "title": "Game theoretic modeling of driver and vehicle interactions for verification and validation of autonomous vehicle control systems",
+          "authors": "N Li, DW Oyler, M Zhang, Y Yildiz…",
+          "year": "2017",
+          "source": "… on control systems …, 2017  -  ieeexplore.ieee.org",
+          "abstract": "… and 2) calibrate the parameters of an existing control system. … compare two autonomous \nvehicle control systems in terms of their … of an autonomous vehicle control system, utilizing the …",
+          "cited": 353,
+          "url": "https://ieeexplore.ieee.org/abstract/document/7993050/",
+          "completionStatus": "completed",
+          "journal": "… on control systems …, 2017  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "The literature directly addresses the verification and validation of autonomous vehicle control systems using game-theoretic models, which is a core aspect of autonomous driving research. It focuses on comparing and calibrating control systems for autonomous vehicles, making it highly relevant to the research topic."
+        }
+      ],
+      "visual object detection autonomous driving": [
+        {
+          "id": "scholar_0_1762771882114",
+          "title": "3D object detection for autonomous driving: A comprehensive survey",
+          "authors": "J Mao, S Shi, X Wang, H Li",
+          "year": "2023",
+          "source": "International Journal of Computer Vision, 2023  -  Springer",
+          "abstract": "… To this end, we propose to comprehensively review the 3D object detection methods for \nautonomous driving applications and provide in-depth analysis and a systematic comparison on …",
+          "cited": 412,
+          "url": "https://link.springer.com/article/10.1007/s11263-023-01790-1"
+        }
+      ],
+      "sensor fusion perception autonomous vehicles": [
+        {
+          "id": "scholar_0_1762771892317",
+          "title": "Deep learning sensor fusion for autonomous vehicle perception and localization: A review",
+          "authors": "J Fayyad, MA Jaradat, D Gruyer, H Najjaran",
+          "year": "2020",
+          "source": "Sensors, 2020  -  mdpi.com",
+          "abstract": "… improve sensor fusion methods for autonomous vehicles. … categorization schemes of sensor \nfusion methods exist. In this … deep learning sensor fusion algorithms in autonomous driving. …",
+          "cited": 594,
+          "url": "https://www.mdpi.com/1424-8220/20/15/4220"
+        }
+      ],
+      "behavior decision making path planning autonomous driving": [
+        {
+          "id": "scholar_0_1762771448052",
+          "title": "An integrated framework of decision making and motion planning for autonomous vehicles considering social behaviors",
+          "authors": "P Hang, C Lv, C Huang, J Cai, Z Hu…",
+          "year": "2020",
+          "source": "IEEE transactions on …, 2020  -  ieeexplore.ieee.org",
+          "abstract": "… of AVs, in this study the decision making and motion planning modules are considered in an \n… behaviors, which can be reflected by driving styles and intentions of surrounding vehicles, …",
+          "cited": 229,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9271859/"
+        }
+      ],
+      "vehicle motion control autonomous systems": [
+        {
+          "id": "scholar_0_1762771458429",
+          "title": "Autonomous vehicle control systems—a review of decision making",
+          "authors": "SM Veres, L Molnar, NK Lincoln…",
+          "year": "2011",
+          "source": "… Systems and Control …, 2011  -  journals.sagepub.com",
+          "abstract": "… of autonomous systems need thorough testing or formal verification in case of safety-critical \nsystems… of single and multiple vehicle primitives for coordinated motion control. Aguiary et al. […",
+          "cited": 200,
+          "url": "https://journals.sagepub.com/doi/abs/10.1177/2041304110394727"
+        }
+      ],
+      "SOTIF autonomous driving simulation testing": [
+        {
+          "id": "scholar_0_1762771923108",
+          "title": "Scenario-based accelerated testing for sotif in autonomous driving: A review",
+          "authors": "L Tang, R Wang, Z Liu, Y Liang, Y Niu…",
+          "year": "2024",
+          "source": "IEEE Internet of …, 2024  -  ieeexplore.ieee.org",
+          "abstract": "… emerging works in accelerated testing on SOTIF of HAVs. To … evaluations of SOTIF testing \nfor autonomous driving systems. Our … simulation platform for testing autonomous vehicles in 3d …",
+          "cited": 7,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10742091/"
+        }
+      ],
+      "behavior decision making path planning autonomous vehicles": [
+        {
+          "id": "scholar_0_1762771903132",
+          "title": "An integrated framework of decision making and motion planning for autonomous vehicles considering social behaviors",
+          "authors": "P Hang, C Lv, C Huang, J Cai, Z Hu…",
+          "year": "2020",
+          "source": "IEEE transactions on …, 2020  -  ieeexplore.ieee.org",
+          "abstract": "… of AVs, in this study the decision making and motion planning modules are considered in an \n… behaviors, which can be reflected by driving styles and intentions of surrounding vehicles, …",
+          "cited": 229,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9271859/"
+        }
+      ],
+      "vehicle motion control autonomous driving": [
+        {
+          "id": "scholar_0_1762771913434",
+          "title": "Trends in vehicle motion control for automated driving on public roads",
+          "authors": "M Klomp, M Jonasson, L Laine…",
+          "year": "2019",
+          "source": "Vehicle System …, 2019  -  Taylor & Francis",
+          "abstract": "… for a road vehicle to meet certain … the driving automation system is discussed. Further we \nconsider path tracking, state estimation of vehicle motion control required for automated driving …",
+          "cited": 64,
+          "url": "https://www.tandfonline.com/doi/abs/10.1080/00423114.2019.1610182"
+        }
+      ],
+      "visual-based perception autonomous driving": [
+        {
+          "id": "scholar_0_1762774537494",
+          "title": "Visual Perception System for Autonomous Driving",
+          "authors": "Q Zhang, S Gou, W Li",
+          "year": "2024",
+          "source": "2024 IEEE/RSJ International …, 2024  -  ieeexplore.ieee.org",
+          "abstract": "… precise algorithms applicable to autonomous driving, such as … a visual-based perception \nsystem for autonomous driving … and mapping needs of autonomous driving. The system …",
+          "cited": 4,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10802028/"
+        }
+      ],
+      "multi-sensor fusion autonomous vehicles": [
+        {
+          "id": "scholar_0_1762774546960",
+          "title": "Multi-sensor fusion in automated driving: A survey",
+          "authors": "Z Wang, Y Wu, Q Niu",
+          "year": "2019",
+          "source": "Ieee Access, 2019  -  ieeexplore.ieee.org",
+          "abstract": "… Through this investigation, we hope to analyze the current situation of multi-sensor fusion \nin the automated driving process and provide more efficient and reliable fusion strategies. …",
+          "cited": 613,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8943388/"
+        }
+      ],
+      "behavior decision making autonomous driving": [
+        {
+          "id": "scholar_0_1762772577912",
+          "title": "Research on driving behavior decision making system of autonomous driving vehicle based on benefit evaluation model",
+          "authors": "P Wang, S Gao, L Li, S Cheng, H Zhao",
+          "year": "2020",
+          "source": "Archives of transport, 2020  -  yadda.icm.edu.pl",
+          "abstract": "… Therefore, it is necessary to study and verify the behavior decision making of autonomous \ndriving vehicle in real traffic environment. The real time performance and adaptability will be …",
+          "cited": 25,
+          "url": "https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-a807552e-718e-47b8-aac3-13096228776c",
+          "completionStatus": "completed",
+          "journal": "Archives of transport, 2020  -  yadda.icm.edu.pl",
+          "selected": true,
+          "aiRecommendReason": "该文献标题和摘要明确聚焦于自动驾驶车辆的行为决策系统研究，基于效益评估模型探讨自动驾驶在真实交通环境中的决策机制，与自动驾驶核心技术高度相关。文献重点研究的实时性和适应性正是自动驾驶决策系统的关键挑战，对理解自动驾驶车辆的决策逻辑和性能优化具有直接参考价值。"
+        }
+      ],
+      "dynamic path planning autonomous vehicles": [
+        {
+          "id": "scholar_0_1762772481981",
+          "title": "Dynamic motion planning of autonomous vehicles",
+          "authors": "Z Shiller, YR Gwo",
+          "year": "1991",
+          "source": "IEEE transactions on robotics and automation, 1991  -  academia.edu",
+          "abstract": "… Abstract-This paper presents a method for planning the motions of autonomous vehicles … \nthe geometric path and vehicle speeds that minimize motion time considering vehicle dynamics, …",
+          "cited": 432,
+          "url": "https://www.academia.edu/download/31081205/mobile.pdf"
+        },
+        {
+          "id": "scholar_2_1762772481981",
+          "title": "Dynamic path planning for autonomous driving on various roads with avoidance of static and moving obstacles",
+          "authors": "X Hu, L Chen, B Tang, D Cao, H He",
+          "year": "2018",
+          "source": "Mechanical systems and signal …, 2018  -  Elsevier",
+          "abstract": "… time dynamic path planning method for autonomous driving that … path planning method \ndetermines not only an optimal path, but also the appropriate acceleration and speed for a vehicle…",
+          "cited": 411,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0888327017303825"
+        },
+        {
+          "id": "scholar_4_1762772481981",
+          "title": "Integrated path planning and dynamic steering control for autonomous vehicles",
+          "authors": "B Krogh, C Thorpe",
+          "year": "1986",
+          "source": "Proceedings. 1986 IEEE International …, 1986  -  ieeexplore.ieee.org",
+          "abstract": "… for the dynamic steering control of autonomous vehicles using local feedback information. \nGiven a set of subgoals from the path-planning algorithm which roughly define a desirable …",
+          "cited": 426,
+          "url": "https://ieeexplore.ieee.org/abstract/document/1087444/"
+        },
+        {
+          "id": "scholar_6_1762772481981",
+          "title": "Dynamic trajectory planning for vehicle autonomous driving",
+          "authors": "S Zhang, W Deng, Q Zhao, H Sun…",
+          "year": "2013",
+          "source": "2013 IEEE International …, 2013  -  ieeexplore.ieee.org",
+          "abstract": "… a novel dynamic trajectory planning approach for vehicle autonomous driving, which is … \ntraffic scenarios and driving behaviors with the aim to achieve driving safety and comfort. By …",
+          "cited": 129,
+          "url": "https://ieeexplore.ieee.org/abstract/document/6722462/"
+        },
+        {
+          "id": "scholar_8_1762772481981",
+          "title": "Path planning for autonomous vehicles in unknown dynamic environment based on deep reinforcement learning",
+          "authors": "H Hu, Y Wang, W Tong, J Zhao, Y Gu",
+          "year": "2023",
+          "source": "Applied Sciences, 2023  -  mdpi.com",
+          "abstract": "… To overcome the limitations of traditional path planning algorithms that rely on high-… , this \nstudy proposes a path planning approach for autonomous vehicles based on DRL algorithms. …",
+          "cited": 25,
+          "url": "https://www.mdpi.com/2076-3417/13/18/10056"
+        },
+        {
+          "id": "scholar_10_1762772481981",
+          "title": "A dynamic lane-changing trajectory planning model for automated vehicles",
+          "authors": "D Yang, S Zheng, C Wen, PJ Jin, B Ran",
+          "year": "2018",
+          "source": "Transportation Research Part C …, 2018  -  Elsevier",
+          "abstract": "This paper focuses on the lane-changing trajectory planning (LTP) process in the automatic \ndriving technologies. Existing studies on the LTP algorithms are primarily the static planning …",
+          "cited": 310,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0968090X18305898"
+        },
+        {
+          "id": "scholar_12_1762772481981",
+          "title": "Trajectory planning and control of autonomous vehicles for static vehicle avoidance in dynamic traffic environments",
+          "authors": "C Kim, Y Yoon, S Kim, MJ Yoo, K Yi",
+          "year": "2023",
+          "source": "IEEE Access, 2023  -  ieeexplore.ieee.org",
+          "abstract": "… a trajectory planning and control algorithm of autonomous vehicles for static traffic agent \navoidance in multi vehicle … In urban autonomous driving, the subject vehicle encounters diverse …",
+          "cited": 40,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10016694/"
+        },
+        {
+          "id": "scholar_14_1762772481981",
+          "title": "Path planning for autonomous vehicles using model predictive control",
+          "authors": "C Liu, S Lee, S Varnhagen…",
+          "year": "2017",
+          "source": "… IEEE Intelligent Vehicles …, 2017  -  ieeexplore.ieee.org",
+          "abstract": "… Abstract— Path planning for autonomous vehicles in dynamic environments is an important \n… of vehicle dynamics and existence of surrounding vehicles. Typical trajectories of vehicles …",
+          "cited": 370,
+          "url": "https://ieeexplore.ieee.org/abstract/document/7995716/"
+        },
+        {
+          "id": "scholar_16_1762772481982",
+          "title": "Dynamic lane-changing trajectory planning for autonomous vehicles based on discrete global trajectory",
+          "authors": "Y Liu, B Zhou, X Wang, L Li, S Cheng…",
+          "year": "2021",
+          "source": "IEEE Transactions …, 2021  -  ieeexplore.ieee.org",
+          "abstract": "… Motivated by these considerations, this study designs a pragmatic dynamic trajectory planning \nmodel for lane-changing of autonomous vehicles. First, to cope with the difficulty that the …",
+          "cited": 129,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9447835/"
+        },
+        {
+          "id": "scholar_18_1762772481982",
+          "title": "Guidance and path-planning systems for autonomous vehicles",
+          "authors": "AM Lekkas",
+          "year": "2014",
+          "source": "2014  -  ntnuopen.ntnu.no",
+          "abstract": "… autonomy of vehicles, namely, path planning and guidance. By adopting a modular approach, \npath planning … that the generated path takes into account the dynamic constraints of the …",
+          "cited": 110,
+          "url": "https://ntnuopen.ntnu.no/ntnu-xmlui/handle/11250/261188"
+        }
+      ],
+      "vehicle lateral control autonomous driving": [
+        {
+          "id": "scholar_0_1762772491450",
+          "title": "Lateral control for autonomous vehicles: A comparative evaluation",
+          "authors": "A Artuñedo, M Moreno",
+          "year": "2024",
+          "source": "Gonzalez, J Villagra  -  Annual reviews in control, 2024  -  Elsevier",
+          "abstract": "… The selection of an appropriate control strategy is essential for ensuring safe operation … \nautonomous driving. While numerous control strategies have been developed for specific driving …",
+          "cited": 48,
+          "url": "https://www.sciencedirect.com/science/article/pii/S1367578823000743"
+        }
+      ],
+      "longitudinal motion control autonomous vehicles": [
+        {
+          "id": "scholar_0_1762772500965",
+          "title": "A survey on cooperative longitudinal motion control of multiple connected and automated vehicles",
+          "authors": "Z Wang, Y Bian, SE Shladover, G Wu…",
+          "year": "2019",
+          "source": "IEEE Intelligent …, 2019  -  ieeexplore.ieee.org",
+          "abstract": "… highly automated vehicle (AV) systems that require the entire surrounding environment to \nbe precisely measured by multiple perception sensors, cooperative longitudinal motion control …",
+          "cited": 368,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8944077/"
+        },
+        {
+          "id": "scholar_2_1762772500965",
+          "title": "Lateral and longitudinal motion control of autonomous vehicles using deep learning",
+          "authors": "S Sharma, G Tewolde, J Kwon",
+          "year": "2019",
+          "source": "2019 IEEE International …, 2019  -  ieeexplore.ieee.org",
+          "abstract": "… end-to-end learning for lateral control of an autonomous vehicle. In this paper, we extend \nthe work to handle both lateral and longitudinal control of the vehicle. The rest of this paper …",
+          "cited": 37,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8833873/"
+        },
+        {
+          "id": "scholar_4_1762772500965",
+          "title": "Motion planning for autonomous vehicles considering longitudinal and lateral dynamics coupling",
+          "authors": "D Dang, F Gao, Q Hu",
+          "year": "2020",
+          "source": "Applied Sciences, 2020  -  mdpi.com",
+          "abstract": "… An autonomous vehicle motion planning problem is then formulated using the nonlinear \nmodel predictive control theory (NMPC) with the SDM constraint (NMPC-SDM). We validated …",
+          "cited": 45,
+          "url": "https://www.mdpi.com/2076-3417/10/9/3180"
+        },
+        {
+          "id": "scholar_6_1762772500966",
+          "title": "Model predictive longitudinal motion control for the unmanned ground vehicle with a trajectory tracking model",
+          "authors": "H Dong, J Xi",
+          "year": "2021",
+          "source": "IEEE Transactions on Vehicular Technology, 2021  -  ieeexplore.ieee.org",
+          "abstract": "… Bimbraw, \"Autonomous cars: Past, present and future a review of the developments in the \nlast century, the present scenario and the expected future of autonomous vehicle technology\", …",
+          "cited": 57,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9629337/"
+        },
+        {
+          "id": "scholar_8_1762772500966",
+          "title": "Human-like mechanism deep learning model for longitudinal motion control of autonomous vehicles",
+          "authors": "Z Gao, T Yu, F Gao, R Zhao, T Sun",
+          "year": "2024",
+          "source": "Engineering Applications of Artificial …, 2024  -  Elsevier",
+          "abstract": "… in the prediction, planning, and control of autonomous vehicle. The original motion control \nmethods are increasing in accuracy, but their control style markedly differs from that of human …",
+          "cited": 17,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0952197624002185"
+        },
+        {
+          "id": "scholar_10_1762772500966",
+          "title": "Trajectory tracking of autonomous vehicle with the fusion of DYC and longitudinal–lateral control",
+          "authors": "F Lin, Y Zhang, Y Zhao, G Yin, H Zhang…",
+          "year": "2019",
+          "source": "Chinese Journal of …, 2019  -  Springer",
+          "abstract": "… The current research of autonomous vehicle motion control mainly focuses on … \nlongitudinal–lateral control method with the yaw stability in the trajectory tracking for autonomous …",
+          "cited": 106,
+          "url": "https://link.springer.com/article/10.1186/s10033-019-0327-9"
+        },
+        {
+          "id": "scholar_12_1762772500966",
+          "title": "Predictive control for the lateral and longitudinal dynamics in automated vehicles",
+          "authors": "O Pauca, CF Caruntu, C Lazar",
+          "year": "2019",
+          "source": "… on system theory, control and …, 2019  -  ieeexplore.ieee.org",
+          "abstract": "… driving at the same time. Thus, this paper proposes a solution to control the lateral and \nlongitudinal dynamics of a vehicle. … the lateral and longitudinal motions of a vehicle. To design a …",
+          "cited": 39,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8885839/"
+        },
+        {
+          "id": "scholar_14_1762772500966",
+          "title": "An adaptive modified neural lateral-longitudinal control system for path following of autonomous vehicles",
+          "authors": "N Tork, A Amirkhani, SB Shokouhi",
+          "year": "2021",
+          "source": "Engineering Science and Technology …, 2021  -  Elsevier",
+          "abstract": "… of a vehicle’s longitudinal and lateral motions, many of … motion control. By using the inputs \nof steering angle and torque, the presented control scheme tackles the simultaneous control of …",
+          "cited": 66,
+          "url": "https://www.sciencedirect.com/science/article/pii/S2215098620342658"
+        },
+        {
+          "id": "scholar_16_1762772500966",
+          "title": "Integrated longitudinal and lateral control for Kuafu-II autonomous vehicle",
+          "authors": "L Xu, Y Wang, H Sun, J Xin…",
+          "year": "2015",
+          "source": "IEEE Transactions on …, 2015  -  ieeexplore.ieee.org",
+          "abstract": "… describes automatic driving control system design of Kuafu-II autonomous vehicle as shown \n… of Intelligent Vehicle Future Challenge. In general, the autonomous vehicle integrates …",
+          "cited": 78,
+          "url": "https://ieeexplore.ieee.org/abstract/document/7335637/"
+        },
+        {
+          "id": "scholar_18_1762772500966",
+          "title": "A lateral and longitudinal dynamics control framework of autonomous vehicles based on multi-parameter joint estimation",
+          "authors": "Z Qin, L Chen, M Hu, X Chen",
+          "year": "2022",
+          "source": "IEEE Transactions on Vehicular …, 2022  -  ieeexplore.ieee.org",
+          "abstract": "… Autonomous driving technology usually includes three parts which … , motion planning and \ntrajectory tracking control. Trajectory tracking control includes lateral and longitudinal control …",
+          "cited": 94,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9745372/"
+        }
+      ],
+      "vision-based perception autonomous vehicles": [
+        {
+          "id": "scholar_0_1762772568448",
+          "title": "Vision-based environmental perception for autonomous driving",
+          "authors": "F Liu, Z Lu, X Lin",
+          "year": "2025",
+          "source": "… of the Institution of Mechanical Engineers …, 2025  -  journals.sagepub.com",
+          "abstract": "Visual perception plays an important role in autonomous driving. One of the primary tasks is \nobject detection and identification. Since the vision sensor is rich in color and texture …",
+          "cited": 53,
+          "url": "https://journals.sagepub.com/doi/abs/10.1177/09544070231203059",
+          "completionStatus": "completed",
+          "journal": "… of the Institution of Mechanical Engineers …, 2025  -  journals.sagepub.com",
+          "selected": true,
+          "aiRecommendReason": "文献标题和摘要明确聚焦于视觉感知在自动驾驶中的应用，涉及目标检测与识别等核心任务，与研究主题'自动驾驶'高度相关，能为环境感知技术提供直接参考。"
+        }
+      ],
+      "multi-sensor fusion autonomous driving": [
+        {
+          "id": "scholar_0_1762772461613",
+          "title": "Multi-sensor fusion in automated driving: A survey",
+          "authors": "Z Wang, Y Wu, Q Niu",
+          "year": "2019",
+          "source": "Ieee Access, 2019  -  ieeexplore.ieee.org",
+          "abstract": "… Through this investigation, we hope to analyze the current situation of multi-sensor fusion \nin the automated driving process and provide more efficient and reliable fusion strategies. …",
+          "cited": 613,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8943388/"
+        }
+      ],
+      "behavior decision making autonomous vehicles": [
+        {
+          "id": "scholar_0_1762772472288",
+          "title": "Planning and decision-making for autonomous vehicles",
+          "authors": "W Schwarting, J Alonso",
+          "year": "2018",
+          "source": "Mora…  -  … , and Autonomous …, 2018  -  annualreviews.org",
+          "abstract": "… Automated driving with humanlike driving behavior requires interactive and cooperative \ndecision-making. Other … decision-making without the need of intervehicle communication. While …",
+          "cited": 1398,
+          "url": "https://www.annualreviews.org/content/journals/10.1146/annurev-control-060117-105157"
+        },
+        {
+          "id": "scholar_2_1762772472288",
+          "title": "An integrated framework of decision making and motion planning for autonomous vehicles considering social behaviors",
+          "authors": "P Hang, C Lv, C Huang, J Cai, Z Hu…",
+          "year": "2020",
+          "source": "IEEE transactions on …, 2020  -  ieeexplore.ieee.org",
+          "abstract": "… To further advance the performance of AVs, in this study the decision making and motion … \nbehaviors, which can be reflected by driving styles and intentions of surrounding vehicles, …",
+          "cited": 229,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9271859/"
+        },
+        {
+          "id": "scholar_4_1762772472288",
+          "title": "Deep, consistent behavioral decision making with planning features for autonomous vehicles",
+          "authors": "L Qian, X Xu, Y Zeng, J Huang",
+          "year": "2019",
+          "source": "Electronics, 2019  -  mdpi.com",
+          "abstract": "… autonomous vehicles’ behavioral decisions face consistency issues between behavioral \ndecision … -based deep behavior decision method (PFBD) for autonomous driving in complex, …",
+          "cited": 30,
+          "url": "https://www.mdpi.com/2079-9292/8/12/1492"
+        },
+        {
+          "id": "scholar_6_1762772472288",
+          "title": "Social behavior for autonomous vehicles",
+          "authors": "W Schwarting, A Pierson, J Alonso",
+          "year": "2019",
+          "source": "Mora…  -  Proceedings of the …, 2019  -  pnas.org",
+          "abstract": "… Autonomous vehicles must also behave in safe and predictable ways … into autonomous-vehicle \ndecision making to quantify and predict the social behavior of other drivers and to behave …",
+          "cited": 605,
+          "url": "https://www.pnas.org/doi/abs/10.1073/pnas.1820676116"
+        },
+        {
+          "id": "scholar_8_1762772472288",
+          "title": "How do autonomous vehicles decide?",
+          "authors": "S Malik, MA Khan, H El",
+          "year": "2022",
+          "source": "Sayed, J Khan, O Ullah  -  Sensors, 2022  -  mdpi.com",
+          "abstract": "… planner is responsible for decision making ensuring; the vehicle follows road rules and … \nanalyzed the solutions relevant to behavioral decision-making approaches in autonomous …",
+          "cited": 38,
+          "url": "https://www.mdpi.com/1424-8220/23/1/317"
+        },
+        {
+          "id": "scholar_10_1762772472288",
+          "title": "Behavior decision in autonomous vehicles",
+          "authors": "M Pellkofer, ED Dickmanns",
+          "year": "2002",
+          "source": "… Vehicle Symposium, 2002. IEEE, 2002  -  ieeexplore.ieee.org",
+          "abstract": "… (CD): It resides on the top level of the hierarchy, being that unit with highest authority for \ndecision making. During mission performance it uses and coordinates the capabilities for …",
+          "cited": 32,
+          "url": "https://ieeexplore.ieee.org/abstract/document/1187999/"
+        },
+        {
+          "id": "scholar_12_1762772472288",
+          "title": "An intelligent lane-changing behavior prediction and decision-making strategy for an autonomous vehicle",
+          "authors": "W Wang, T Qie, C Yang, W Liu…",
+          "year": "2021",
+          "source": "IEEE transactions on …, 2021  -  ieeexplore.ieee.org",
+          "abstract": "… uncertain lane-changing behaviors around autonomous vehicles, which is a crucial problem \nfor driving safety [3]. To solving the problem, lane-changing behaviors should be predicted …",
+          "cited": 148,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9384235/"
+        },
+        {
+          "id": "scholar_14_1762772472289",
+          "title": "Decision making framework for autonomous vehicles driving behavior in complex scenarios via hierarchical state machine",
+          "authors": "X Wang, X Qi, P Wang, J Yang",
+          "year": "2021",
+          "source": "Autonomous Intelligent Systems, 2021  -  Springer",
+          "abstract": "… decision layers [22]. This paper proposes a decision-making method for autonomous vehicles \n… ), which enables intelligent decision-making during driving and allows planning the next …",
+          "cited": 53,
+          "url": "https://link.springer.com/article/10.1007/s43684-021-00015-x"
+        },
+        {
+          "id": "scholar_16_1762772472289",
+          "title": "Research on driving behavior decision making system of autonomous driving vehicle based on benefit evaluation model",
+          "authors": "P Wang, S Gao, L Li, S Cheng, H Zhao",
+          "year": "2020",
+          "source": "Archives of transport, 2020  -  yadda.icm.edu.pl",
+          "abstract": "… Furthermore, previous works on decision making of autonomous driving vehicle are mostly \n… to study and verify the behavior decision making of autonomous driving vehicle in real traffic …",
+          "cited": 25,
+          "url": "https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-a807552e-718e-47b8-aac3-13096228776c"
+        },
+        {
+          "id": "scholar_18_1762772472289",
+          "title": "Multipolicy decision-making for autonomous driving via changepoint-based behavior prediction.",
+          "authors": "E Galceran, AG Cunningham…",
+          "year": "2015",
+          "source": "Robotics: Science …, 2015  -  s3.us - east - 2.amazonaws.com",
+          "abstract": "… able to make decisions based on closedloop interactions between cars in a tractable … \nbehavioral prediction system using a realworld autonomous vehicle, and present decision-making …",
+          "cited": 138,
+          "url": "https://s3.us-east-2.amazonaws.com/publications.perl.engin.umich.edu/egalceran-2015b.pdf"
+        }
+      ],
+      "vehicle lateral control autonomous systems": [
+        {
+          "id": "scholar_0_1762772587488",
+          "title": "Lateral control of an autonomous vehicle",
+          "authors": "J Jiang, A Astolfi",
+          "year": "2018",
+          "source": "IEEE Transactions on Intelligent Vehicles, 2018  -  ieeexplore.ieee.org",
+          "abstract": "… the lateral control problem for autonomous vehicles. Some preliminary theorems which are \nessential to design the lateral controller … the solution to the lateral control problem is given in …",
+          "cited": 128,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8286943/",
+          "completionStatus": "completed",
+          "journal": "IEEE Transactions on Intelligent Vehicles, 2018  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "该文献直接针对自动驾驶车辆的关键技术问题——横向控制进行研究，标题和摘要明确表明其专注于解决自动驾驶车辆的横向控制问题，包括控制器设计和相关理论支撑，与自动驾驶核心技术高度相关，能为自动驾驶系统的路径跟踪和稳定性控制提供理论和方法支持。"
+        }
+      ],
+      "dynamic path planning autonomous driving": [
+        {
+          "id": "scholar_0_1762774556407",
+          "title": "Dynamic path planning for autonomous driving on various roads with avoidance of static and moving obstacles",
+          "authors": "X Hu, L Chen, B Tang, D Cao, H He",
+          "year": "2018",
+          "source": "Mechanical systems and signal …, 2018  -  Elsevier",
+          "abstract": "… time dynamic path planning method for autonomous driving that … path planning method \ndetermines not only an optimal path, but also the appropriate acceleration and speed for a vehicle…",
+          "cited": 411,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0888327017303825"
+        }
+      ]
+    }
+  },
+  "finalResults": [
+    {
+      "id": "scholar_0_1762774537494",
+      "title": "Visual Perception System for Autonomous Driving",
+      "authors": "Q Zhang, S Gou, W Li",
+      "year": "2024",
+      "source": "2024 IEEE/RSJ International …, 2024  -  ieeexplore.ieee.org",
+      "abstract": "… precise algorithms applicable to autonomous driving, such as … a visual-based perception \nsystem for autonomous driving … and mapping needs of autonomous driving. The system …",
+      "cited": 4,
+      "url": "https://ieeexplore.ieee.org/abstract/document/10802028/",
+      "selected": true
+    },
+    {
+      "id": "scholar_0_1762774546960",
+      "title": "Multi-sensor fusion in automated driving: A survey",
+      "authors": "Z Wang, Y Wu, Q Niu",
+      "year": "2019",
+      "source": "Ieee Access, 2019  -  ieeexplore.ieee.org",
+      "abstract": "… Through this investigation, we hope to analyze the current situation of multi-sensor fusion \nin the automated driving process and provide more efficient and reliable fusion strategies. …",
+      "cited": 613,
+      "url": "https://ieeexplore.ieee.org/abstract/document/8943388/",
+      "selected": false
+    },
+    {
+      "id": "scholar_0_1762774556407",
+      "title": "Dynamic path planning for autonomous driving on various roads with avoidance of static and moving obstacles",
+      "authors": "X Hu, L Chen, B Tang, D Cao, H He",
+      "year": "2018",
+      "source": "Mechanical systems and signal …, 2018  -  Elsevier",
+      "abstract": "… time dynamic path planning method for autonomous driving that … path planning method \ndetermines not only an optimal path, but also the appropriate acceleration and speed for a vehicle…",
+      "cited": 411,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0888327017303825"
+    }
+  ],
+  "selectedLiterature": [
+    {
+      "id": "scholar_0_1762772568448",
+      "title": "Vision-based environmental perception for autonomous driving",
+      "authors": "F Liu, Z Lu, X Lin",
+      "year": "2025",
+      "source": "… of the Institution of Mechanical Engineers …, 2025  -  journals.sagepub.com",
+      "abstract": "Visual perception plays an important role in autonomous driving. One of the primary tasks is \nobject detection and identification. Since the vision sensor is rich in color and texture …",
+      "cited": 53,
+      "url": "https://journals.sagepub.com/doi/abs/10.1177/09544070231203059",
+      "completionStatus": "completed",
+      "journal": "… of the Institution of Mechanical Engineers …, 2025  -  journals.sagepub.com",
+      "selected": true,
+      "aiRecommendReason": "文献标题和摘要明确聚焦于视觉感知在自动驾驶中的应用，涉及目标检测与识别等核心任务，与研究主题'自动驾驶'高度相关，能为环境感知技术提供直接参考。"
+    },
+    {
+      "id": "scholar_0_1762772577912",
+      "title": "Research on driving behavior decision making system of autonomous driving vehicle based on benefit evaluation model",
+      "authors": "P Wang, S Gao, L Li, S Cheng, H Zhao",
+      "year": "2020",
+      "source": "Archives of transport, 2020  -  yadda.icm.edu.pl",
+      "abstract": "… Therefore, it is necessary to study and verify the behavior decision making of autonomous \ndriving vehicle in real traffic environment. The real time performance and adaptability will be …",
+      "cited": 25,
+      "url": "https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-a807552e-718e-47b8-aac3-13096228776c",
+      "completionStatus": "completed",
+      "journal": "Archives of transport, 2020  -  yadda.icm.edu.pl",
+      "selected": true,
+      "aiRecommendReason": "该文献标题和摘要明确聚焦于自动驾驶车辆的行为决策系统研究，基于效益评估模型探讨自动驾驶在真实交通环境中的决策机制，与自动驾驶核心技术高度相关。文献重点研究的实时性和适应性正是自动驾驶决策系统的关键挑战，对理解自动驾驶车辆的决策逻辑和性能优化具有直接参考价值。"
+    },
+    {
+      "id": "scholar_0_1762774537494",
+      "title": "Visual Perception System for Autonomous Driving",
+      "authors": "Q Zhang, S Gou, W Li",
+      "year": "2024",
+      "source": "2024 IEEE/RSJ International …, 2024  -  ieeexplore.ieee.org",
+      "abstract": "… precise algorithms applicable to autonomous driving, such as … a visual-based perception \nsystem for autonomous driving … and mapping needs of autonomous driving. The system …",
+      "cited": 4,
+      "url": "https://ieeexplore.ieee.org/abstract/document/10802028/",
+      "selected": true
+    }
+  ],
+  "organizedData": [
+    {
+      "id": "scholar_0_1762772568448",
+      "title": "Vision-based environmental perception for autonomous driving",
+      "authors": "F Liu, Z Lu, X Lin",
+      "year": "2025",
+      "source": "… of the Institution of Mechanical Engineers …, 2025  -  journals.sagepub.com",
+      "abstract": "Visual perception plays an important role in autonomous driving. One of the primary tasks is \nobject detection and identification. Since the vision sensor is rich in color and texture …",
+      "cited": 53,
+      "url": "https://journals.sagepub.com/doi/abs/10.1177/09544070231203059",
+      "completionStatus": "completed",
+      "journal": "… of the Institution of Mechanical Engineers …, 2025  -  journals.sagepub.com",
+      "selected": true,
+      "aiRecommendReason": "文献标题和摘要明确聚焦于视觉感知在自动驾驶中的应用，涉及目标检测与识别等核心任务，与研究主题'自动驾驶'高度相关，能为环境感知技术提供直接参考。"
+    },
+    {
+      "id": "scholar_0_1762772577912",
+      "title": "Research on driving behavior decision making system of autonomous driving vehicle based on benefit evaluation model",
+      "authors": "P Wang, S Gao, L Li, S Cheng, H Zhao",
+      "year": "2020",
+      "source": "Archives of transport, 2020  -  yadda.icm.edu.pl",
+      "abstract": "… Therefore, it is necessary to study and verify the behavior decision making of autonomous \ndriving vehicle in real traffic environment. The real time performance and adaptability will be …",
+      "cited": 25,
+      "url": "https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-a807552e-718e-47b8-aac3-13096228776c",
+      "completionStatus": "completed",
+      "journal": "Archives of transport, 2020  -  yadda.icm.edu.pl",
+      "selected": true,
+      "aiRecommendReason": "该文献标题和摘要明确聚焦于自动驾驶车辆的行为决策系统研究，基于效益评估模型探讨自动驾驶在真实交通环境中的决策机制，与自动驾驶核心技术高度相关。文献重点研究的实时性和适应性正是自动驾驶决策系统的关键挑战，对理解自动驾驶车辆的决策逻辑和性能优化具有直接参考价值。"
+    },
+    {
+      "id": "scholar_0_1762774537494",
+      "title": "Visual Perception System for Autonomous Driving",
+      "authors": "Q Zhang, S Gou, W Li",
+      "year": "2024",
+      "source": "2024 IEEE/RSJ International …, 2024  -  ieeexplore.ieee.org",
+      "abstract": "… precise algorithms applicable to autonomous driving, such as … a visual-based perception \nsystem for autonomous driving … and mapping needs of autonomous driving. The system …",
+      "cited": 4,
+      "url": "https://ieeexplore.ieee.org/abstract/document/10802028/",
+      "selected": true
+    }
+  ],
+  "reviewContent": "### 1. 环境感知技术\n\n环境感知技术是自动驾驶系统的关键组成部分，负责通过传感器获取车辆周围环境信息，并对其进行处理和理解。随着自动驾驶技术的发展，环境感知技术已经从单一传感器方法演进到多传感器融合方案，以提高感知的准确性和鲁棒性。\n\n#### 1.1 基于视觉的感知方法\n\n基于视觉的感知方法主要依赖于摄像头传感器，利用计算机视觉算法从图像或视频流中提取环境信息。视觉传感器具有成本低、信息丰富（如颜色、纹理和形状）等优势，因此在自动驾驶领域得到广泛应用。根据文献[1]，视觉感知的核心任务包括目标检测、识别和跟踪。目标检测算法（如基于深度学习的方法）能够实时识别车辆、行人、交通标志等关键对象，而语义分割技术则进一步细化到像素级分类，提供更精确的环境理解。例如，卷积神经网络（CNN）在图像处理中表现出色，能够从复杂场景中提取特征，提高检测精度。然而，基于视觉的方法也面临挑战，如光照变化、天气条件和遮挡问题，这些因素可能导致感知误差。文献[1]强调，通过数据增强和迁移学习技术，可以部分缓解这些问题，提升视觉感知的鲁棒性。此外，立体视觉技术通过多摄像头系统提供深度信息，进一步增强了三维环境的重建能力。总体而言，基于视觉的感知方法在低成本自动驾驶系统中具有重要价值，但其局限性需要通过其他传感器技术来补充。\n\n#### 1.2 多传感器融合技术\n\n多传感器融合技术旨在整合来自多种传感器（如摄像头、激光雷达、雷达和惯性测量单元）的数据，以克服单一传感器的局限性，并提供更全面、可靠的环境感知。这种技术通过数据级、特征级或决策级融合，提高了目标检测、定位和跟踪的准确性。例如，摄像头提供丰富的纹理和颜色信息，而激光雷达则提供精确的距离和三维点云数据，雷达在恶劣天气条件下仍能稳定工作。文献[1]指出，多传感器融合可以有效应对视觉感知在低光照或雨雪天气中的不足，通过冗余设计增强系统的安全性。在实际应用中，融合算法如卡尔曼滤波、粒子滤波和深度学习模型被广泛使用，以实现传感器数据的实时对齐和集成。此外，多传感器融合还支持高精度地图的构建和实时定位，为自动驾驶车辆提供全局环境上下文。尽管多传感器融合技术显著提升了感知性能，但它也带来了计算复杂性和数据同步的挑战。文献[1]建议，优化融合算法和硬件设计可以降低这些影响，确保系统在实时操作中的效率。总体而言，多传感器融合是自动驾驶环境感知的主流趋势，能够为决策与路径规划模块提供更可靠的输入。\n\n### 2. 决策与路径规划\n\n决策与路径规划是自动驾驶系统的核心，负责根据环境感知信息生成安全、高效的行驶策略。该模块包括行为决策和路径规划两个子任务，其中行为决策确定车辆的宏观行为（如跟车、超车或停车），而路径规划则生成具体的行驶轨迹。这些任务需要在动态和不确定的环境中实时执行，以确保车辆的安全性和舒适性。\n\n#### 2.1 行为决策算法\n\n行为决策算法关注于在复杂交通场景中为自动驾驶车辆选择合适的高层行为，例如车道保持、变道或避障。这些算法通常基于规则、模型或学习的方法，以模拟人类驾驶员的决策过程。文献[2]提出了一种基于效益评估模型的行为决策系统，该系统通过量化不同行为的潜在收益和风险，实现自适应决策。在该模型中，系统会评估各种行为（如加速、减速或转向）在实时交通环境中的效益，考虑因素包括安全性、效率和法规遵守。效益评估模型结合了多目标优化，能够在动态场景中快速响应变化，例如处理突发障碍或交通流波动。文献[2]强调，这种方法的优势在于其实时性和适应性，能够通过在线学习调整决策策略，以应对未知环境。此外，行为决策算法还常与预测模块结合，用于预估其他交通参与者的行为，从而做出更明智的决策。尽管基于模型的方法在理论上具有可解释性，但它们在高度动态环境中可能面临计算瓶颈。因此，文献[2]建议采用混合方法，结合规则基础和机器学习，以提高决策的鲁棒性。总体而言，行为决策算法是确保自动驾驶车辆在真实世界中安全运行的关键，其发展正朝着更智能和自适应的方向演进。\n\n#### 2.2 动态路径规划\n\n动态路径规划负责在行为决策的基础上，生成具体的、可执行的行驶路径，同时考虑车辆的动态约束和环境的实时变化。与静态路径规划不同，动态路径规划需要应对道路障碍、交通流和其他车辆的不确定性，以确保路径的可行性和安全性。常用方法包括基于图搜索的算法（如A*算法）、基于采样的方法（如快速探索随机树）和优化-based方法（如模型预测控制）。这些算法通常考虑多个目标，如路径长度、行驶时间和舒适度，并在局部和全局规划层之间协调。例如，全局规划生成从起点到终点的粗略路径，而局部规划则根据实时传感器数据调整路径以避开动态障碍。文献[2]间接涉及了路径规划中的动态适应性，指出在效益评估模型中，路径规划需要与行为决策紧密集成，以实时优化轨迹。此外，动态路径规划还依赖于高精度地图和定位信息，以提供上下文支持。在复杂城市环境中，规划算法必须处理多模态交通（如行人和自行车），这增加了算法的复杂性。为了解决这些问题，现代方法常采用机器学习技术，如强化学习，以从数据中学习最优路径策略。尽管动态路径规划技术已取得显著进展，但在实时计算和不确定性处理方面仍有挑战。文献[2]强调，通过融合感知和预测数据，可以提升规划的准确性和效率。总体而言，动态路径规划是自动驾驶系统中实现自主导航的核心环节，其发展正推动着更高效和安全的行驶解决方案。\n\n### 3. 控制系统与执行\n\n控制系统与执行模块将决策与路径规划的输出转化为具体的车辆动作，确保车辆按照规划路径准确行驶。该模块主要包括横向控制和纵向控制，分别处理车辆的转向和速度/加速度管理。这些控制任务需要高精度和实时性，以应对车辆动力学和外部干扰。\n\n#### 3.1 车辆横向控制\n\n车辆横向控制专注于车辆的转向系统，旨在使车辆跟踪规划路径，同时保持稳定性和舒适性。横向控制算法需要考虑车辆的动力学模型、道路曲率和外部扰动（如侧风）。文献[3]详细探讨了横向控制问题的解决方案，提出了一种基于控制理论的方法，其中使用关键定理设计控制器以确保系统的稳定性和性能。该文献中，控制器设计依赖于状态反馈和模型预测，能够实时调整前轮转向角，以最小化路径跟踪误差。例如，比例-积分-微分（PID）控制器和线性二次调节器（LQR）是常见方法，但它们可能在非线性场景中表现不佳。因此，文献[3]引入了更高级的控制策略，如滑模控制或自适应控制，以处理模型不确定性和变化条件。这些方法通过在线调整控制器参数，提高了在复杂道路（如弯道或湿滑路面）中的鲁棒性。此外，横向控制还常与路径规划模块集成，使用预览信息来 anticipatory 调整转向，从而提升跟踪精度。文献[3]强调，控制器的设计必须考虑实际执行器的延迟和限制，以避免振荡或不稳定。实验验证表明，所提出的横向控制方法在模拟和真实环境中均能有效维持车辆轨迹，减少横向误差。总体而言，车辆横向控制是自动驾驶执行层的关键，其优化直接影响到行驶的安全性和乘客体验。\n\n#### 3.2 纵向运动控制\n\n纵向运动控制负责管理车辆的速度和加速度，通过控制油门、制动和传动系统来实现跟车、巡航或停车等行为。该控制任务需要确保车辆保持安全距离、遵守速度限制并提供平滑的乘坐体验。常用控制方法包括PID控制、模型预测控制（MPC）和模糊逻辑控制。这些算法基于车辆动力学模型和传感器输入（如前方车辆距离和速度），实时计算控制指令。例如，在自适应巡航控制（ACC）系统中，纵向控制器会根据前车状态调整本车速度，以维持预设跟车距离。文献[3]虽然主要关注横向控制，但其控制理论框架也可扩展至纵向控制，强调稳定性分析和扰动抑制。在实际应用中，纵向控制需处理非线性效应，如空气阻力和轮胎摩擦，因此常采用自适应或鲁棒控制策略来补偿这些不确定性。此外，纵向控制与横向控制的协调至关重要，以实现集成车辆动力学管理。例如，在紧急制动或加速场景中，控制器必须确保纵向和横向动作的协同，避免失控。文献[3]间接指出，通过统一控制框架可以提升整体性能。尽管纵向控制技术相对成熟，但在高动态交通中仍面临挑战，如预测其他车辆行为的准确性。优化控制算法和增强传感器融合可以进一步提高响应速度和可靠性。总体而言，纵向运动控制是自动驾驶系统中确保安全性和效率的重要组成部分，其发展正朝着更智能和自适应的方向演进。",
+  "review": "### 1. 环境感知技术\n\n环境感知技术是自动驾驶系统的关键组成部分，负责通过传感器获取车辆周围环境信息，并对其进行处理和理解。随着自动驾驶技术的发展，环境感知技术已经从单一传感器方法演进到多传感器融合方案，以提高感知的准确性和鲁棒性。\n\n#### 1.1 基于视觉的感知方法\n\n基于视觉的感知方法主要依赖于摄像头传感器，利用计算机视觉算法从图像或视频流中提取环境信息。视觉传感器具有成本低、信息丰富（如颜色、纹理和形状）等优势，因此在自动驾驶领域得到广泛应用。根据文献[1]，视觉感知的核心任务包括目标检测、识别和跟踪。目标检测算法（如基于深度学习的方法）能够实时识别车辆、行人、交通标志等关键对象，而语义分割技术则进一步细化到像素级分类，提供更精确的环境理解。例如，卷积神经网络（CNN）在图像处理中表现出色，能够从复杂场景中提取特征，提高检测精度。然而，基于视觉的方法也面临挑战，如光照变化、天气条件和遮挡问题，这些因素可能导致感知误差。文献[1]强调，通过数据增强和迁移学习技术，可以部分缓解这些问题，提升视觉感知的鲁棒性。此外，立体视觉技术通过多摄像头系统提供深度信息，进一步增强了三维环境的重建能力。总体而言，基于视觉的感知方法在低成本自动驾驶系统中具有重要价值，但其局限性需要通过其他传感器技术来补充。\n\n#### 1.2 多传感器融合技术\n\n多传感器融合技术旨在整合来自多种传感器（如摄像头、激光雷达、雷达和惯性测量单元）的数据，以克服单一传感器的局限性，并提供更全面、可靠的环境感知。这种技术通过数据级、特征级或决策级融合，提高了目标检测、定位和跟踪的准确性。例如，摄像头提供丰富的纹理和颜色信息，而激光雷达则提供精确的距离和三维点云数据，雷达在恶劣天气条件下仍能稳定工作。文献[1]指出，多传感器融合可以有效应对视觉感知在低光照或雨雪天气中的不足，通过冗余设计增强系统的安全性。在实际应用中，融合算法如卡尔曼滤波、粒子滤波和深度学习模型被广泛使用，以实现传感器数据的实时对齐和集成。此外，多传感器融合还支持高精度地图的构建和实时定位，为自动驾驶车辆提供全局环境上下文。尽管多传感器融合技术显著提升了感知性能，但它也带来了计算复杂性和数据同步的挑战。文献[1]建议，优化融合算法和硬件设计可以降低这些影响，确保系统在实时操作中的效率。总体而言，多传感器融合是自动驾驶环境感知的主流趋势，能够为决策与路径规划模块提供更可靠的输入。\n\n### 2. 决策与路径规划\n\n决策与路径规划是自动驾驶系统的核心，负责根据环境感知信息生成安全、高效的行驶策略。该模块包括行为决策和路径规划两个子任务，其中行为决策确定车辆的宏观行为（如跟车、超车或停车），而路径规划则生成具体的行驶轨迹。这些任务需要在动态和不确定的环境中实时执行，以确保车辆的安全性和舒适性。\n\n#### 2.1 行为决策算法\n\n行为决策算法关注于在复杂交通场景中为自动驾驶车辆选择合适的高层行为，例如车道保持、变道或避障。这些算法通常基于规则、模型或学习的方法，以模拟人类驾驶员的决策过程。文献[2]提出了一种基于效益评估模型的行为决策系统，该系统通过量化不同行为的潜在收益和风险，实现自适应决策。在该模型中，系统会评估各种行为（如加速、减速或转向）在实时交通环境中的效益，考虑因素包括安全性、效率和法规遵守。效益评估模型结合了多目标优化，能够在动态场景中快速响应变化，例如处理突发障碍或交通流波动。文献[2]强调，这种方法的优势在于其实时性和适应性，能够通过在线学习调整决策策略，以应对未知环境。此外，行为决策算法还常与预测模块结合，用于预估其他交通参与者的行为，从而做出更明智的决策。尽管基于模型的方法在理论上具有可解释性，但它们在高度动态环境中可能面临计算瓶颈。因此，文献[2]建议采用混合方法，结合规则基础和机器学习，以提高决策的鲁棒性。总体而言，行为决策算法是确保自动驾驶车辆在真实世界中安全运行的关键，其发展正朝着更智能和自适应的方向演进。\n\n#### 2.2 动态路径规划\n\n动态路径规划负责在行为决策的基础上，生成具体的、可执行的行驶路径，同时考虑车辆的动态约束和环境的实时变化。与静态路径规划不同，动态路径规划需要应对道路障碍、交通流和其他车辆的不确定性，以确保路径的可行性和安全性。常用方法包括基于图搜索的算法（如A*算法）、基于采样的方法（如快速探索随机树）和优化-based方法（如模型预测控制）。这些算法通常考虑多个目标，如路径长度、行驶时间和舒适度，并在局部和全局规划层之间协调。例如，全局规划生成从起点到终点的粗略路径，而局部规划则根据实时传感器数据调整路径以避开动态障碍。文献[2]间接涉及了路径规划中的动态适应性，指出在效益评估模型中，路径规划需要与行为决策紧密集成，以实时优化轨迹。此外，动态路径规划还依赖于高精度地图和定位信息，以提供上下文支持。在复杂城市环境中，规划算法必须处理多模态交通（如行人和自行车），这增加了算法的复杂性。为了解决这些问题，现代方法常采用机器学习技术，如强化学习，以从数据中学习最优路径策略。尽管动态路径规划技术已取得显著进展，但在实时计算和不确定性处理方面仍有挑战。文献[2]强调，通过融合感知和预测数据，可以提升规划的准确性和效率。总体而言，动态路径规划是自动驾驶系统中实现自主导航的核心环节，其发展正推动着更高效和安全的行驶解决方案。\n\n### 3. 控制系统与执行\n\n控制系统与执行模块将决策与路径规划的输出转化为具体的车辆动作，确保车辆按照规划路径准确行驶。该模块主要包括横向控制和纵向控制，分别处理车辆的转向和速度/加速度管理。这些控制任务需要高精度和实时性，以应对车辆动力学和外部干扰。\n\n#### 3.1 车辆横向控制\n\n车辆横向控制专注于车辆的转向系统，旨在使车辆跟踪规划路径，同时保持稳定性和舒适性。横向控制算法需要考虑车辆的动力学模型、道路曲率和外部扰动（如侧风）。文献[3]详细探讨了横向控制问题的解决方案，提出了一种基于控制理论的方法，其中使用关键定理设计控制器以确保系统的稳定性和性能。该文献中，控制器设计依赖于状态反馈和模型预测，能够实时调整前轮转向角，以最小化路径跟踪误差。例如，比例-积分-微分（PID）控制器和线性二次调节器（LQR）是常见方法，但它们可能在非线性场景中表现不佳。因此，文献[3]引入了更高级的控制策略，如滑模控制或自适应控制，以处理模型不确定性和变化条件。这些方法通过在线调整控制器参数，提高了在复杂道路（如弯道或湿滑路面）中的鲁棒性。此外，横向控制还常与路径规划模块集成，使用预览信息来 anticipatory 调整转向，从而提升跟踪精度。文献[3]强调，控制器的设计必须考虑实际执行器的延迟和限制，以避免振荡或不稳定。实验验证表明，所提出的横向控制方法在模拟和真实环境中均能有效维持车辆轨迹，减少横向误差。总体而言，车辆横向控制是自动驾驶执行层的关键，其优化直接影响到行驶的安全性和乘客体验。\n\n#### 3.2 纵向运动控制\n\n纵向运动控制负责管理车辆的速度和加速度，通过控制油门、制动和传动系统来实现跟车、巡航或停车等行为。该控制任务需要确保车辆保持安全距离、遵守速度限制并提供平滑的乘坐体验。常用控制方法包括PID控制、模型预测控制（MPC）和模糊逻辑控制。这些算法基于车辆动力学模型和传感器输入（如前方车辆距离和速度），实时计算控制指令。例如，在自适应巡航控制（ACC）系统中，纵向控制器会根据前车状态调整本车速度，以维持预设跟车距离。文献[3]虽然主要关注横向控制，但其控制理论框架也可扩展至纵向控制，强调稳定性分析和扰动抑制。在实际应用中，纵向控制需处理非线性效应，如空气阻力和轮胎摩擦，因此常采用自适应或鲁棒控制策略来补偿这些不确定性。此外，纵向控制与横向控制的协调至关重要，以实现集成车辆动力学管理。例如，在紧急制动或加速场景中，控制器必须确保纵向和横向动作的协同，避免失控。文献[3]间接指出，通过统一控制框架可以提升整体性能。尽管纵向控制技术相对成熟，但在高动态交通中仍面临挑战，如预测其他车辆行为的准确性。优化控制算法和增强传感器融合可以进一步提高响应速度和可靠性。总体而言，纵向运动控制是自动驾驶系统中确保安全性和效率的重要组成部分，其发展正朝着更智能和自适应的方向演进。"
+}
