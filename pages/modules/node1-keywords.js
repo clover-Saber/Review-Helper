@@ -1,7 +1,7 @@
 // 节点1：关键词分析模块
 window.Node1Keywords = {
     // 自动执行关键词分析
-    async execute(apiKey, requirementData) {
+    async execute(apiKey, requirementData, apiProvider = 'deepseek') {
         console.log('[Node1Keywords.execute] ========== STARTING EXECUTE ==========');
         console.log('[Node1Keywords.execute] Parameters:', {
             hasApiKey: !!apiKey,
@@ -41,8 +41,8 @@ ${requirementData.outline}
 - 所有count的总和必须等于${targetCount}
 - 只返回JSON，不要添加任何其他文字说明`;
 
-        console.log('[Node1Keywords.execute] Calling API.callDeepSeek...');
-        const content = await window.API.callDeepSeek(apiKey, [{ role: 'user', content: prompt }], 0.7);
+        console.log('[Node1Keywords.execute] Calling API.callAPI...');
+        const content = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.7);
         console.log('[Node1Keywords.execute] API returned, content length:', content ? content.length : 0);
         console.log('[Node1Keywords.execute] Content preview:', content ? content.substring(0, 200) : 'N/A');
         

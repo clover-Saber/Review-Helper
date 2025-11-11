@@ -55,5 +55,8 @@
     "linux": {
       "target": "AppImage"
     }
+  },
+  "dependencies": {
+    "@google/genai": "^1.29.0"
   }
 }

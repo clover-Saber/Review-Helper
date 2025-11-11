@@ -1,7 +1,7 @@
 // 需求管理模块：处理主页面的需求分析功能
 window.RequirementManager = {
     // 分析需求并生成大纲
-    async analyzeRequirement(apiKey, requirement, targetCount) {
+    async analyzeRequirement(apiKey, requirement, targetCount, apiProvider = 'deepseek') {
         const prompt = `你是一位专业的学术文献综述助手。用户需要撰写一篇文献综述。请分析以下需求：
 
 用户需求：
@@ -37,7 +37,7 @@ ${requirement}
 - 所有内容必须使用中文
 - 仅返回JSON，不要添加任何其他文字说明`;
 
-        const content = await window.API.callDeepSeek(apiKey, [{ role: 'user', content: prompt }], 0.7);
+        const content = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.7);
         
         // 解析JSON
         let jsonStr = content;

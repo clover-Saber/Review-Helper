@@ -780,6 +780,37 @@
                 font-size: 16px;
             }
         }
+        /* API供应商选择框样式 */
+        .api-provider-select {
+            width: 100%;
+            padding: 12px 16px;
+            padding-right: 40px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 15px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px;
+        }
+        
+        .api-provider-select:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .api-provider-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -812,16 +843,32 @@
                     <p style="color: #666; margin-bottom: 20px;">请填写以下信息，系统将自动分析需求并生成文献综述</p>
                     
                     <div class="form-group">
-                        <label>DeepSeek API Key:</label>
-                        <input type="password" id="main-api-key-input" placeholder="请输入您的DeepSeek API Key">
-                        <small style="display: block; margin-top: 5px; color: #666;">
-                            <a href="https://api-docs.deepseek.com/zh-cn/api/deepseek-api/" target="_blank" 
-                               style="color: #3b82f6; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s;"
-                               onmouseover="this.style.color='#2563eb'" 
-                               onmouseout="this.style.color='#3b82f6'">
-                                🔗 DeepSeek API 申请地址
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">API供应商:</label>
+                        <select id="main-api-provider-select" class="api-provider-select" 
+                                onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onmouseout="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'"
+                                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'">
+                            <option value="deepseek">DeepSeek</option>
+                            <option value="gemini">Google Gemini</option>
+                        </select>
+                        <div id="main-api-docs-container" style="margin-top: 8px;">
+                            <a id="main-api-docs-link" href="https://api-docs.deepseek.com/zh-cn/api/deepseek-api/" target="_blank" 
+                               style="color: #3b82f6; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; transition: all 0.2s ease; padding: 4px 0;"
+                               onmouseover="this.style.color='#2563eb'; this.style.transform='translateX(2px)'"
+                               onmouseout="this.style.color='#3b82f6'; this.style.transform='translateX(0)'">
+                                <span>🔗</span>
+                                <span id="main-api-docs-text">API 申请地址</span>
                             </a>
-                        </small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label id="main-api-key-label" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">API Key:</label>
+                        <input type="password" id="main-api-key-input" placeholder="请输入您的API Key" 
+                               style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 15px; transition: all 0.3s ease;"
+                               onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                               onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'">
                     </div>
                     
                     <div class="form-group">
@@ -1079,7 +1126,6 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                             <h4 style="margin: 0;">已补全文献 (<span id="complete-count">0</span> 篇)</h4>
                             <div style="display: flex; gap: 10px;">
-                                <button class="btn btn-warning" id="clear-completion-btn" style="display: none;">清空补全状态</button>
                                 <button class="btn btn-success" id="save-completion-btn" style="display: none;">保存修改</button>
                             </div>
                         </div>
@@ -1134,7 +1180,6 @@
                     <!-- 操作按钮行 -->
                     <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
                         <button class="btn btn-warning" id="export-excel-btn">导出Excel</button>
-                        <button class="btn btn-warning" id="clear-filter-status-btn" style="display: none;">清空AI判断状态</button>
                         <button class="btn btn-success" id="save-filter-btn" style="display: none;">保存修改</button>
                     </div>
                     
@@ -1178,7 +1223,7 @@
                         <h4>生成的综述:</h4>
                         <textarea id="review-content" rows="20" style="width: 100%; padding: 15px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; line-height: 1.6;"></textarea>
                         <div style="margin-top: 15px;">
-                            <button class="btn btn-success" id="save-review-btn">保存综述</button>
+                            <button class="btn btn-success" id="copy-review-btn">复制综述内容</button>
                             <button class="btn btn-secondary" id="export-word-btn" style="margin-left: 10px;">导出Word</button>
                         </div>
                     </div>

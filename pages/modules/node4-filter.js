@@ -1,7 +1,7 @@
 // 节点4：精选文献模块
 window.Node4Filter = {
     // 自动执行文献筛选
-    async execute(apiKey, allLiterature, requirement, targetCount, onProgress) {
+    async execute(apiKey, allLiterature, requirement, targetCount, onProgress, apiProvider = 'deepseek') {
         // 数据验证
         if (!allLiterature || !Array.isArray(allLiterature)) {
             console.error('节点4执行失败: allLiterature不是数组或为空');
@@ -54,7 +54,7 @@ window.Node4Filter = {
 
 如果相关，请给出推荐理由；如果不相关，请简要说明原因。`;
 
-                const answer = await window.API.callDeepSeek(apiKey, [{ role: 'user', content: prompt }], 0.3);
+                const answer = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.3);
                 
                 // 尝试解析JSON
                 let isRelevant = false;

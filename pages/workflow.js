@@ -36,10 +36,10 @@ window.electronAPI = {
             return ipcRenderer.invoke('search-google-scholar', keyword, limit, minYear);
         }
     },
-    openScholarLogin: () => {
+    openScholarLogin: (autoSearchKeyword = null, autoSearchLimit = 50) => {
         if (window.require) {
             const { ipcRenderer } = window.require('electron');
-            return ipcRenderer.invoke('open-scholar-login');
+            return ipcRenderer.invoke('open-scholar-login', autoSearchKeyword, autoSearchLimit);
         }
     },
     extractAbstractFromUrl: (url) => {

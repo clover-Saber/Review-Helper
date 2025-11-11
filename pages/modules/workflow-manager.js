@@ -12,7 +12,9 @@ window.WorkflowManager = {
             4: 'pending',
             5: 'pending'
         },
-        globalApiKey: '',
+        globalApiKey: '', // 当前使用的API Key（根据选择的供应商动态更新）
+        apiKeys: {}, // 按供应商存储的API Keys: { deepseek: 'xxx', openai: 'yyy', ... }
+        apiProvider: 'deepseek', // 默认使用DeepSeek
         requirementData: {
             requirement: '',
             targetCount: 50,
@@ -53,6 +55,9 @@ window.WorkflowManager = {
         await this.loadCurrentProject();
         this.bindEvents();
         this.checkRequirementStatus();
+        
+        // 初始化API供应商UI
+        this.updateApiProviderUI();
         
         // 初始化按钮显示状态
         this.updateGenerateButtonState();
@@ -132,9 +137,23 @@ window.WorkflowManager = {
                     if (data.projectDescription) {
                         this.state.requirementData.requirement = data.projectDescription;
                     }
+                    // 兼容旧格式：如果存在apiKey，迁移到新格式apiKeys
                     if (data.config.apiKey) {
+                        const oldProvider = data.config.apiProvider || 'deepseek';
+                        if (!this.state.apiKeys) {
+                            this.state.apiKeys = {};
+                        }
+                        this.state.apiKeys[oldProvider] = data.config.apiKey;
                         this.state.globalApiKey = data.config.apiKey;
                     }
+                    if (data.config.apiProvider) {
+                        this.state.apiProvider = data.config.apiProvider;
+                    }
+                }
+                
+                // 加载新格式的apiKeys
+                if (data.config && data.config.apiKeys && typeof data.config.apiKeys === 'object') {
+                    this.state.apiKeys = { ...this.state.apiKeys, ...data.config.apiKeys };
                 }
                 
                 // 优先使用keywordsPlan中的关键词，确保keywords和keywordsPlan同步
@@ -214,6 +233,66 @@ window.WorkflowManager = {
         }
     },
 
+    // 更新API供应商UI（根据选择的供应商更新文档链接等）
+    updateApiProviderUI() {
+        const providerSelect = document.getElementById('main-api-provider-select');
+        const docsLink = document.getElementById('main-api-docs-link');
+        const apiKeyLabel = document.getElementById('main-api-key-label');
+        const apiKeyInput = document.getElementById('main-api-key-input');
+        
+        if (!providerSelect) return;
+        
+        const provider = providerSelect.value || 'deepseek';
+        const oldProvider = this.state.apiProvider || 'deepseek';
+        
+        // 切换供应商时，保存当前供应商的Key，并加载新供应商的Key
+        if (oldProvider !== provider && apiKeyInput) {
+            // 保存旧供应商的Key
+            if (!this.state.apiKeys) {
+                this.state.apiKeys = {};
+            }
+            const currentKey = apiKeyInput.value || this.state.globalApiKey;
+            if (currentKey) {
+                this.state.apiKeys[oldProvider] = currentKey;
+            }
+            
+            // 加载新供应商的Key
+            if (this.state.apiKeys[provider]) {
+                apiKeyInput.value = this.state.apiKeys[provider];
+                this.state.globalApiKey = this.state.apiKeys[provider];
+            } else {
+                // 如果新供应商没有保存的Key，清空输入框
+                apiKeyInput.value = '';
+                this.state.globalApiKey = '';
+            }
+        }
+        
+        // 更新当前供应商
+        this.state.apiProvider = provider;
+        
+        // 更新文档链接
+        const docsText = document.getElementById('main-api-docs-text');
+        if (docsLink && window.API && window.API.providers[provider]) {
+            const providerConfig = window.API.providers[provider];
+            docsLink.href = providerConfig.docsUrl;
+            if (docsText) {
+                docsText.textContent = `${providerConfig.name} API 申请地址`;
+            }
+        }
+        
+        // 更新API Key输入框的placeholder
+        if (apiKeyInput && window.API && window.API.providers[provider]) {
+            const providerConfig = window.API.providers[provider];
+            apiKeyInput.placeholder = `请输入您的${providerConfig.name} API Key`;
+        }
+    },
+
+    // 获取当前选择的API供应商
+    getCurrentApiProvider() {
+        const providerSelect = document.getElementById('main-api-provider-select');
+        return providerSelect ? (providerSelect.value || 'deepseek') : (this.state.apiProvider || 'deepseek');
+    },
+
     // 检查需求状态
     checkRequirementStatus() {
         // 确保UI元素存在
@@ -232,13 +311,36 @@ window.WorkflowManager = {
             outline: this.state.requirementData.outline
         });
 
-        // 加载API Key
-        if (this.state.projectData.config && this.state.projectData.config.apiKey) {
-            window.UIUtils.setValue('main-api-key-input', this.state.projectData.config.apiKey);
-            this.state.globalApiKey = this.state.projectData.config.apiKey;
-        } else if (this.state.globalApiKey) {
-            // 如果state中有但config中没有，也设置
-            window.UIUtils.setValue('main-api-key-input', this.state.globalApiKey);
+        // 加载API供应商
+        if (this.state.projectData.config && this.state.projectData.config.apiProvider) {
+            window.UIUtils.setValue('main-api-provider-select', this.state.projectData.config.apiProvider);
+            this.state.apiProvider = this.state.projectData.config.apiProvider;
+        } else if (this.state.apiProvider) {
+            window.UIUtils.setValue('main-api-provider-select', this.state.apiProvider);
+        }
+        this.updateApiProviderUI();
+
+        // 加载API Key（根据当前选择的供应商）
+        const currentProvider = this.getCurrentApiProvider();
+        if (this.state.apiKeys && this.state.apiKeys[currentProvider]) {
+            // 从apiKeys对象中加载当前供应商的Key
+            const apiKey = this.state.apiKeys[currentProvider];
+            window.UIUtils.setValue('main-api-key-input', apiKey);
+            this.state.globalApiKey = apiKey;
+        } else if (this.state.projectData.config && this.state.projectData.config.apiKey) {
+            // 兼容旧格式：如果存在旧的apiKey，迁移到新格式
+            if (!this.state.apiKeys) {
+                this.state.apiKeys = {};
+            }
+            const oldProvider = this.state.projectData.config.apiProvider || 'deepseek';
+            this.state.apiKeys[oldProvider] = this.state.projectData.config.apiKey;
+            if (currentProvider === oldProvider) {
+                window.UIUtils.setValue('main-api-key-input', this.state.projectData.config.apiKey);
+                this.state.globalApiKey = this.state.projectData.config.apiKey;
+            }
+        } else if (this.state.globalApiKey && this.state.apiKeys && this.state.apiKeys[currentProvider]) {
+            // 如果state中有但输入框没有，也设置
+            window.UIUtils.setValue('main-api-key-input', this.state.apiKeys[currentProvider]);
         }
         
         // 加载需求描述
@@ -262,9 +364,18 @@ window.WorkflowManager = {
         const statusEl = document.getElementById('google-scholar-verify-status');
         if (this.state.googleScholarVerified) {
             if (verifyBtn) {
-                verifyBtn.innerHTML = '✓ 已验证';
-                verifyBtn.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
-                verifyBtn.disabled = true;
+                verifyBtn.innerHTML = '✓ 已验证（点击重新验证）';
+                verifyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                verifyBtn.disabled = false;
+                verifyBtn.style.opacity = '1';
+                // 移除所有旧的事件监听器
+                const newBtn = verifyBtn.cloneNode(true);
+                verifyBtn.parentNode.replaceChild(newBtn, verifyBtn);
+                // 添加重新验证监听器
+                const newVerifyBtn = document.getElementById('verify-google-scholar-btn');
+                if (newVerifyBtn) {
+                    newVerifyBtn.addEventListener('click', () => this.reverifyGoogleScholar());
+                }
             }
             if (statusEl) {
                 statusEl.style.display = 'inline';
@@ -276,6 +387,14 @@ window.WorkflowManager = {
                 verifyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
                 verifyBtn.disabled = false;
                 verifyBtn.style.opacity = '1';
+                // 移除所有旧的事件监听器
+                const newBtn = verifyBtn.cloneNode(true);
+                verifyBtn.parentNode.replaceChild(newBtn, verifyBtn);
+                // 添加验证监听器
+                const newVerifyBtn = document.getElementById('verify-google-scholar-btn');
+                if (newVerifyBtn) {
+                    newVerifyBtn.addEventListener('click', () => this.verifyGoogleScholar(false));
+                }
             }
             if (statusEl) {
                 statusEl.style.display = 'none';
@@ -751,12 +870,10 @@ window.WorkflowManager = {
                 if (this.state.allLiterature.length > 0) {
                     window.Node3Complete.display(this.state.allLiterature);
                 }
-                // 如果节点3已完成，显示清空补全状态、保存修改和重新补全文献按钮
+                // 如果节点3已完成，显示保存修改和重新补全文献按钮
                 if (this.state.nodeStates[3] === 'completed') {
-                    const clearBtn = document.getElementById('clear-completion-btn');
                     const saveBtn = document.getElementById('save-completion-btn');
                     const regenerateBtn = document.getElementById('regenerate-completion-btn');
-                    if (clearBtn) clearBtn.style.display = 'block';
                     if (saveBtn) saveBtn.style.display = 'inline-block';
                     if (regenerateBtn) regenerateBtn.style.display = 'block';
                 }
@@ -773,12 +890,10 @@ window.WorkflowManager = {
                     // 用户点击节点进入时使用编辑模式（editable=true）
                     window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
                 }
-                // 如果节点4已完成，显示清空AI判断状态、保存修改和重新精选文献按钮
+                // 如果节点4已完成，显示保存修改和重新精选文献按钮
                 if (this.state.nodeStates[4] === 'completed') {
-                    const clearBtn = document.getElementById('clear-filter-status-btn');
                     const saveBtn = document.getElementById('save-filter-btn');
                     const regenerateBtn = document.getElementById('regenerate-filter-btn');
-                    if (clearBtn) clearBtn.style.display = 'inline-block';
                     if (saveBtn) saveBtn.style.display = 'inline-block';
                     if (regenerateBtn) regenerateBtn.style.display = 'block';
                 }
@@ -824,39 +939,6 @@ window.WorkflowManager = {
                 organizedData: this.state.selectedLiterature
             });
         }
-    },
-
-    // 清空AI判断状态
-    clearFilterStatus() {
-        if (!confirm('确定要清空所有文献的AI判断状态吗？这将删除AI推荐理由和选择状态，恢复到节点3时的状态。')) {
-            return;
-        }
-
-        let clearedCount = 0;
-        for (const lit of this.state.allLiterature) {
-            // 清空AI判断相关的字段
-            if (lit.aiRecommendReason) {
-                delete lit.aiRecommendReason;
-                clearedCount++;
-            }
-            // 清空选择状态
-            lit.selected = false;
-        }
-
-        // 清空已选文献列表
-        this.state.selectedLiterature = [];
-
-        // 重新显示（用户手动操作时使用编辑模式）
-        window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
-        
-        // 保存数据
-        this.saveProjectData({ 
-            finalResults: this.state.allLiterature,
-            selectedLiterature: [],
-            organizedData: []  // 清空时同时清空organizedData
-        });
-        
-        window.UIUtils.showToast(`已清空 ${clearedCount} 篇文献的AI判断状态`, 'success');
     },
 
     // 更新文献内容
@@ -1099,7 +1181,8 @@ window.WorkflowManager = {
 
 如果相关，请给出推荐理由；如果不相关，请简要说明原因。`;
 
-            const answer = await window.API.callDeepSeek(this.state.globalApiKey, [{ role: 'user', content: prompt }], 0.3);
+            const apiProvider = this.getCurrentApiProvider();
+            const answer = await window.API.callAPI(apiProvider, this.state.globalApiKey, [{ role: 'user', content: prompt }], 0.3);
             
             // 尝试解析JSON
             let isRelevant = false;
@@ -1206,51 +1289,6 @@ window.WorkflowManager = {
         window.UIUtils.showToast(`已导出 ${this.state.selectedLiterature.length} 篇文献到Excel`, 'success');
     },
 
-    // 清空补全状态（恢复到节点2时的状态）
-    clearCompletionStatus() {
-        if (!confirm('确定要清空所有文献的补全状态吗？这将删除节点3补全的摘要、期刊、被引次数等信息，恢复到节点2时的原始状态。')) {
-            return;
-        }
-
-        let clearedCount = 0;
-        for (const lit of this.state.allLiterature) {
-            // 如果文献有completionStatus，说明经过了节点3的处理
-            if (lit.completionStatus) {
-                // 清空节点3补全的标记
-                delete lit.completionStatus;
-                
-                // 清空节点3补全的字段
-                // journal是节点3补全的（节点2搜索时只有source，没有journal）
-                if (lit.journal) {
-                    delete lit.journal;
-                }
-                
-                // cited是节点3补全的
-                if (lit.cited !== undefined) {
-                    delete lit.cited;
-                }
-                
-                // abstract：如果节点2搜索时没有abstract，节点3补全了abstract，则清空
-                // 但为了安全，我们不清空abstract，因为节点2搜索时可能已经有abstract
-                // 如果用户需要，可以手动删除
-                
-                clearedCount++;
-            }
-        }
-
-        // 重新显示节点3的结果（清空后更新显示）
-        window.Node3Complete.display(this.state.allLiterature);
-        
-        // 保存数据（确保保存所有相关字段）
-        this.saveProjectData({ 
-            finalResults: this.state.allLiterature,
-            selectedLiterature: this.state.selectedLiterature,
-            organizedData: this.state.selectedLiterature
-        });
-        
-        window.UIUtils.showToast(`已清空 ${clearedCount} 篇文献的补全状态，恢复到节点2时的状态`, 'success');
-    },
-
     // 保存项目数据
     async saveProjectData(patch) {
         if (!this.state.currentProject) {
@@ -1269,6 +1307,7 @@ window.WorkflowManager = {
         try {
             // 从输入框获取最新数据（确保保存的是用户当前输入的内容）
             const apiKey = window.UIUtils.getValue('main-api-key-input') || this.state.globalApiKey;
+            const apiProvider = this.getCurrentApiProvider();
             const requirement = window.UIUtils.getValue('main-requirement-input') || this.state.requirementData.requirement;
             const targetCount = parseInt(window.UIUtils.getValue('main-target-count')) || this.state.requirementData.targetCount || 50;
             const outline = window.UIUtils.getValue('main-outline-editor') || this.state.requirementData.outline;
@@ -1276,7 +1315,13 @@ window.WorkflowManager = {
             // 更新状态
             if (apiKey) {
                 this.state.globalApiKey = apiKey;
+                // 保存到apiKeys对象中
+                if (!this.state.apiKeys) {
+                    this.state.apiKeys = {};
+                }
+                this.state.apiKeys[apiProvider] = apiKey;
             }
+            this.state.apiProvider = apiProvider;
             if (requirement) {
                 this.state.requirementData.requirement = requirement;
             }
@@ -1290,7 +1335,8 @@ window.WorkflowManager = {
             // 收集当前所有状态数据
             const dataToSave = {
                 config: {
-                    apiKey: this.state.globalApiKey
+                    apiKeys: this.state.apiKeys || {}, // 保存所有供应商的Keys
+                    apiProvider: this.state.apiProvider
                 },
                 requirementData: this.state.requirementData,
                 keywords: this.state.keywords,
@@ -1392,14 +1438,6 @@ window.WorkflowManager = {
             });
         }
 
-        // 节点3清空补全状态按钮事件
-        const clearCompletionBtn = document.getElementById('clear-completion-btn');
-        if (clearCompletionBtn) {
-            clearCompletionBtn.addEventListener('click', () => {
-                this.clearCompletionStatus();
-            });
-        }
-
         // 节点3保存修改按钮事件
         const saveCompletionBtn = document.getElementById('save-completion-btn');
         if (saveCompletionBtn) {
@@ -1413,14 +1451,6 @@ window.WorkflowManager = {
         if (regenerateCompletionBtn) {
             regenerateCompletionBtn.addEventListener('click', () => {
                 this.regenerateCompletion();
-            });
-        }
-
-        // 节点4清空AI判断状态按钮事件
-        const clearFilterStatusBtn = document.getElementById('clear-filter-status-btn');
-        if (clearFilterStatusBtn) {
-            clearFilterStatusBtn.addEventListener('click', () => {
-                this.clearFilterStatus();
             });
         }
 
@@ -1568,16 +1598,33 @@ window.WorkflowManager = {
             });
         }
 
-        // Google Scholar验证按钮
-        const verifyScholarBtn = document.getElementById('verify-google-scholar-btn');
-        if (verifyScholarBtn) {
-            verifyScholarBtn.addEventListener('click', () => this.verifyGoogleScholar());
+        // API供应商选择变化事件
+        const apiProviderSelect = document.getElementById('main-api-provider-select');
+        if (apiProviderSelect) {
+            apiProviderSelect.addEventListener('change', () => {
+                this.updateApiProviderUI();
+            });
         }
+
+        // Google Scholar验证按钮（在checkRequirementStatus中动态绑定，这里不绑定）
+        // 验证按钮的事件绑定在checkRequirementStatus中根据验证状态动态设置
 
         // 生成综述按钮事件
         const generateReviewBtn = document.getElementById('generate-review-btn');
         if (generateReviewBtn) {
             generateReviewBtn.addEventListener('click', () => this.generateReview());
+        }
+
+        // 复制综述内容按钮事件
+        const copyReviewBtn = document.getElementById('copy-review-btn');
+        if (copyReviewBtn) {
+            copyReviewBtn.addEventListener('click', () => this.copyReviewContent());
+        }
+
+        // 导出Word按钮事件
+        const exportWordBtn = document.getElementById('export-word-btn');
+        if (exportWordBtn) {
+            exportWordBtn.addEventListener('click', () => this.exportReviewToWord());
         }
 
         // 节点1关键词分析按钮事件
@@ -1588,13 +1635,19 @@ window.WorkflowManager = {
     },
 
     // Google Scholar验证
-    async verifyGoogleScholar() {
+    async verifyGoogleScholar(isReverify = false) {
         const verifyBtn = document.getElementById('verify-google-scholar-btn');
         const statusEl = document.getElementById('google-scholar-verify-status');
         
         if (!window.electronAPI || !window.electronAPI.openScholarLogin) {
             window.UIUtils.showToast('无法打开验证窗口（API不可用）', 'error');
-            return;
+            return false;
+        }
+
+        // 如果已验证且不是重新验证，直接返回
+        if (!isReverify && this.state.googleScholarVerified) {
+            window.UIUtils.showToast('当前项目已验证，如需重新验证请点击"重新验证"', 'info');
+            return true;
         }
 
         try {
@@ -1607,8 +1660,8 @@ window.WorkflowManager = {
 
             window.UIUtils.showToast('正在打开Google Scholar验证窗口...', 'info');
 
-            // 调用主进程打开验证窗口
-            const result = await window.electronAPI.openScholarLogin();
+            // 调用主进程打开验证窗口（传入自动搜索参数）
+            const result = await window.electronAPI.openScholarLogin('Machine learning', 50);
             
             if (result && result.success) {
                 // 验证完成
@@ -1630,11 +1683,19 @@ window.WorkflowManager = {
                     });
                 }
                 
-                // 更新UI
+                // 更新UI（通过重新绑定事件）
                 if (verifyBtn) {
-                    verifyBtn.innerHTML = '✓ 已验证';
-                    verifyBtn.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
-                    verifyBtn.disabled = true;
+                    verifyBtn.innerHTML = '✓ 已验证（点击重新验证）';
+                    verifyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    verifyBtn.disabled = false;
+                    verifyBtn.style.opacity = '1';
+                    // 移除旧的事件监听器，添加新的重新验证监听器
+                    const newBtn = verifyBtn.cloneNode(true);
+                    verifyBtn.parentNode.replaceChild(newBtn, verifyBtn);
+                    const newVerifyBtn = document.getElementById('verify-google-scholar-btn');
+                    if (newVerifyBtn) {
+                        newVerifyBtn.addEventListener('click', () => this.reverifyGoogleScholar());
+                    }
                 }
                 
                 if (statusEl) {
@@ -1642,6 +1703,7 @@ window.WorkflowManager = {
                 }
                 
                 window.UIUtils.showToast('Google Scholar验证完成！', 'success');
+                return true;
             } else {
                 // 验证失败或取消
                 const errorMsg = result?.error || '验证失败或已取消';
@@ -1653,6 +1715,7 @@ window.WorkflowManager = {
                     verifyBtn.innerHTML = '🔐 进行Google Scholar验证';
                     verifyBtn.style.opacity = '1';
                 }
+                return false;
             }
         } catch (error) {
             console.error('Google Scholar验证失败:', error);
@@ -1664,7 +1727,25 @@ window.WorkflowManager = {
                 verifyBtn.innerHTML = '🔐 进行Google Scholar验证';
                 verifyBtn.style.opacity = '1';
             }
+            return false;
         }
+    },
+
+    // 重新验证Google Scholar（允许用户因为更换网络环境重新验证）
+    async reverifyGoogleScholar() {
+        const confirmed = confirm('确定要重新验证Google Scholar吗？\n\n重新验证将清除当前验证状态，适用于更换网络环境等情况。');
+        if (!confirmed) {
+            return;
+        }
+
+        // 清除当前验证状态
+        this.state.googleScholarVerified = false;
+        if (this.state.projectData.config) {
+            this.state.projectData.config.googleScholarVerified = false;
+        }
+
+        // 执行验证
+        await this.verifyGoogleScholar(true);
     },
 
     // 保存项目需求设置
@@ -1677,6 +1758,7 @@ window.WorkflowManager = {
         try {
             // 从输入框获取最新数据
             const apiKey = window.UIUtils.getValue('main-api-key-input') || this.state.globalApiKey;
+            const apiProvider = this.getCurrentApiProvider();
             const requirement = window.UIUtils.getValue('main-requirement-input') || '';
             const targetCount = parseInt(window.UIUtils.getValue('main-target-count')) || 50;
             const outline = window.UIUtils.getValue('main-outline-editor') || '';
@@ -1685,7 +1767,13 @@ window.WorkflowManager = {
             // 更新状态
             if (apiKey) {
                 this.state.globalApiKey = apiKey;
+                // 保存到apiKeys对象中
+                if (!this.state.apiKeys) {
+                    this.state.apiKeys = {};
+                }
+                this.state.apiKeys[apiProvider] = apiKey;
             }
+            this.state.apiProvider = apiProvider;
             this.state.requirementData.requirement = requirement;
             this.state.requirementData.targetCount = targetCount;
             this.state.requirementData.outline = outline;
@@ -1694,7 +1782,8 @@ window.WorkflowManager = {
             // 保存到JSON文件
             await this.saveProjectData({
                 config: {
-                    apiKey: apiKey
+                    apiKeys: this.state.apiKeys || {}, // 保存所有供应商的Keys
+                    apiProvider: apiProvider
                 },
                 requirementData: {
                     requirement: requirement,
@@ -1737,7 +1826,8 @@ window.WorkflowManager = {
             this.state.requirementData.targetCount = targetCount;
             this.state.requirementData.language = language;
 
-            const result = await window.RequirementManager.analyzeRequirement(apiKey, requirement, targetCount);
+            const apiProvider = this.getCurrentApiProvider();
+            const result = await window.RequirementManager.analyzeRequirement(apiKey, requirement, targetCount, apiProvider);
             
             this.state.requirementData.outline = result.outline;
             // 需求分析不再生成关键词，关键词将在节点1中生成
@@ -1748,8 +1838,19 @@ window.WorkflowManager = {
             window.UIUtils.showElement('main-outline-result');
             window.UIUtils.hideElement('main-requirement-progress');
 
+            // 保存当前供应商的Key到apiKeys对象
+            if (apiKey) {
+                if (!this.state.apiKeys) {
+                    this.state.apiKeys = {};
+                }
+                this.state.apiKeys[apiProvider] = apiKey;
+            }
+            
             await this.saveProjectData({
-                config: { apiKey: apiKey },
+                config: { 
+                    apiKeys: this.state.apiKeys || {},
+                    apiProvider: apiProvider
+                },
                 requirementData: this.state.requirementData
             });
 
@@ -1834,12 +1935,8 @@ window.WorkflowManager = {
             } else if (nodeNum === 3) {
                 // 节点3重新补全时，隐藏多余的内容，只显示进度条（与一键生成一致）
                 window.UIUtils.hideElement('complete-results');
-                const clearBtn = document.getElementById('clear-completion-btn');
                 const saveBtn = document.getElementById('save-completion-btn');
                 const regenerateBtn = document.getElementById('regenerate-completion-btn');
-                if (clearBtn) {
-                    clearBtn.style.display = 'none';
-                }
                 if (saveBtn) {
                     saveBtn.style.display = 'none';
                 }
@@ -1852,14 +1949,10 @@ window.WorkflowManager = {
                 window.UIUtils.hideElement('filter-results');
                 window.UIUtils.hideElement('filter-statistics-container');
                 const exportBtn = document.getElementById('export-excel-btn');
-                const clearBtn = document.getElementById('clear-filter-status-btn');
                 const saveBtn = document.getElementById('save-filter-btn');
                 const regenerateBtn = document.getElementById('regenerate-filter-btn');
                 if (exportBtn) {
                     exportBtn.style.display = 'none';
-                }
-                if (clearBtn) {
-                    clearBtn.style.display = 'none';
                 }
                 if (saveBtn) {
                     saveBtn.style.display = 'none';
@@ -1922,8 +2015,20 @@ window.WorkflowManager = {
         if (startBtn) startBtn.style.display = 'none';
         if (stopBtn) stopBtn.style.display = 'block';
 
+        // 保存当前供应商的Key到apiKeys对象
+        const apiProvider = this.getCurrentApiProvider();
+        if (apiKey) {
+            if (!this.state.apiKeys) {
+                this.state.apiKeys = {};
+            }
+            this.state.apiKeys[apiProvider] = apiKey;
+        }
+        
         await this.saveProjectData({
-            config: { apiKey: apiKey },
+            config: { 
+                apiKeys: this.state.apiKeys || {},
+                apiProvider: apiProvider
+            },
             requirementData: this.state.requirementData
         });
 
@@ -1977,6 +2082,31 @@ window.WorkflowManager = {
             return;
         }
         console.log('[startAutoGenerate] API key exists, length:', apiKey.length);
+
+        // 检查Google Scholar验证状态（每个项目必须验证）
+        if (!this.state.currentProject) {
+            window.UIUtils.showToast('请先选择或创建项目', 'error');
+            return;
+        }
+
+        // 检查当前项目的验证状态
+        const isVerified = this.state.googleScholarVerified || 
+                          (this.state.projectData.config && this.state.projectData.config.googleScholarVerified);
+        
+        if (!isVerified) {
+            const confirmed = confirm('⚠️ 检测到当前项目尚未完成Google Scholar验证。\n\n每个项目必须完成验证后才能进行一键生成。\n\n是否现在进行验证？');
+            if (!confirmed) {
+                window.UIUtils.showToast('已取消一键生成，请先完成Google Scholar验证', 'info');
+                return;
+            }
+            
+            // 打开验证窗口
+            const verifyResult = await this.verifyGoogleScholar();
+            if (!verifyResult || !this.state.googleScholarVerified) {
+                window.UIUtils.showToast('验证未完成，无法进行一键生成', 'error');
+                return;
+            }
+        }
 
         // 检查当前是否有已保存的内容
         const hasKeywords = this.state.keywords && this.state.keywords.length > 0;
@@ -2057,6 +2187,7 @@ window.WorkflowManager = {
         
         console.log('[startAutoGenerate] Setting up state...');
         this.state.globalApiKey = apiKey;
+        this.state.apiProvider = this.getCurrentApiProvider();
         this.state.isAutoGenerating = true;
         this.state.currentAutoNode = 1;
         this.state.shouldStop = false; // 重置停止标志
@@ -2100,9 +2231,20 @@ window.WorkflowManager = {
         }
         console.log('[startAutoGenerate] Node visibility updated');
 
+        // 保存当前供应商的Key到apiKeys对象
+        if (apiKey) {
+            if (!this.state.apiKeys) {
+                this.state.apiKeys = {};
+            }
+            this.state.apiKeys[this.state.apiProvider] = apiKey;
+        }
+        
         console.log('[startAutoGenerate] Saving project data...');
         await this.saveProjectData({
-            config: { apiKey: apiKey },
+            config: { 
+                apiKeys: this.state.apiKeys || {},
+                apiProvider: this.state.apiProvider
+            },
             requirementData: this.state.requirementData
         });
         console.log('[startAutoGenerate] Project data saved');
@@ -2337,7 +2479,8 @@ window.WorkflowManager = {
                 requirementData: this.state.requirementData
             });
             
-            const keywordsPlan = await window.Node1Keywords.execute(this.state.globalApiKey, this.state.requirementData);
+            const apiProvider = this.getCurrentApiProvider();
+            const keywordsPlan = await window.Node1Keywords.execute(this.state.globalApiKey, this.state.requirementData, apiProvider);
             console.log('[Node 1] Node1Keywords.execute returned:', {
                 hasResult: !!keywordsPlan,
                 isArray: Array.isArray(keywordsPlan),
@@ -2557,12 +2700,14 @@ window.WorkflowManager = {
         };
 
         try {
+            const apiProvider = this.getCurrentApiProvider();
             const result = await window.Node4Filter.execute(
                 this.state.globalApiKey,
                 this.state.allLiterature,
                 this.state.requirementData.requirement,
                 this.state.requirementData.targetCount,
-                onProgress
+                onProgress,
+                apiProvider
             );
 
             // 验证返回结果
@@ -2708,14 +2853,10 @@ window.WorkflowManager = {
             window.UIUtils.hideElement('filter-results');
             window.UIUtils.hideElement('filter-statistics-container');
             const exportBtn = document.getElementById('export-excel-btn');
-            const clearBtn = document.getElementById('clear-filter-status-btn');
             const saveBtn = document.getElementById('save-filter-btn');
             const regenerateBtn = document.getElementById('regenerate-filter-btn');
             if (exportBtn) {
                 exportBtn.style.display = 'none';
-            }
-            if (clearBtn) {
-                clearBtn.style.display = 'none';
             }
             if (saveBtn) {
                 saveBtn.style.display = 'none';
@@ -2788,12 +2929,8 @@ window.WorkflowManager = {
 
             // 隐藏多余的内容，只显示进度条（与一键生成一致）
             window.UIUtils.hideElement('complete-results');
-            const clearBtn = document.getElementById('clear-completion-btn');
             const saveBtn = document.getElementById('save-completion-btn');
             const regenerateBtn = document.getElementById('regenerate-completion-btn');
-            if (clearBtn) {
-                clearBtn.style.display = 'none';
-            }
             if (saveBtn) {
                 saveBtn.style.display = 'none';
             }
@@ -2956,10 +3093,12 @@ window.WorkflowManager = {
             );
 
             // 执行生成
+            const apiProvider = this.getCurrentApiProvider();
             this.state.reviewContent = await window.Node5Review.execute(
                 this.state.globalApiKey,
                 this.state.selectedLiterature,
-                this.state.requirementData
+                this.state.requirementData,
+                apiProvider
             );
 
             // 更新进度条
@@ -3001,6 +3140,210 @@ window.WorkflowManager = {
         }
     },
 
+    // 复制综述内容到剪贴板
+    async copyReviewContent() {
+        try {
+            const reviewContentEl = document.getElementById('review-content');
+            if (!reviewContentEl) {
+                window.UIUtils.showToast('未找到综述内容', 'error');
+                return;
+            }
+
+            const content = reviewContentEl.value || this.state.reviewContent || '';
+            if (!content || content.trim().length === 0) {
+                window.UIUtils.showToast('综述内容为空，无法复制', 'error');
+                return;
+            }
+
+            // 使用Clipboard API复制
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(content);
+                window.UIUtils.showToast('综述内容已复制到剪贴板', 'success');
+            } else {
+                // 降级方案：使用传统的execCommand方法
+                const textArea = document.createElement('textarea');
+                textArea.value = content;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        window.UIUtils.showToast('综述内容已复制到剪贴板', 'success');
+                    } else {
+                        throw new Error('复制命令执行失败');
+                    }
+                } catch (err) {
+                    window.UIUtils.showToast('复制失败，请手动复制', 'error');
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+        } catch (error) {
+            console.error('复制综述内容失败:', error);
+            window.UIUtils.showToast(`复制失败: ${error.message || '未知错误'}`, 'error');
+        }
+    },
+
+    // 导出综述为Word文档
+    async exportReviewToWord() {
+        try {
+            const reviewContentEl = document.getElementById('review-content');
+            if (!reviewContentEl) {
+                window.UIUtils.showToast('未找到综述内容', 'error');
+                return;
+            }
+
+            const content = reviewContentEl.value || this.state.reviewContent || '';
+            if (!content || content.trim().length === 0) {
+                window.UIUtils.showToast('综述内容为空，无法导出', 'error');
+                return;
+            }
+
+            // 获取项目名称作为默认文件名
+            const projectName = this.state.currentProject || '文献综述';
+            const fileName = `${projectName}_${new Date().toISOString().split('T')[0]}.doc`;
+
+            // 将文本内容转换为HTML格式（保留换行）
+            const htmlContent = content
+                .split('\n')
+                .map(line => {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine.length === 0) {
+                        return '<p class="empty-line"><br></p>';
+                    }
+                    // 检测标题（以数字开头或包含特定标记）
+                    if (/^[一二三四五六七八九十\d]+[、\.]/.test(trimmedLine) || 
+                        /^第[一二三四五六七八九十\d]+[章节部分]/.test(trimmedLine) ||
+                        trimmedLine.length < 50 && !trimmedLine.includes('。')) {
+                        return `<h2>${this.escapeHtml(trimmedLine)}</h2>`;
+                    }
+                    return `<p class="paragraph">${this.escapeHtml(trimmedLine)}</p>`;
+                })
+                .join('\n');
+
+            // 创建完整的HTML文档
+            const fullHtml = `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+    <meta charset="UTF-8">
+    <meta name="ProgId" content="Word.Document">
+    <meta name="Generator" content="Microsoft Word">
+    <meta name="Originator" content="Microsoft Word">
+    <title>${this.escapeHtml(projectName)}</title>
+    <!--[if gte mso 9]>
+    <xml>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>100</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+    </xml>
+    <![endif]-->
+    <style>
+        @page {
+            size: A4;
+            margin: 2.54cm 3.17cm 2.54cm 3.17cm;
+            mso-header-margin: 1.27cm;
+            mso-footer-margin: 1.27cm;
+        }
+        body {
+            font-family: "Dengxian", "等线", "Microsoft YaHei UI", "Microsoft YaHei", "SimSun", Arial, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            color: #000000;
+            text-align: justify;
+        }
+        h1 {
+            font-family: "Dengxian", "等线", "Microsoft YaHei UI", "Microsoft YaHei", "SimSun", Arial, sans-serif;
+            font-size: 16pt;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20pt;
+            line-height: 1.5;
+            page-break-after: avoid;
+        }
+        h2 {
+            font-family: "Dengxian", "等线", "Microsoft YaHei UI", "Microsoft YaHei", "SimSun", Arial, sans-serif;
+            font-size: 12pt;
+            font-weight: bold;
+            margin-top: 12pt;
+            margin-bottom: 6pt;
+            margin-left: 0;
+            margin-right: 0;
+            line-height: 1.5;
+            text-align: left;
+            page-break-after: avoid;
+        }
+        p.paragraph {
+            font-family: "Dengxian", "等线", "Microsoft YaHei UI", "Microsoft YaHei", "SimSun", Arial, sans-serif;
+            font-size: 10.5pt;
+            text-indent: 21pt;
+            line-height: 1.5;
+            margin-top: 0;
+            margin-bottom: 0;
+            margin-left: 0;
+            margin-right: 0;
+            text-align: justify;
+            orphans: 2;
+            widows: 2;
+        }
+        p.empty-line {
+            font-family: "Dengxian", "等线", "Microsoft YaHei UI", "Microsoft YaHei", "SimSun", Arial, sans-serif;
+            font-size: 10.5pt;
+            margin-top: 0;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <h1>${this.escapeHtml(projectName)}</h1>
+    ${htmlContent}
+</body>
+</html>`;
+
+            // 通过Electron API保存文件
+            if (window.electronAPI && window.electronAPI.saveWordFile) {
+                const result = await window.electronAPI.saveWordFile(fileName, fullHtml);
+                if (result && result.success) {
+                    window.UIUtils.showToast(`Word文档已保存: ${result.filePath || fileName}`, 'success');
+                } else {
+                    window.UIUtils.showToast(`保存失败: ${result?.error || '未知错误'}`, 'error');
+                }
+            } else {
+                // 降级方案：使用Blob和下载链接
+                const blob = new Blob(['\ufeff' + fullHtml], { type: 'application/msword' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                window.UIUtils.showToast(`Word文档已下载: ${fileName}`, 'success');
+            }
+        } catch (error) {
+            console.error('导出Word文档失败:', error);
+            window.UIUtils.showToast(`导出失败: ${error.message || '未知错误'}`, 'error');
+        }
+    },
+
+    // HTML转义辅助函数
+    escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
     async autoExecuteNode5() {
         this.updateNodeState(5, 'active');
         
@@ -3032,10 +3375,12 @@ window.WorkflowManager = {
             '正在生成综述...'
         );
 
+        const apiProvider = this.getCurrentApiProvider();
         this.state.reviewContent = await window.Node5Review.execute(
             this.state.globalApiKey,
             this.state.selectedLiterature,
-            this.state.requirementData
+            this.state.requirementData,
+            apiProvider
         );
 
         // 完成时更新进度条，不显示结果

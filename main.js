@@ -156,7 +156,9 @@ app.on('window-all-closed', () => {
 });
 
 // Google Scholar 预登录/验证窗口（让用户先完成登录和验证）
-function openScholarLoginWindow() {
+// autoSearchKeyword: 自动搜索的关键词（可选）
+// autoSearchLimit: 自动搜索的文献数量（可选）
+function openScholarLoginWindow(autoSearchKeyword = null, autoSearchLimit = 50) {
   return new Promise((resolve, reject) => {
     const loginWindow = new BrowserWindow({
       width: 1200,
@@ -180,7 +182,15 @@ function openScholarLoginWindow() {
       reject(new Error('登录超时（5分钟）'));
     }, 300000); // 5分钟超时
     
+    // 如果有自动搜索关键词，直接导航到搜索页面
+    let initialUrl = 'https://scholar.google.com/';
+    if (autoSearchKeyword) {
+      initialUrl = `https://scholar.google.com/scholar?hl=zh-CN&as_sdt=0%2C5&q=${encodeURIComponent(autoSearchKeyword)}&num=${autoSearchLimit}`;
+      loginWindow.setTitle(`Google Scholar - 正在搜索: ${autoSearchKeyword}`);
+    }
+    
     // 注入确认按钮（放在左下角，避免遮挡页面元素）
+    // 延迟显示按钮，给用户足够时间完成验证
     loginWindow.webContents.on('did-finish-load', () => {
       setTimeout(() => {
         loginWindow.webContents.executeJavaScript(`
@@ -201,8 +211,8 @@ function openScholarLoginWindow() {
               
               btn = document.createElement('button');
               btn.id = 'confirm-login-btn';
-              // 初始状态：显示"已完成登录/验证，开始搜索"
-              btn.innerHTML = '<span style="font-size: 18px; margin-right: 8px;">✓</span><span>已完成登录/验证，开始搜索</span>';
+              // 按钮文本：已完成登录/验证
+              btn.innerHTML = '<span style="font-size: 18px; margin-right: 8px;">✓</span><span>已完成登录/验证</span>';
               btn.style.cssText = \`
                 display: flex;
                 align-items: center;
@@ -251,17 +261,9 @@ function openScholarLoginWindow() {
                 this.disabled = true;
                 this.style.opacity = '0.8';
                 this.style.cursor = 'not-allowed';
-                // 立即设置标志并触发检查
+                // 设置标志
                 window.loginConfirmed = true;
                 window.dispatchEvent(new CustomEvent('login-confirmed'));
-                // 立即触发一次检查（通过模拟页面变化）
-                setTimeout(() => {
-                  // 触发一个微小变化以确保主进程能立即检测到
-                  document.title = document.title + ' ';
-                  setTimeout(() => {
-                    document.title = document.title.trim();
-                  }, 10);
-                }, 10);
               };
               
               btn.onmouseover = function() {
@@ -298,12 +300,12 @@ function openScholarLoginWindow() {
                 btn.disabled = false;
                 btn.style.opacity = '1';
                 btn.style.cursor = 'pointer';
-                btn.innerHTML = '<span style="font-size: 18px; margin-right: 8px;">✓</span><span>已完成登录/验证，开始搜索</span>';
+                btn.innerHTML = '<span style="font-size: 18px; margin-right: 8px;">✓</span><span>已完成登录/验证</span>';
               }
             }
           })();
         `).catch(() => {});
-      }, 1500); // 稍微延迟，确保页面元素加载完成
+      }, 3000); // 延迟3秒显示按钮，给用户足够时间完成验证
     });
     
     // 监听确认事件
@@ -335,17 +337,20 @@ function openScholarLoginWindow() {
             confirmed = true;
             cleanup();
             clearTimeout(timeout);
-            loginWindow.setTitle('Google Scholar - 登录确认完成');
-            // 立即关闭窗口，不需要延迟
+            loginWindow.setTitle('Google Scholar - 验证完成');
+            
+            // 用户点击完成按钮后，直接关闭窗口
             setTimeout(() => {
               if (!loginWindow.isDestroyed()) {
                 loginWindow.close();
               }
               resolve(true);
-            }, 200); // 缩短延迟到200ms
+            }, 500);
           }
         })
-        .catch(() => {});
+        .catch((error) => {
+          console.error('检查登录确认状态失败:', error);
+        });
     };
     
     // 使用更频繁的轮询（100ms）以提高响应速度
@@ -397,8 +402,8 @@ function openScholarLoginWindow() {
     `);
     
     
-    // 加载Google Scholar主页
-    loginWindow.loadURL('https://scholar.google.com/');
+    // 加载初始URL（如果有自动搜索关键词，直接加载搜索页面）
+    loginWindow.loadURL(initialUrl);
     
     // 处理关闭事件
     loginWindow.on('closed', () => {
@@ -1754,10 +1759,10 @@ function formatScholarResults(results, limit) {
 }
 
 // IPC处理 - Google Scholar预登录
-ipcMain.handle('open-scholar-login', async (event) => {
+ipcMain.handle('open-scholar-login', async (event, autoSearchKeyword = null, autoSearchLimit = 50) => {
   try {
-    console.log('打开Google Scholar登录/验证窗口');
-    await openScholarLoginWindow();
+    console.log('打开Google Scholar登录/验证窗口', { autoSearchKeyword, autoSearchLimit });
+    await openScholarLoginWindow(autoSearchKeyword, autoSearchLimit);
     return {
       success: true
     };
@@ -2131,4 +2136,37 @@ ipcMain.handle('select-directory', async () => {
     return null;
   }
   return result.filePaths[0];
+});
+
+// 保存Word文件
+ipcMain.handle('save-word-file', async (event, fileName, htmlContent) => {
+  try {
+    const result = await dialog.showSaveDialog({
+      title: '保存Word文档',
+      defaultPath: fileName,
+      filters: [
+        { name: 'Word文档', extensions: ['doc'] },
+        { name: '所有文件', extensions: ['*'] }
+      ]
+    });
+
+    if (result.canceled || !result.filePath) {
+      return { success: false, error: '用户取消保存' };
+    }
+
+    // 将HTML内容写入文件（添加BOM以支持中文）
+    const contentWithBOM = '\ufeff' + htmlContent;
+    await fs.writeFile(result.filePath, contentWithBOM, 'utf8');
+    
+    return {
+      success: true,
+      filePath: result.filePath
+    };
+  } catch (error) {
+    console.error('保存Word文件失败:', error);
+    return {
+      success: false,
+      error: error.message || '保存失败'
+    };
+  }
 });
