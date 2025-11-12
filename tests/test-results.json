@@ -1,0 +1,49 @@
+{
+  "deep learning object detection": [
+    {
+      "title": "Object detection with deep learning: A review",
+      "authors": "ZQ Zhao, P Zheng, S Xu, X Wu - … neural networks and learning …, 2019 - ieeexplore.ieee.org",
+      "year": "2019",
+      "source": "… neural networks and learning …",
+      "abstract": "… of deep learning-based object detection frameworks. Our review begins with a brief introduction on the history of deep learning and its … Then, we focus on typical generic object detection …",
+      "cited": 7184,
+      "url": "https://ieeexplore.ieee.org/abstract/document/8627998/"
+    },
+    {
+      "title": "A review of object detection based on deep learning",
+      "authors": "Y Xiao, Z Tian, J Yu, Y Zhang, S Liu, S Du… - Multimedia Tools and …, 2020 - Springer",
+      "year": "2020",
+      "source": "Multimedia Tools and …",
+      "abstract": "… object detection algorithms based on deep convolutional neural networks, while the traditional object detection … Through the review and analysis of deep learning-based object detection …",
+      "cited": 699,
+      "url": "https://link.springer.com/article/10.1007/s11042-020-08976-6"
+    },
+    {
+      "title": "Application of deep learning for object detection",
+      "authors": "AR Pathak, M Pandey, S Rautaray - Procedia computer science, 2018 - Elsevier",
+      "year": "2018",
+      "source": "Procedia computer science",
+      "abstract": "… detection are also enunciated. Deep learning techniques for state-of-the-art object detection … , we demystified the role of deep learning techniques based on CNN for object detection. …",
+      "cited": 888,
+      "url": "https://www.sciencedirect.com/science/article/pii/S1877050918308767"
+    },
+    {
+      "title": "Recent advances in deep learning for object detection",
+      "authors": "X Wu, D Sahoo, SCH Hoi - Neurocomputing, 2020 - Elsevier",
+      "year": "2020",
+      "source": "Neurocomputing",
+      "abstract": "… advances in visual object detection with deep learning. By reviewing a … object detection frameworks and organize the survey into three major parts: (i) detection components, (ii) learning …",
+      "cited": 1274,
+      "url": "https://www.sciencedirect.com/science/article/pii/S0925231220301430"
+    },
+    {
+      "title": "Deep learning for generic object detection: A survey",
+      "authors": "L Liu, W Ouyang, X Wang, P Fieguth, J Chen… - International journal of …, 2020 - Springer",
+      "year": "2020",
+      "source": "International journal of …",
+      "abstract": "… of deep learning based generic object detection techniques, … , context modeling, and detection proposal methods. The intention is … A brief introduction to deep learning is given in Sect. 3. …",
+      "cited": 3778,
+      "url": "https://link.springer.com/article/10.1007/s11263-019-01247-4"
+    }
+  ]
+}

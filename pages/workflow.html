@@ -829,7 +829,7 @@
                 <button class="btn btn-success" id="start-auto-generate-btn" style="display: none;">一键生成</button>
                 <button class="btn btn-danger" id="stop-auto-generate-btn" style="display: none;">停止生成</button>
                 <button class="btn btn-primary" id="overview-btn">总览</button>
-                <button class="btn btn-secondary" id="back-to-index-btn">返回项目管理</button>
+                <button class="btn btn-secondary" id="back-to-index-btn">关闭项目</button>
             </div>
         </div>
 
@@ -839,7 +839,7 @@
             <div class="main-left">
                 <!-- 需求设置区域 -->
                 <div class="requirement-section">
-                    <h2>项目需求设置</h2>
+                    <h2>项目配置</h2>
                     <p style="color: #666; margin-bottom: 20px;">请填写以下信息，系统将自动分析需求并生成文献综述</p>
                     
                     <div class="form-group">
@@ -861,6 +861,22 @@
                                 <span id="main-api-docs-text">API 申请地址</span>
                             </a>
                         </div>
+                    </div>
+                    
+                    <!-- Gemini 模型选择（仅在选择 Gemini 时显示） -->
+                    <div class="form-group" id="gemini-model-select-group" style="display: none;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Gemini 模型:</label>
+                        <select id="gemini-model-select" class="api-provider-select" 
+                                onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onmouseout="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'"
+                                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'">
+                            <option value="gemini-2.5-flash">Gemini 2.5 Flash（快速响应）</option>
+                            <option value="gemini-2.5-pro">Gemini 2.5 Pro（更强大）</option>
+                        </select>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            <span id="gemini-model-desc">快速响应，适合大多数任务</span>
+                        </small>
                     </div>
                     
                     <div class="form-group">

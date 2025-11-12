@@ -20,11 +20,25 @@ window.Node2Search = {
             return count > 0;
         });
 
+        if (validKeywords.length === 0) {
+            console.warn('[节点2搜索] 没有有效的关键词，返回空结果');
+            return {
+                searchResults: {},
+                allLiterature: []
+            };
+        }
+
         const searchResults = {};
         const allLiterature = [];
         const totalKeywords = validKeywords.length;
 
         for (let i = 0; i < validKeywords.length; i++) {
+            // 检查是否应该停止（通过检查WorkflowManager的状态）
+            if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                console.log('[节点2搜索] 检测到停止信号，中断搜索');
+                break;
+            }
+            
             const keyword = validKeywords[i];
             const maxPerKeyword = searchParams[keyword] || 10;
             
@@ -34,10 +48,16 @@ window.Node2Search = {
                     onProgress(i + 1, totalKeywords, keyword, '搜索中...');
                 }
                 
+                // 再次检查停止标志
+                if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                    console.log('[节点2搜索] 检测到停止信号，中断搜索');
+                    break;
+                }
+                
                 const results = await window.API.searchGoogleScholar(keyword, maxPerKeyword, null);
                 searchResults[keyword] = results;
                 
-                // 合并结果并去重
+                // 合并结果并去重（使用原始逻辑）
                 if (results && results.length > 0) {
                     results.forEach(result => {
                         const exists = allLiterature.find(lit => 
@@ -127,7 +147,7 @@ window.Node2Search = {
     },
 
     // 删除文献
-    deleteLiterature(index, allLiterature) {
+    async deleteLiterature(index, allLiterature) {
         if (index >= 0 && index < allLiterature.length) {
             // 确认删除
             const lit = allLiterature[index];
@@ -153,9 +173,11 @@ window.Node2Search = {
                 if (count) {
                     count.textContent = allLiterature.length;
                 }
-                // 保存数据
-                window.WorkflowManager.saveProjectData({ 
-                    finalResults: allLiterature,
+                // 保存数据（使用节点数据格式）
+                await window.WorkflowManager.saveNodeData(3, {
+                    allLiterature: allLiterature
+                });
+                await window.WorkflowManager.saveNodeData(4, {
                     selectedLiterature: window.WorkflowManager.state.selectedLiterature
                 });
                 window.UIUtils.showToast('文献已删除', 'success');

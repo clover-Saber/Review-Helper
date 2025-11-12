@@ -13,8 +13,9 @@ window.WorkflowManager = {
             5: 'pending'
         },
         globalApiKey: '', // 当前使用的API Key（根据选择的供应商动态更新）
-        apiKeys: {}, // 按供应商存储的API Keys: { deepseek: 'xxx', openai: 'yyy', ... }
+        apiKeys: {}, // 按供应商存储的API Keys: { deepseek: 'xxx', gemini: 'yyy', ... }
         apiProvider: 'deepseek', // 默认使用DeepSeek
+        geminiModel: 'gemini-2.5-flash', // Gemini 模型选择
         requirementData: {
             requirement: '',
             targetCount: 50,
@@ -27,45 +28,68 @@ window.WorkflowManager = {
         allLiterature: [],
         selectedLiterature: [],
         reviewContent: '',
-        isAutoGenerating: false,
+        isAutoGenerating: false, // 保留用于兼容
         currentAutoNode: 0,
         shouldStop: false,
-        googleScholarVerified: false
+        googleScholarVerified: false,
+        // 全局运行状态：null=未运行, 'auto'=一键生成, 'manual'=手动运行单个节点
+        runningState: null,
+        // 当前正在运行的节点编号（0表示未运行）
+        currentRunningNode: 0
     },
 
     // 初始化
     async init() {
-        // 检查依赖模块
-        if (!window.DataManager) {
-            console.error('DataManager模块未加载');
-            return;
-        }
-        if (!window.UIUtils) {
-            console.error('UIUtils模块未加载');
-            return;
-        }
-        if (!window.RequirementManager) {
-            console.error('RequirementManager模块未加载');
-            return;
-        }
+        try {
+            // 检查依赖模块
+            if (!window.DataManager) {
+                console.error('DataManager模块未加载');
+                return;
+            }
+            if (!window.UIUtils) {
+                console.error('UIUtils模块未加载');
+                return;
+            }
+            if (!window.RequirementManager) {
+                console.error('RequirementManager模块未加载');
+                return;
+            }
 
-        // 初始化目标数量提示
-        window.RequirementManager.updateTargetHint();
+            // 初始化目标数量提示
+            window.RequirementManager.updateTargetHint();
 
-        await this.loadCurrentProject();
-        this.bindEvents();
-        this.checkRequirementStatus();
-        
-        // 初始化API供应商UI
-        this.updateApiProviderUI();
-        
-        // 初始化按钮显示状态
-        this.updateGenerateButtonState();
-        
-        // 如果有项目，自动显示总览
-        if (this.state.currentProject) {
-            this.updateOverview();
-            this.showOverview();
+            // 先绑定事件，确保按钮能正常工作
+            this.bindEvents();
+            
+            // 然后加载项目数据
+            try {
+                await this.loadCurrentProject();
+            } catch (error) {
+                console.error('加载项目失败，但继续初始化:', error);
+            }
+            
+            // 检查需求状态
+            this.checkRequirementStatus();
+            
+            // 初始化API供应商UI
+            this.updateApiProviderUI();
+            
+            // 初始化按钮显示状态
+            this.updateGenerateButtonState();
+            
+            // 如果有项目，自动显示总览
+            if (this.state.currentProject) {
+                this.updateOverview();
+                this.showOverview();
+            }
+        } catch (error) {
+            console.error('初始化失败:', error);
+            // 即使出错，也尝试绑定事件
+            try {
+                this.bindEvents();
+            } catch (bindError) {
+                console.error('绑定事件失败:', bindError);
+            }
         }
     },
 
@@ -75,11 +99,14 @@ window.WorkflowManager = {
         const stopBtn = document.getElementById('stop-auto-generate-btn');
         
         if (this.state.requirementData.outline) {
-            // 有大纲时，根据生成状态显示对应按钮
-            if (this.state.isAutoGenerating) {
+            // 有大纲时，根据运行状态显示对应按钮
+            // 无论是一键生成还是手动运行节点，只要在运行就显示停止按钮
+            if (this.state.runningState !== null) {
+                // 正在运行（一键生成或手动运行节点）
                 if (startBtn) startBtn.style.display = 'none';
                 if (stopBtn) stopBtn.style.display = 'block';
             } else {
+                // 未运行
                 if (startBtn) startBtn.style.display = 'block';
                 if (stopBtn) stopBtn.style.display = 'none';
             }
@@ -114,12 +141,7 @@ window.WorkflowManager = {
                 console.log('加载的项目数据:', data);
                 this.state.projectData = data;
                 
-                // 加载数据到状态
-                if (data.requirementData) {
-                    this.state.requirementData = { ...this.state.requirementData, ...data.requirementData };
-                }
-                
-                // 加载Google Scholar验证状态
+                // 加载配置数据
                 if (data.config) {
                     if (data.config.googleScholarVerified) {
                         this.state.googleScholarVerified = data.config.googleScholarVerified;
@@ -129,16 +151,13 @@ window.WorkflowManager = {
                         this.state.projectData.config = {};
                     }
                     this.state.projectData.config = { ...this.state.projectData.config, ...data.config };
-                }
-                
-                // 如果没有requirementData但有其他数据，尝试从旧格式恢复
-                if (!data.requirementData && data.config) {
-                    // 尝试从旧格式恢复requirementData
-                    if (data.projectDescription) {
-                        this.state.requirementData.requirement = data.projectDescription;
+                    
+                    // 加载API Keys
+                    if (data.config.apiKeys && typeof data.config.apiKeys === 'object') {
+                        this.state.apiKeys = { ...this.state.apiKeys, ...data.config.apiKeys };
                     }
                     // 兼容旧格式：如果存在apiKey，迁移到新格式apiKeys
-                    if (data.config.apiKey) {
+                    if (data.config.apiKey && !data.config.apiKeys) {
                         const oldProvider = data.config.apiProvider || 'deepseek';
                         if (!this.state.apiKeys) {
                             this.state.apiKeys = {};
@@ -151,74 +170,150 @@ window.WorkflowManager = {
                     }
                 }
                 
-                // 加载新格式的apiKeys
-                if (data.config && data.config.apiKeys && typeof data.config.apiKeys === 'object') {
-                    this.state.apiKeys = { ...this.state.apiKeys, ...data.config.apiKeys };
+                // 加载需求数据
+                if (data.requirementData) {
+                    this.state.requirementData = { ...this.state.requirementData, ...data.requirementData };
                 }
                 
-                // 优先使用keywordsPlan中的关键词，确保keywords和keywordsPlan同步
-                if (this.state.requirementData.keywordsPlan && this.state.requirementData.keywordsPlan.length > 0) {
-                    this.state.keywords = this.state.requirementData.keywordsPlan.map(item => item.keyword);
-                } else if (data.keywords && Array.isArray(data.keywords)) {
-                    // 如果只有keywords数组，尝试重建keywordsPlan（兼容旧数据）
-                    this.state.keywords = data.keywords;
-                    if (data.keywords.length > 0 && (!this.state.requirementData.keywordsPlan || this.state.requirementData.keywordsPlan.length === 0)) {
-                        // 尝试从keywords重建keywordsPlan（如果可能）
-                        this.state.requirementData.keywordsPlan = data.keywords.map(kw => ({ keyword: kw, count: 0 }));
+                // 加载节点1数据：关键词分析
+                if (data.node1) {
+                    if (data.node1.keywords && Array.isArray(data.node1.keywords)) {
+                        this.state.keywords = data.node1.keywords;
+                    }
+                    if (data.node1.keywordsPlan && Array.isArray(data.node1.keywordsPlan)) {
+                        this.state.requirementData.keywordsPlan = data.node1.keywordsPlan;
+                    }
+                    if (data.node1.status) {
+                        this.state.nodeStates[1] = data.node1.status;
                     }
                 } else {
-                    this.state.keywords = [];
-                    if (!this.state.requirementData.keywordsPlan) {
-                        this.state.requirementData.keywordsPlan = [];
+                    // 兼容旧格式：从根级别读取
+                    if (data.keywords && Array.isArray(data.keywords)) {
+                        this.state.keywords = data.keywords;
+                    }
+                    if (data.requirementData && data.requirementData.keywordsPlan && Array.isArray(data.requirementData.keywordsPlan)) {
+                        this.state.requirementData.keywordsPlan = data.requirementData.keywordsPlan;
                     }
                 }
                 
-                this.state.searchResults = (data.search && data.search.results) || {};
-                
-                // 加载文献数据（兼容多种字段名）
-                if (data.finalResults && Array.isArray(data.finalResults)) {
-                    this.state.allLiterature = data.finalResults;
+                // 加载节点2数据：文献搜索（只保存 searchResults，不保存 allLiterature）
+                if (data.node2) {
+                    if (data.node2.searchResults) {
+                        this.state.searchResults = data.node2.searchResults;
+                    }
+                    // 节点2不再保存 allLiterature，如果存在（旧数据兼容），只在没有节点3数据时临时使用
+                    if (data.node2.allLiterature && Array.isArray(data.node2.allLiterature)) {
+                        // 只有在没有节点3数据时才使用节点2的 allLiterature（临时数据）
+                        if (!data.node3 || !data.node3.allLiterature) {
+                            this.state.allLiterature = data.node2.allLiterature;
+                        }
+                    }
+                    if (data.node2.status) {
+                        this.state.nodeStates[2] = data.node2.status;
+                    }
                 } else {
-                    this.state.allLiterature = [];
+                    // 兼容旧格式：从根级别读取
+                    this.state.searchResults = (data.search && data.search.results) || {};
+                    if (data.finalResults && Array.isArray(data.finalResults)) {
+                        // 只有在没有节点3数据时才使用（临时数据）
+                        if (!data.node3 || !data.node3.allLiterature) {
+                            this.state.allLiterature = data.finalResults;
+                        }
+                    }
                 }
                 
-                // 加载选中的文献（优先使用selectedLiterature，兼容organizedData）
-                if (data.selectedLiterature && Array.isArray(data.selectedLiterature)) {
-                    this.state.selectedLiterature = data.selectedLiterature;
-                } else if (data.organizedData && Array.isArray(data.organizedData)) {
-                    this.state.selectedLiterature = data.organizedData;
-                } else {
-                    this.state.selectedLiterature = [];
+                // 加载节点3数据：文献补全（allLiterature 应该保存在这里）
+                if (data.node3) {
+                    if (data.node3.allLiterature && Array.isArray(data.node3.allLiterature)) {
+                        this.state.allLiterature = data.node3.allLiterature; // 节点3的数据覆盖节点2的临时数据
+                    }
+                    if (data.node3.status) {
+                        this.state.nodeStates[3] = data.node3.status;
+                    }
                 }
                 
-                // 加载综述内容（优先使用reviewContent，兼容review）
-                this.state.reviewContent = data.reviewContent || data.review || '';
+                // 如果节点2有 searchResults 但没有 allLiterature（新格式），从 searchResults 重新生成
+                if (this.state.searchResults && Object.keys(this.state.searchResults).length > 0 && 
+                    (!this.state.allLiterature || this.state.allLiterature.length === 0)) {
+                    // 从 searchResults 合并生成 allLiterature
+                    const allLit = [];
+                    for (const keyword in this.state.searchResults) {
+                        const results = this.state.searchResults[keyword];
+                        if (Array.isArray(results)) {
+                            results.forEach(result => {
+                                const exists = allLit.find(lit => 
+                                    lit.title === result.title || 
+                                    (lit.url && result.url && lit.url === result.url)
+                                );
+                                if (!exists) {
+                                    allLit.push(result);
+                                }
+                            });
+                        }
+                    }
+                    this.state.allLiterature = allLit;
+                }
+                
+                // 加载节点4数据：精选文献（优先从 node4 读取）
+                if (data.node4) {
+                    if (data.node4.selectedLiterature && Array.isArray(data.node4.selectedLiterature)) {
+                        this.state.selectedLiterature = data.node4.selectedLiterature;
+                    }
+                    if (data.node4.status) {
+                        this.state.nodeStates[4] = data.node4.status;
+                    }
+                }
+                // 兼容旧格式：如果 node4 没有数据，从根级别读取（但不会保存到根级别）
+                if ((!this.state.selectedLiterature || this.state.selectedLiterature.length === 0)) {
+                    if (data.selectedLiterature && Array.isArray(data.selectedLiterature)) {
+                        this.state.selectedLiterature = data.selectedLiterature;
+                        // 如果从根级别读取到数据，迁移到 node4
+                        if (this.state.selectedLiterature.length > 0) {
+                            this.saveNodeData(4, {
+                                selectedLiterature: this.state.selectedLiterature
+                            });
+                        }
+                    } else if (data.organizedData && Array.isArray(data.organizedData)) {
+                        this.state.selectedLiterature = data.organizedData;
+                        // 如果从根级别读取到数据，迁移到 node4
+                        if (this.state.selectedLiterature.length > 0) {
+                            this.saveNodeData(4, {
+                                selectedLiterature: this.state.selectedLiterature
+                            });
+                        }
+                    }
+                }
+                
+                // 加载节点5数据：综述撰写（优先从 node5 读取）
+                if (data.node5) {
+                    if (data.node5.reviewContent) {
+                        this.state.reviewContent = data.node5.reviewContent;
+                    }
+                    if (data.node5.status) {
+                        this.state.nodeStates[5] = data.node5.status;
+                    }
+                }
+                // 兼容旧格式：如果 node5 没有数据，从根级别读取（但不会保存到根级别）
+                if (!this.state.reviewContent && (data.reviewContent || data.review)) {
+                    this.state.reviewContent = data.reviewContent || data.review || '';
+                    // 如果从根级别读取到数据，迁移到 node5
+                    if (this.state.reviewContent) {
+                        this.saveNodeData(5, {
+                            reviewContent: this.state.reviewContent
+                        });
+                    }
+                }
+                
+                // 根据JSON数据检查并更新节点状态
+                this.checkNodeStatesFromData(data);
                 
                 console.log('加载后的状态:', {
                     keywords: this.state.keywords.length,
                     allLiterature: this.state.allLiterature.length,
                     selectedLiterature: this.state.selectedLiterature.length,
                     hasReview: !!this.state.reviewContent,
-                    requirementData: this.state.requirementData
+                    nodeStates: this.state.nodeStates
                 });
-                
-                // 更新节点状态
-                if (this.state.keywords.length > 0 || (this.state.requirementData.keywordsPlan && this.state.requirementData.keywordsPlan.length > 0)) {
-                    this.state.nodeStates[1] = 'completed';
-                }
-                if (this.state.allLiterature.length > 0) {
-                    this.state.nodeStates[2] = 'completed';
-                    const hasAbstracts = this.state.allLiterature.some(lit => lit.abstract && lit.abstract.trim());
-                    if (hasAbstracts) {
-                        this.state.nodeStates[3] = 'completed';
-                    }
-                }
-                if (this.state.selectedLiterature.length > 0) {
-                    this.state.nodeStates[4] = 'completed';
-                }
-                if (this.state.reviewContent) {
-                    this.state.nodeStates[5] = 'completed';
-                }
             } else {
                 // 没有项目时显示提示
                 const projectNameEl = document.getElementById('current-project-name');
@@ -231,6 +326,164 @@ window.WorkflowManager = {
             console.error('加载项目失败:', error);
             window.UIUtils.showToast('加载项目失败: ' + error.message, 'error');
         }
+    },
+
+    // 根据JSON数据检查节点状态（基于每个节点的数据情况）
+    checkNodeStatesFromData(data) {
+        // 节点1：关键词分析
+        // 检查依据：是否有keywordsPlan或keywords数据
+        if (data.node1) {
+            if (data.node1.status) {
+                this.state.nodeStates[1] = data.node1.status;
+            } else {
+                // 根据数据推断状态
+                const hasKeywordsPlan = data.node1.keywordsPlan && Array.isArray(data.node1.keywordsPlan) && data.node1.keywordsPlan.length > 0;
+                const hasKeywords = data.node1.keywords && Array.isArray(data.node1.keywords) && data.node1.keywords.length > 0;
+                this.state.nodeStates[1] = (hasKeywordsPlan || hasKeywords) ? 'completed' : 'pending';
+            }
+        } else {
+            // 兼容旧格式：从根级别检查
+            const hasKeywordsPlan = this.state.requirementData.keywordsPlan && Array.isArray(this.state.requirementData.keywordsPlan) && this.state.requirementData.keywordsPlan.length > 0;
+            const hasKeywords = this.state.keywords && Array.isArray(this.state.keywords) && this.state.keywords.length > 0;
+            if (hasKeywordsPlan || hasKeywords) {
+                this.state.nodeStates[1] = 'completed';
+            }
+        }
+
+        // 节点2：文献搜索
+        // 检查依据：是否有searchResults数据
+        if (data.node2) {
+            if (data.node2.status) {
+                this.state.nodeStates[2] = data.node2.status;
+            } else {
+                // 根据数据推断状态
+                const hasSearchResults = data.node2.searchResults && typeof data.node2.searchResults === 'object' && Object.keys(data.node2.searchResults).length > 0;
+                this.state.nodeStates[2] = hasSearchResults ? 'completed' : 'pending';
+            }
+        } else {
+            // 兼容旧格式：从根级别检查
+            const hasSearchResults = this.state.searchResults && typeof this.state.searchResults === 'object' && Object.keys(this.state.searchResults).length > 0;
+            if (hasSearchResults) {
+                this.state.nodeStates[2] = 'completed';
+            }
+        }
+
+        // 节点3：文献补全
+        // 检查依据：是否有allLiterature数据，且包含有摘要的文献
+        if (data.node3) {
+            if (data.node3.status) {
+                this.state.nodeStates[3] = data.node3.status;
+            } else {
+                // 根据数据推断状态
+                const hasLiterature = data.node3.allLiterature && Array.isArray(data.node3.allLiterature) && data.node3.allLiterature.length > 0;
+                const hasAbstracts = hasLiterature && data.node3.allLiterature.some(lit => lit.abstract && lit.abstract.trim());
+                this.state.nodeStates[3] = hasAbstracts ? 'completed' : (hasLiterature ? 'active' : 'pending');
+            }
+        } else {
+            // 兼容旧格式：从根级别检查
+            const hasLiterature = this.state.allLiterature && Array.isArray(this.state.allLiterature) && this.state.allLiterature.length > 0;
+            const hasAbstracts = hasLiterature && this.state.allLiterature.some(lit => lit.abstract && lit.abstract.trim());
+            if (hasAbstracts) {
+                this.state.nodeStates[3] = 'completed';
+            } else if (hasLiterature) {
+                this.state.nodeStates[3] = 'active';
+            }
+        }
+
+        // 节点4：文献筛选
+        // 检查依据：是否有selectedLiterature数据
+        if (data.node4) {
+            if (data.node4.status) {
+                this.state.nodeStates[4] = data.node4.status;
+            } else {
+                // 根据数据推断状态
+                const hasSelected = data.node4.selectedLiterature && Array.isArray(data.node4.selectedLiterature) && data.node4.selectedLiterature.length > 0;
+                this.state.nodeStates[4] = hasSelected ? 'completed' : 'pending';
+            }
+        } else {
+            // 兼容旧格式：从根级别检查
+            const hasSelected = this.state.selectedLiterature && Array.isArray(this.state.selectedLiterature) && this.state.selectedLiterature.length > 0;
+            if (hasSelected) {
+                this.state.nodeStates[4] = 'completed';
+            }
+        }
+
+        // 节点5：综述撰写
+        // 检查依据：是否有reviewContent数据
+        if (data.node5) {
+            if (data.node5.status) {
+                this.state.nodeStates[5] = data.node5.status;
+            } else {
+                // 根据数据推断状态
+                const hasReview = data.node5.reviewContent && typeof data.node5.reviewContent === 'string' && data.node5.reviewContent.trim().length > 0;
+                this.state.nodeStates[5] = hasReview ? 'completed' : 'pending';
+            }
+        } else {
+            // 兼容旧格式：从根级别检查
+            const hasReview = this.state.reviewContent && typeof this.state.reviewContent === 'string' && this.state.reviewContent.trim().length > 0;
+            if (hasReview) {
+                this.state.nodeStates[5] = 'completed';
+            }
+        }
+
+        console.log('[checkNodeStatesFromData] 节点状态检查完成:', this.state.nodeStates);
+    },
+
+    // 根据JSON数据获取节点状态信息（用于关闭项目时的提示）
+    getNodeStatusInfoFromData(data) {
+        const activeNodes = [];
+        const incompleteNodes = [];
+        const completedNodes = [];
+        
+        // 检查每个节点的状态
+        for (let i = 1; i <= 5; i++) {
+            const nodeData = data[`node${i}`];
+            let status = 'pending';
+            
+            if (nodeData && nodeData.status) {
+                status = nodeData.status;
+            } else {
+                // 根据数据推断状态
+                switch(i) {
+                    case 1:
+                        const hasKeywordsPlan = nodeData?.keywordsPlan && Array.isArray(nodeData.keywordsPlan) && nodeData.keywordsPlan.length > 0;
+                        const hasKeywords = nodeData?.keywords && Array.isArray(nodeData.keywords) && nodeData.keywords.length > 0;
+                        status = (hasKeywordsPlan || hasKeywords) ? 'completed' : 'pending';
+                        break;
+                    case 2:
+                        const hasSearchResults = nodeData?.searchResults && typeof nodeData.searchResults === 'object' && Object.keys(nodeData.searchResults).length > 0;
+                        status = hasSearchResults ? 'completed' : 'pending';
+                        break;
+                    case 3:
+                        const hasLiterature = nodeData?.allLiterature && Array.isArray(nodeData.allLiterature) && nodeData.allLiterature.length > 0;
+                        const hasAbstracts = hasLiterature && nodeData.allLiterature.some(lit => lit.abstract && lit.abstract.trim());
+                        status = hasAbstracts ? 'completed' : (hasLiterature ? 'active' : 'pending');
+                        break;
+                    case 4:
+                        const hasSelected = nodeData?.selectedLiterature && Array.isArray(nodeData.selectedLiterature) && nodeData.selectedLiterature.length > 0;
+                        status = hasSelected ? 'completed' : 'pending';
+                        break;
+                    case 5:
+                        const hasReview = nodeData?.reviewContent && typeof nodeData.reviewContent === 'string' && nodeData.reviewContent.trim().length > 0;
+                        status = hasReview ? 'completed' : 'pending';
+                        break;
+                }
+            }
+            
+            if (status === 'active') {
+                activeNodes.push(`节点${i}`);
+            } else if (status === 'pending') {
+                incompleteNodes.push(`节点${i}`);
+            } else if (status === 'completed') {
+                completedNodes.push(`节点${i}`);
+            }
+        }
+        
+        return {
+            activeNodes,
+            incompleteNodes,
+            completedNodes
+        };
     },
 
     // 更新API供应商UI（根据选择的供应商更新文档链接等）
@@ -285,12 +538,49 @@ window.WorkflowManager = {
             const providerConfig = window.API.providers[provider];
             apiKeyInput.placeholder = `请输入您的${providerConfig.name} API Key`;
         }
+        
+        // 显示/隐藏 Gemini 模型选择
+        const geminiModelGroup = document.getElementById('gemini-model-select-group');
+        const geminiModelSelect = document.getElementById('gemini-model-select');
+        const geminiModelDesc = document.getElementById('gemini-model-desc');
+        
+        if (geminiModelGroup && geminiModelSelect) {
+            if (provider === 'gemini' && window.API && window.API.providers.gemini && window.API.providers.gemini.models) {
+                geminiModelGroup.style.display = 'block';
+                
+                // 更新模型描述
+                const selectedModel = geminiModelSelect.value || this.state.geminiModel || 'gemini-2.5-flash';
+                if (geminiModelDesc && window.API.providers.gemini.models[selectedModel]) {
+                    geminiModelDesc.textContent = window.API.providers.gemini.models[selectedModel].description;
+                }
+            } else {
+                geminiModelGroup.style.display = 'none';
+            }
+        }
+    },
+    
+    // 获取当前选择的 Gemini 模型
+    getGeminiModel() {
+        const geminiModelSelect = document.getElementById('gemini-model-select');
+        if (geminiModelSelect && geminiModelSelect.offsetParent !== null) { // 检查是否可见
+            return geminiModelSelect.value || this.state.geminiModel || 'gemini-2.5-flash';
+        }
+        return this.state.geminiModel || 'gemini-2.5-flash';
     },
 
     // 获取当前选择的API供应商
     getCurrentApiProvider() {
         const providerSelect = document.getElementById('main-api-provider-select');
         return providerSelect ? (providerSelect.value || 'deepseek') : (this.state.apiProvider || 'deepseek');
+    },
+    
+    // 获取当前使用的模型名称（用于 Gemini）
+    getCurrentModelName() {
+        const provider = this.getCurrentApiProvider();
+        if (provider === 'gemini') {
+            return this.getGeminiModel();
+        }
+        return null; // 其他供应商使用默认模型
     },
 
     // 检查需求状态
@@ -318,7 +608,21 @@ window.WorkflowManager = {
         } else if (this.state.apiProvider) {
             window.UIUtils.setValue('main-api-provider-select', this.state.apiProvider);
         }
+        
+        // 加载 Gemini 模型选择（需要在 updateApiProviderUI 之前设置，以便正确显示）
+        if (this.state.projectData.config && this.state.projectData.config.geminiModel) {
+            this.state.geminiModel = this.state.projectData.config.geminiModel;
+        }
+        
         this.updateApiProviderUI();
+        
+        // 在 updateApiProviderUI 之后设置模型选择框的值（确保选择框已显示）
+        if (this.state.geminiModel) {
+            const geminiModelSelect = document.getElementById('gemini-model-select');
+            if (geminiModelSelect) {
+                window.UIUtils.setValue('gemini-model-select', this.state.geminiModel);
+            }
+        }
 
         // 加载API Key（根据当前选择的供应商）
         const currentProvider = this.getCurrentApiProvider();
@@ -729,7 +1033,24 @@ window.WorkflowManager = {
                 
             case 3:
                 if (this.state.allLiterature && this.state.allLiterature.length > 0) {
-                    const completedCount = this.state.allLiterature.filter(lit => lit.abstract && lit.abstract.trim()).length;
+                    // 计算补全成功的文献数（使用节点3的补全状态判断）
+                    // 优先使用 completionStatus === 'completed'，如果没有则检查 abstractComplete 或使用 isAbstractComplete 函数
+                    const completedCount = this.state.allLiterature.filter(lit => {
+                        // 优先使用 completionStatus（节点3明确标记的补全状态）
+                        if (lit.completionStatus === 'completed') {
+                            return true;
+                        }
+                        // 如果没有 completionStatus，检查 abstractComplete 字段
+                        if (lit.abstractComplete === true) {
+                            return true;
+                        }
+                        // 如果都没有，使用 isAbstractComplete 函数判断摘要是否完整
+                        if (window.Node3Complete && window.Node3Complete.isAbstractComplete) {
+                            return window.Node3Complete.isAbstractComplete(lit.abstract);
+                        }
+                        // 最后回退：检查是否有摘要且长度>=150（简单判断）
+                        return lit.abstract && lit.abstract.trim().length >= 150;
+                    }).length;
                     let html = `<p><strong>总文献数：</strong>${this.state.allLiterature.length}篇</p>`;
                     html += `<p><strong>已补全摘要：</strong>${completedCount}篇</p>`;
                     html += `<p><strong>补全率：</strong>${Math.round(completedCount / this.state.allLiterature.length * 100)}%</p>`;
@@ -847,21 +1168,38 @@ window.WorkflowManager = {
                 window.UIUtils.showElement('search-results');
                 window.UIUtils.hideElement('search-progress');
                 
-                // 显示保存修改按钮（如果节点2已完成）
+                // 显示保存修改按钮（如果节点2已完成且有文献）
                 const saveSearchBtn = document.getElementById('save-search-results-btn');
-                if (saveSearchBtn && this.state.nodeStates[2] === 'completed') {
+                if (saveSearchBtn && this.state.nodeStates[2] === 'completed' && this.state.allLiterature.length > 0) {
                     saveSearchBtn.style.display = 'inline-block';
+                } else if (saveSearchBtn) {
+                    saveSearchBtn.style.display = 'none';
                 }
                 
-                // 显示重新搜索文献按钮（如果节点2已完成）
+                // 显示重新搜索文献按钮（只要节点2执行过，无论成功失败都应该显示）
+                // 判断条件：节点状态是 completed 或 active，或者有 searchResults 数据，或者节点1已完成（允许开始搜索）
                 const regenerateBtn2 = document.getElementById('regenerate-node2-btn');
-                if (regenerateBtn2 && this.state.nodeStates[2] === 'completed') {
-                    regenerateBtn2.style.display = 'block';
+                const shouldShowRegenerate = this.state.nodeStates[2] === 'completed' || 
+                                           this.state.nodeStates[2] === 'active' ||
+                                           (this.state.searchResults && Object.keys(this.state.searchResults).length > 0) ||
+                                           (this.state.nodeStates[1] === 'completed' && this.state.requirementData.keywordsPlan && this.state.requirementData.keywordsPlan.length > 0);
+                if (regenerateBtn2) {
+                    if (shouldShowRegenerate) {
+                        regenerateBtn2.style.display = 'block';
+                    } else {
+                        regenerateBtn2.style.display = 'none';
+                    }
                 }
                 
                 if (this.state.allLiterature.length > 0) {
                     // 编辑模式：editable=true，支持删除
                     window.Node2Search.display(this.state.allLiterature, true);
+                } else {
+                    // 如果没有文献，显示提示信息
+                    const searchResultsList = document.getElementById('search-results-list');
+                    if (searchResultsList) {
+                        searchResultsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">暂无搜索结果，请点击"重新搜索文献"按钮进行搜索</p>';
+                    }
                 }
                 break;
             case 3:
@@ -869,13 +1207,27 @@ window.WorkflowManager = {
                 window.UIUtils.hideElement('complete-progress');
                 if (this.state.allLiterature.length > 0) {
                     window.Node3Complete.display(this.state.allLiterature);
+                } else {
+                    // 如果没有文献，显示提示信息
+                    const completeResultsList = document.getElementById('complete-results-list');
+                    if (completeResultsList) {
+                        completeResultsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">暂无补全结果，请点击"重新补全文献"按钮进行补全</p>';
+                    }
                 }
-                // 如果节点3已完成，显示保存修改和重新补全文献按钮
+                // 显示重新补全文献按钮（只要节点3执行过，无论成功失败都应该显示）
+                // 判断条件：节点状态是 completed 或 active，或者有 allLiterature 数据，或者节点2已完成（允许开始补全）
+                const regenerateBtn3 = document.getElementById('regenerate-completion-btn');
+                const shouldShowRegenerate3 = this.state.nodeStates[3] === 'completed' || 
+                                             this.state.nodeStates[3] === 'active' ||
+                                             (this.state.allLiterature && this.state.allLiterature.length > 0) ||
+                                             (this.state.nodeStates[2] === 'completed' && this.state.allLiterature && this.state.allLiterature.length > 0);
+                if (regenerateBtn3) {
+                    regenerateBtn3.style.display = shouldShowRegenerate3 ? 'block' : 'none';
+                }
+                // 如果节点3已完成，显示保存修改按钮
                 if (this.state.nodeStates[3] === 'completed') {
                     const saveBtn = document.getElementById('save-completion-btn');
-                    const regenerateBtn = document.getElementById('regenerate-completion-btn');
                     if (saveBtn) saveBtn.style.display = 'inline-block';
-                    if (regenerateBtn) regenerateBtn.style.display = 'block';
                 }
                 break;
             case 4:
@@ -933,10 +1285,9 @@ window.WorkflowManager = {
             window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
             
             // 保存数据（确保保存所有相关字段）
-            this.saveProjectData({
-                finalResults: this.state.allLiterature,
-                selectedLiterature: this.state.selectedLiterature,
-                organizedData: this.state.selectedLiterature
+            // 节点4保存自己的数据
+            this.saveNodeData(4, {
+                selectedLiterature: this.state.selectedLiterature
             });
         }
     },
@@ -963,7 +1314,10 @@ window.WorkflowManager = {
             // 重新显示（用户手动操作时使用编辑模式）
             window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
             // 保存数据
-            this.saveProjectData({ finalResults: this.state.allLiterature });
+            // 节点3保存自己的数据（补全后的文献）
+            this.saveNodeData(3, {
+                allLiterature: this.state.allLiterature
+            });
         }
     },
 
@@ -1096,25 +1450,59 @@ window.WorkflowManager = {
         lit.journal = journalInput.value.trim();
         lit.url = urlInput.value.trim();
         lit.abstract = abstractInput.value.trim();
+        
+        // 如果是在节点3中手动补全的，检查摘要是否完整并更新状态
+        if (window.Node3Complete && window.Node3Complete.isAbstractComplete) {
+            const abstractComplete = window.Node3Complete.isAbstractComplete(lit.abstract);
+            lit.abstractComplete = abstractComplete;
+            
+            // 如果摘要完整且有期刊，标记为补全成功
+            if (abstractComplete && lit.journal && lit.journal.trim()) {
+                lit.completionStatus = 'completed';
+                window.UIUtils.showToast('文献已手动补全成功', 'success');
+            } else if (abstractComplete) {
+                // 只有摘要完整，也算部分成功
+                lit.completionStatus = 'completed';
+                window.UIUtils.showToast('摘要已补全，建议补充期刊信息', 'info');
+            } else if (lit.abstract && lit.abstract.trim()) {
+                // 有摘要但不完整
+                lit.completionStatus = 'failed';
+            }
+        }
 
         // 重新显示（用户手动操作时使用编辑模式）
-        window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
+        // 如果当前在节点3，更新节点3的显示
+        const currentNodeContent = document.querySelector('.node-content.active');
+        if (currentNodeContent && currentNodeContent.id === 'content-node-3') {
+            window.Node3Complete.display(this.state.allLiterature);
+        }
+        // 如果当前在节点4，更新节点4的显示
+        if (currentNodeContent && currentNodeContent.id === 'content-node-4') {
+            window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
+        }
         
         // 保存数据（确保保存所有相关字段）
-        this.saveProjectData({ 
-            finalResults: this.state.allLiterature,
-            selectedLiterature: this.state.selectedLiterature,
-            organizedData: this.state.selectedLiterature
+        // 保存节点3和节点4的数据
+        this.saveNodeData(3, {
+            allLiterature: this.state.allLiterature
         });
+        this.saveNodeData(4, {
+            selectedLiterature: this.state.selectedLiterature
+        });
+        
+        // 更新总览
+        this.updateOverview();
         
         // 关闭模态框
         this.closeEditModal();
         
-        window.UIUtils.showToast('文献信息已保存', 'success');
+        if (!lit.completionStatus || lit.completionStatus !== 'completed') {
+            window.UIUtils.showToast('文献信息已保存', 'success');
+        }
     },
 
     // 删除文献
-    deleteLiterature(index) {
+    async deleteLiterature(index) {
         if (index >= 0 && index < this.state.allLiterature.length) {
             const lit = this.state.allLiterature[index];
             if (!confirm(`确定要删除文献 "${lit.title || '无标题'}" 吗？`)) {
@@ -1132,11 +1520,12 @@ window.WorkflowManager = {
             // 重新显示（用户手动操作时使用编辑模式）
             window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
             
-            // 保存数据（确保保存所有相关字段）
-            this.saveProjectData({ 
-                finalResults: this.state.allLiterature,
-                selectedLiterature: this.state.selectedLiterature,
-                organizedData: this.state.selectedLiterature
+            // 保存数据（使用节点数据格式）
+            await this.saveNodeData(3, {
+                allLiterature: this.state.allLiterature
+            });
+            await this.saveNodeData(4, {
+                selectedLiterature: this.state.selectedLiterature
             });
             
             window.UIUtils.showToast('文献已删除', 'success');
@@ -1182,7 +1571,8 @@ window.WorkflowManager = {
 如果相关，请给出推荐理由；如果不相关，请简要说明原因。`;
 
             const apiProvider = this.getCurrentApiProvider();
-            const answer = await window.API.callAPI(apiProvider, this.state.globalApiKey, [{ role: 'user', content: prompt }], 0.3);
+            const modelName = this.getCurrentModelName();
+            const answer = await window.API.callAPI(apiProvider, this.state.globalApiKey, [{ role: 'user', content: prompt }], 0.3, modelName);
             
             // 尝试解析JSON
             let isRelevant = false;
@@ -1236,11 +1626,12 @@ window.WorkflowManager = {
             // 重新显示（用户手动操作时使用编辑模式）
             window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
             
-            // 保存数据
-            this.saveProjectData({ 
-                finalResults: this.state.allLiterature,
-                selectedLiterature: this.state.selectedLiterature,
-                organizedData: this.state.selectedLiterature
+            // 保存数据（使用节点数据格式）
+            await this.saveNodeData(3, {
+                allLiterature: this.state.allLiterature
+            });
+            await this.saveNodeData(4, {
+                selectedLiterature: this.state.selectedLiterature
             });
             
             window.UIUtils.showToast(isRelevant ? 'AI判断：相关' : 'AI判断：不相关', isRelevant ? 'success' : 'info');
@@ -1296,6 +1687,38 @@ window.WorkflowManager = {
         }
         return await window.DataManager.saveProjectData(this.state.currentProject, patch);
     },
+    
+    // 保存节点数据（每个节点只保存自己的数据）
+    async saveNodeData(nodeNum, nodeData) {
+        if (!this.state.currentProject) {
+            throw new Error('未选择项目');
+        }
+        const nodeKey = `node${nodeNum}`;
+        
+        // 节点2不应该包含 allLiterature（那是节点3的数据）
+        if (nodeNum === 2 && nodeData.allLiterature !== undefined) {
+            const { allLiterature, ...restData } = nodeData;
+            nodeData = restData;
+        }
+        
+        const patch = {
+            [nodeKey]: {
+                ...nodeData,
+                status: this.state.nodeStates[nodeNum] || 'pending'
+            }
+        };
+        
+        // 如果节点2存在，确保删除其中的 allLiterature 字段
+        if (nodeNum === 2) {
+            // 加载现有数据，删除 allLiterature
+            const existing = await window.DataManager.loadProjectData(this.state.currentProject);
+            if (existing && existing.node2 && existing.node2.allLiterature !== undefined) {
+                patch[nodeKey].allLiterature = undefined; // 设置为 undefined 以便删除
+            }
+        }
+        
+        return await window.DataManager.saveProjectData(this.state.currentProject, patch);
+    },
 
     // 保存当前项目的所有数据
     async saveCurrentProjectData() {
@@ -1332,22 +1755,35 @@ window.WorkflowManager = {
                 this.state.requirementData.outline = outline;
             }
 
-            // 收集当前所有状态数据
+            // 收集当前所有状态数据（按节点组织）
             const dataToSave = {
                 config: {
                     apiKeys: this.state.apiKeys || {}, // 保存所有供应商的Keys
-                    apiProvider: this.state.apiProvider
+                    apiProvider: this.state.apiProvider,
+                    geminiModel: this.state.apiProvider === 'gemini' ? this.getGeminiModel() : undefined
                 },
                 requirementData: this.state.requirementData,
-                keywords: this.state.keywords,
-                search: {
-                    results: this.state.searchResults
+                node1: {
+                    keywords: this.state.keywords,
+                    keywordsPlan: this.state.requirementData.keywordsPlan || [],
+                    status: this.state.nodeStates[1] || 'pending'
                 },
-                finalResults: this.state.allLiterature,
-                selectedLiterature: this.state.selectedLiterature,
-                organizedData: this.state.selectedLiterature,
-                reviewContent: this.state.reviewContent,
-                review: this.state.reviewContent
+                node2: {
+                    searchResults: this.state.searchResults,
+                    status: this.state.nodeStates[2] || 'pending'
+                },
+                node3: {
+                    allLiterature: this.state.allLiterature,
+                    status: this.state.nodeStates[3] || 'pending'
+                },
+                node4: {
+                    selectedLiterature: this.state.selectedLiterature,
+                    status: this.state.nodeStates[4] || 'pending'
+                },
+                node5: {
+                    reviewContent: this.state.reviewContent,
+                    status: this.state.nodeStates[5] || 'pending'
+                }
             };
 
             const result = await this.saveProjectData(dataToSave);
@@ -1367,7 +1803,7 @@ window.WorkflowManager = {
         }
     },
 
-        // 绑定事件
+    // 绑定事件
     bindEvents() {
         // 节点点击事件
         for (let i = 1; i <= 5; i++) {
@@ -1510,31 +1946,87 @@ window.WorkflowManager = {
             });
         }
 
-        // 返回项目管理（返回前先保存项目数据）
+        // 关闭项目（关闭前先保存项目数据，并检查节点状态）
         const backBtn = document.getElementById('back-to-index-btn');
         if (backBtn) {
             backBtn.addEventListener('click', async () => {
-                console.log('点击返回项目管理按钮');
+                console.log('点击关闭项目按钮');
                 
                 try {
-                    // 先保存当前项目数据
+                    // 先保存当前项目数据（保存后获取最新的JSON数据）
+                    let savedData = null;
                     if (this.state.currentProject) {
                         console.log('开始保存项目数据，项目名:', this.state.currentProject);
                         try {
                             await this.saveCurrentProjectData();
                             console.log('项目数据保存成功');
+                            // 重新加载保存后的数据，用于状态检查
+                            savedData = await window.DataManager.loadProjectData(this.state.currentProject);
                         } catch (saveError) {
                             console.error('保存数据失败:', saveError);
-                            // 保存失败时询问用户是否继续返回
-                            const shouldContinue = confirm('保存项目数据失败，是否仍要返回项目管理界面？\n\n如果返回，未保存的更改可能会丢失。');
+                            // 保存失败时，使用当前内存中的数据
+                            savedData = this.state.projectData;
+                            // 询问用户是否继续关闭
+                            const shouldContinue = confirm('保存项目数据失败，是否仍要关闭项目？\n\n如果关闭，未保存的更改可能会丢失。');
                             if (!shouldContinue) {
-                                console.log('用户选择不返回');
-                                return; // 用户选择不返回
+                                console.log('用户选择不关闭');
+                                return;
                             }
-                            console.log('用户选择继续返回');
+                            console.log('用户选择继续关闭');
                         }
                     } else {
                         console.warn('没有当前项目，跳过保存');
+                        savedData = this.state.projectData;
+                    }
+                    
+                    // 根据JSON数据检查节点状态
+                    const nodeStatusInfo = this.getNodeStatusInfoFromData(savedData || this.state.projectData);
+                    
+                    // 检查是否有正在运行的流程
+                    const isRunning = this.state.runningState !== null || this.state.isAutoGenerating;
+                    
+                    // 构建确认消息
+                    let confirmMessage = '确定要关闭当前项目吗？\n\n';
+                    
+                    if (isRunning) {
+                        confirmMessage += '⚠️ 警告：当前有流程正在运行中！\n';
+                        if (this.state.runningState === 'auto') {
+                            confirmMessage += '• 一键生成流程正在进行\n';
+                        } else if (this.state.runningState === 'manual') {
+                            confirmMessage += `• 节点${this.state.currentRunningNode}正在手动运行\n`;
+                        }
+                        confirmMessage += '\n如果关闭，正在运行的流程将被中断。\n\n';
+                    }
+                    
+                    // 显示节点状态信息
+                    if (nodeStatusInfo.activeNodes.length > 0) {
+                        confirmMessage += `⚠️ 当前有以下节点处于"进行中"状态：\n`;
+                        nodeStatusInfo.activeNodes.forEach(node => {
+                            confirmMessage += `• ${node}\n`;
+                        });
+                        confirmMessage += '\n';
+                    }
+                    
+                    if (nodeStatusInfo.incompleteNodes.length > 0 && !isRunning) {
+                        confirmMessage += `提示：还有 ${nodeStatusInfo.incompleteNodes.length} 个节点未完成。\n`;
+                        confirmMessage += `未完成节点：${nodeStatusInfo.incompleteNodes.join('、')}\n\n`;
+                    }
+                    
+                    confirmMessage += '关闭前将自动保存当前项目数据。';
+                    
+                    // 显示确认对话框
+                    const shouldClose = confirm(confirmMessage);
+                    if (!shouldClose) {
+                        console.log('用户取消关闭');
+                        return;
+                    }
+                    
+                    // 如果正在运行，先停止
+                    if (isRunning) {
+                        console.log('检测到正在运行的流程，先停止');
+                        this.stopAutoGenerate();
+                        // 等待一小段时间确保停止完成
+                        await new Promise(resolve => setTimeout(resolve, 500));
                     }
                     
                     // 清除当前项目（避免index.html自动切换回工作流）
@@ -1564,12 +2056,12 @@ window.WorkflowManager = {
                         window.UIUtils.showToast('无法返回项目管理界面（API不存在）', 'error');
                     }
                 } catch (error) {
-                    console.error('返回过程出错:', error);
-                    window.UIUtils.showToast('返回失败: ' + error.message, 'error');
+                    console.error('关闭项目过程出错:', error);
+                    window.UIUtils.showToast('关闭项目失败: ' + error.message, 'error');
                 }
             });
         } else {
-            console.warn('返回按钮未找到: back-to-index-btn');
+            console.warn('关闭项目按钮未找到: back-to-index-btn');
         }
 
         // 需求分析
@@ -1603,6 +2095,22 @@ window.WorkflowManager = {
         if (apiProviderSelect) {
             apiProviderSelect.addEventListener('change', () => {
                 this.updateApiProviderUI();
+            });
+        }
+        
+        // Gemini 模型选择变化事件
+        const geminiModelSelect = document.getElementById('gemini-model-select');
+        if (geminiModelSelect) {
+            geminiModelSelect.addEventListener('change', () => {
+                this.state.geminiModel = geminiModelSelect.value;
+                // 更新模型描述
+                const geminiModelDesc = document.getElementById('gemini-model-desc');
+                if (geminiModelDesc && window.API && window.API.providers.gemini && window.API.providers.gemini.models) {
+                    const modelConfig = window.API.providers.gemini.models[geminiModelSelect.value];
+                    if (modelConfig) {
+                        geminiModelDesc.textContent = modelConfig.description;
+                    }
+                }
             });
         }
 
@@ -1783,14 +2291,15 @@ window.WorkflowManager = {
             await this.saveProjectData({
                 config: {
                     apiKeys: this.state.apiKeys || {}, // 保存所有供应商的Keys
-                    apiProvider: apiProvider
+                    apiProvider: apiProvider,
+                    geminiModel: apiProvider === 'gemini' ? this.getGeminiModel() : undefined
                 },
                 requirementData: {
                     requirement: requirement,
                     targetCount: targetCount,
                     outline: outline,
-                    language: language,
-                    keywordsPlan: this.state.requirementData.keywordsPlan || [] // 保留已有的关键词计划
+                    language: language
+                    // keywordsPlan应该保存在node1中，不保存在requirementData中
                 }
             });
 
@@ -1827,7 +2336,8 @@ window.WorkflowManager = {
             this.state.requirementData.language = language;
 
             const apiProvider = this.getCurrentApiProvider();
-            const result = await window.RequirementManager.analyzeRequirement(apiKey, requirement, targetCount, apiProvider);
+            const modelName = this.getCurrentModelName();
+            const result = await window.RequirementManager.analyzeRequirement(apiKey, requirement, targetCount, apiProvider, modelName);
             
             this.state.requirementData.outline = result.outline;
             // 需求分析不再生成关键词，关键词将在节点1中生成
@@ -1849,7 +2359,8 @@ window.WorkflowManager = {
             await this.saveProjectData({
                 config: { 
                     apiKeys: this.state.apiKeys || {},
-                    apiProvider: apiProvider
+                    apiProvider: apiProvider,
+                    geminiModel: apiProvider === 'gemini' ? this.getGeminiModel() : undefined
                 },
                 requirementData: this.state.requirementData
             });
@@ -1892,11 +2403,25 @@ window.WorkflowManager = {
         let hasExistingData = false;
         let confirmMessage = '';
         if (nodeNum === 2) {
-            hasExistingData = this.state.allLiterature && this.state.allLiterature.length > 0;
-            confirmMessage = '当前已存在搜索结果，重新搜索将覆盖现有搜索结果。\n\n是否继续？';
+            // 检查节点2、3、4、5是否有数据
+            const hasNode2Data = this.state.searchResults && Object.keys(this.state.searchResults).length > 0;
+            const hasNode3Data = this.state.allLiterature && this.state.allLiterature.length > 0;
+            const hasNode4Data = this.state.selectedLiterature && this.state.selectedLiterature.length > 0;
+            const hasNode5Data = this.state.reviewContent && this.state.reviewContent.trim().length > 0;
+            hasExistingData = hasNode2Data || hasNode3Data || hasNode4Data || hasNode5Data;
+            confirmMessage = '重新搜索节点2将清空以下内容：\n\n' +
+                           '• 节点2：搜索结果\n' +
+                           '• 节点3：补全的文献\n' +
+                           '• 节点4：筛选的文献\n' +
+                           '• 节点5：生成的综述\n\n' +
+                           '同时会将节点3、4、5的状态重置为"待开始"。\n\n' +
+                           '是否继续？';
         } else if (nodeNum === 3) {
             hasExistingData = this.state.allLiterature && this.state.allLiterature.some(lit => lit.abstract && lit.abstract.trim());
-            confirmMessage = '当前已存在补全的文献，重新生成将覆盖现有补全结果。\n\n是否继续？';
+            confirmMessage = '重新补全节点3将清空以下内容：\n\n' +
+                           '• 节点3：已补全的文献信息（摘要、期刊、被引次数等）\n\n' +
+                           '同时会将节点3的状态重置为"进行中"。\n\n' +
+                           '是否继续？';
         } else if (nodeNum === 4) {
             hasExistingData = this.state.selectedLiterature && this.state.selectedLiterature.length > 0;
             confirmMessage = '当前已存在筛选结果，重新生成将覆盖现有筛选结果。\n\n是否继续？';
@@ -1921,6 +2446,88 @@ window.WorkflowManager = {
         try {
             // 执行对应节点的重新生成
             if (nodeNum === 2) {
+                // 先将节点2的状态设置为active（正在重新搜索）
+                this.state.nodeStates[2] = 'active';
+                // 将节点3、4、5的状态重置为pending（必须在saveNodeData之前设置）
+                this.state.nodeStates[3] = 'pending';
+                this.state.nodeStates[4] = 'pending';
+                this.state.nodeStates[5] = 'pending';
+                
+                // 节点2重新搜索时，先清空JSON中节点2、3、4、5的数据（status会自动更新）
+                await this.saveNodeData(2, {
+                    searchResults: undefined, // 明确删除 searchResults 字段
+                    allLiterature: undefined // 明确删除 allLiterature 字段
+                });
+                await this.saveNodeData(3, {
+                    allLiterature: undefined // 清空节点3的数据
+                });
+                await this.saveNodeData(4, {
+                    selectedLiterature: undefined // 清空节点4的数据
+                });
+                await this.saveNodeData(5, {
+                    reviewContent: undefined // 清空节点5的数据
+                });
+                
+                // 然后清空state中的数据
+                this.state.searchResults = {};
+                this.state.allLiterature = [];
+                this.state.selectedLiterature = [];
+                this.state.reviewContent = '';
+                
+                // 更新节点状态显示
+                this.updateNodeState(2, 'active');
+                this.updateNodeState(3, 'pending');
+                this.updateNodeState(4, 'pending');
+                this.updateNodeState(5, 'pending');
+                
+                // 清空节点2的UI显示
+                const searchResultsList = document.getElementById('search-results-list');
+                if (searchResultsList) {
+                    searchResultsList.innerHTML = '';
+                }
+                const searchCount = document.getElementById('search-count');
+                if (searchCount) {
+                    searchCount.textContent = '0';
+                }
+                
+                // 清空节点3的UI显示
+                const completeResultsList = document.getElementById('complete-results-list');
+                if (completeResultsList) {
+                    completeResultsList.innerHTML = '';
+                }
+                const completeCount = document.getElementById('complete-count');
+                if (completeCount) {
+                    completeCount.textContent = '0';
+                }
+                
+                // 清空节点4的UI显示
+                const filterResultsList = document.getElementById('filter-results-list');
+                if (filterResultsList) {
+                    filterResultsList.innerHTML = '';
+                }
+                const selectedList = document.getElementById('selected-list');
+                if (selectedList) {
+                    selectedList.innerHTML = '';
+                }
+                
+                // 清空节点5的UI显示
+                const reviewContent = document.getElementById('review-content');
+                if (reviewContent) {
+                    reviewContent.value = '';
+                }
+                
+                // 隐藏节点3、4、5的相关UI元素
+                window.UIUtils.hideElement('complete-results');
+                window.UIUtils.hideElement('filter-results');
+                const saveCompletionBtn = document.getElementById('save-completion-btn');
+                const regenerateCompletionBtn = document.getElementById('regenerate-completion-btn');
+                const saveFilterBtn = document.getElementById('save-filter-btn');
+                const regenerateFilterBtn = document.getElementById('regenerate-filter-btn');
+                if (saveCompletionBtn) saveCompletionBtn.style.display = 'none';
+                if (regenerateCompletionBtn) regenerateCompletionBtn.style.display = 'none';
+                if (saveFilterBtn) saveFilterBtn.style.display = 'none';
+                if (regenerateFilterBtn) regenerateFilterBtn.style.display = 'none';
+                
                 // 节点2重新搜索时，隐藏多余的内容，只显示进度条（与一键生成一致）
                 window.UIUtils.hideElement('search-results');
                 const saveSearchBtn = document.getElementById('save-search-results-btn');
@@ -1931,9 +2538,72 @@ window.WorkflowManager = {
                 if (regenerateBtn2) {
                     regenerateBtn2.style.display = 'none';
                 }
+                
+                // 更新总览显示
+                this.updateOverview();
+                
+                // 只显示节点2的内容，隐藏其他所有节点
+                this.showNodeContent(2);
+                // 手动隐藏其他所有节点（1、3、4、5）
+                for (let i = 1; i <= 5; i++) {
+                    if (i === 2) continue; // 跳过节点2
+                    const nodeContent = document.getElementById(`content-node-${i}`);
+                    if (nodeContent) {
+                        nodeContent.style.display = 'none';
+                        nodeContent.classList.remove('active');
+                        const nodeBody = document.getElementById(`node-body-${i}`);
+                        if (nodeBody) {
+                            nodeBody.style.display = 'none';
+                        }
+                    }
+                }
+                
+                // 设置手动运行状态
+                this.state.runningState = 'manual';
+                this.state.currentRunningNode = 2;
+                this.state.shouldStop = false;
+                this.updateGenerateButtonState();
+                
                 await this.autoExecuteNode2();
+                
+                // 清除运行状态
+                this.state.runningState = null;
+                this.state.currentRunningNode = 0;
+                this.state.isAutoGenerating = false;
+                this.updateGenerateButtonState();
             } else if (nodeNum === 3) {
-                // 节点3重新补全时，隐藏多余的内容，只显示进度条（与一键生成一致）
+                // 节点3重新补全时，先清空节点3的补全状态
+                // 清空 allLiterature 中的补全信息（abstract、journal、completionStatus），保留基本信息
+                if (this.state.allLiterature && Array.isArray(this.state.allLiterature)) {
+                    this.state.allLiterature.forEach(lit => {
+                        delete lit.abstract;
+                        delete lit.journal;
+                        delete lit.completionStatus;
+                    });
+                }
+                
+                // 将节点3的状态设置为active（正在重新补全）
+                this.state.nodeStates[3] = 'active';
+                
+                // 清空JSON中节点3的补全数据（保留文献基本信息）
+                await this.saveNodeData(3, {
+                    allLiterature: this.state.allLiterature
+                });
+                
+                // 更新节点状态显示
+                this.updateNodeState(3, 'active');
+                
+                // 清空节点3的UI显示
+                const completeResultsList = document.getElementById('complete-results-list');
+                if (completeResultsList) {
+                    completeResultsList.innerHTML = '';
+                }
+                const completeCount = document.getElementById('complete-count');
+                if (completeCount) {
+                    completeCount.textContent = '0';
+                }
+                
+                // 隐藏多余的内容，只显示进度条
                 window.UIUtils.hideElement('complete-results');
                 const saveBtn = document.getElementById('save-completion-btn');
                 const regenerateBtn = document.getElementById('regenerate-completion-btn');
@@ -1943,7 +2613,36 @@ window.WorkflowManager = {
                 if (regenerateBtn) {
                     regenerateBtn.style.display = 'none';
                 }
+                
+                // 只显示节点3的内容，隐藏其他所有节点
+                this.showNodeContent(3);
+                // 手动隐藏其他所有节点（1、2、4、5）
+                for (let i = 1; i <= 5; i++) {
+                    if (i === 3) continue; // 跳过节点3
+                    const nodeContent = document.getElementById(`content-node-${i}`);
+                    if (nodeContent) {
+                        nodeContent.style.display = 'none';
+                        nodeContent.classList.remove('active');
+                        const nodeBody = document.getElementById(`node-body-${i}`);
+                        if (nodeBody) {
+                            nodeBody.style.display = 'none';
+                        }
+                    }
+                }
+                
+                // 设置手动运行状态
+                this.state.runningState = 'manual';
+                this.state.currentRunningNode = 3;
+                this.state.shouldStop = false;
+                this.updateGenerateButtonState();
+                
                 await this.autoExecuteNode3();
+                
+                // 清除运行状态
+                this.state.runningState = null;
+                this.state.currentRunningNode = 0;
+                this.state.isAutoGenerating = false;
+                this.updateGenerateButtonState();
             } else if (nodeNum === 4) {
                 // 节点4重新精选时，隐藏多余的内容，只显示进度条（与一键生成一致）
                 window.UIUtils.hideElement('filter-results');
@@ -1960,13 +2659,30 @@ window.WorkflowManager = {
                 if (regenerateBtn) {
                     regenerateBtn.style.display = 'none';
                 }
+                // 设置手动运行状态
+                this.state.runningState = 'manual';
+                this.state.currentRunningNode = 4;
+                this.state.shouldStop = false;
+                this.updateGenerateButtonState();
+                
                 await this.autoExecuteNode4();
+                
+                // 清除运行状态
+                this.state.runningState = null;
+                this.state.currentRunningNode = 0;
+                this.state.isAutoGenerating = false;
+                this.updateGenerateButtonState();
             }
 
             window.UIUtils.showToast(`节点${nodeNum}重新生成完成`, 'success');
         } catch (error) {
             console.error(`节点${nodeNum}重新生成失败:`, error);
             window.UIUtils.showToast(`节点${nodeNum}重新生成失败: ${error.message || '未知错误'}`, 'error');
+            // 即使出错，也要确保按钮状态正确
+            this.state.runningState = null;
+            this.state.currentRunningNode = 0;
+            this.state.isAutoGenerating = false;
+            this.updateGenerateButtonState();
         }
     },
 
@@ -2140,19 +2856,103 @@ window.WorkflowManager = {
             }
         }
 
-        // 用户确认后，先清除JSON文件中的节点信息
+        // 用户确认后，先清空所有节点的UI内容
+        console.log('[startAutoGenerate] Clearing all node UI content...');
+        
+        // 清空节点1：关键词列表
+        const keywordsList = document.getElementById('keywords-list');
+        if (keywordsList) {
+            keywordsList.innerHTML = '';
+        }
+        
+        // 清空节点2：搜索结果列表和所有相关内容
+        const searchResultsList = document.getElementById('search-results-list');
+        if (searchResultsList) {
+            searchResultsList.innerHTML = '';
+        }
+        const searchCount = document.getElementById('search-count');
+        if (searchCount) {
+            searchCount.textContent = '0';
+        }
+        // 隐藏搜索结果区域
+        const searchResults = document.getElementById('search-results');
+        if (searchResults) {
+            searchResults.style.display = 'none';
+        }
+        // 隐藏搜索进度条
+        const searchProgress = document.getElementById('search-progress');
+        if (searchProgress) {
+            searchProgress.style.display = 'none';
+        }
+        // 隐藏保存按钮
+        const saveSearchBtn = document.getElementById('save-search-results-btn');
+        if (saveSearchBtn) {
+            saveSearchBtn.style.display = 'none';
+        }
+        // 隐藏重新搜索按钮
+        const regenerateNode2Btn = document.getElementById('regenerate-node2-btn');
+        if (regenerateNode2Btn) {
+            regenerateNode2Btn.style.display = 'none';
+        }
+        
+        // 清空节点3：补全结果列表
+        const completeResultsList = document.getElementById('complete-results-list');
+        if (completeResultsList) {
+            completeResultsList.innerHTML = '';
+        }
+        const completeCount = document.getElementById('complete-count');
+        if (completeCount) {
+            completeCount.textContent = '0';
+        }
+        
+        // 清空节点4：筛选结果列表
+        const filterResultsList = document.getElementById('filter-results-list');
+        if (filterResultsList) {
+            filterResultsList.innerHTML = '';
+        }
+        
+        // 清空节点5：综述内容
+        const reviewContent = document.getElementById('review-content');
+        if (reviewContent) {
+            reviewContent.value = '';
+        }
+        const selectedList = document.getElementById('selected-list');
+        if (selectedList) {
+            selectedList.innerHTML = '';
+        }
+        const selectedCount = document.getElementById('selected-count');
+        if (selectedCount) {
+            selectedCount.textContent = '0';
+        }
+        
+        console.log('[startAutoGenerate] All node UI content cleared');
+        
+        // 然后清除JSON文件中的节点信息
         console.log('[startAutoGenerate] Clearing node data from JSON file...');
-        await this.saveProjectData({
+        // 清空所有节点数据
+        await this.saveNodeData(1, {
             keywords: [],
-            search: { results: {} },
-            finalResults: [],
-            selectedLiterature: [],
-            organizedData: [],
-            reviewContent: '',
-            review: '',
+            keywordsPlan: []
+        });
+        await this.saveNodeData(2, {
+            searchResults: undefined, // 明确删除 searchResults 字段
+            allLiterature: undefined // 明确删除 allLiterature 字段
+        });
+        await this.saveNodeData(3, {
+            allLiterature: []
+        });
+        await this.saveNodeData(4, {
+            selectedLiterature: []
+        });
+        await this.saveNodeData(5, {
+            reviewContent: ''
+        });
+        
+        // 清空关键词计划
+        await this.saveProjectData({
             requirementData: {
                 ...this.state.requirementData,
-                keywordsPlan: [] // 清空关键词计划，重新生成
+                keywordsPlan: []
             }
         });
         console.log('[startAutoGenerate] Node data cleared from JSON file');
@@ -2160,10 +2960,10 @@ window.WorkflowManager = {
         // 然后清空state中的所有现有内容
         // 注意：保留需求分析相关数据（requirement、outline），只清空执行结果
         this.state.keywords = [];
-        this.state.searchResults = {};
-        this.state.allLiterature = [];
-        this.state.selectedLiterature = [];
-        this.state.reviewContent = '';
+        this.state.searchResults = {}; // 清空节点2的搜索结果
+        this.state.allLiterature = []; // 清空节点3的文献列表
+        this.state.selectedLiterature = []; // 清空节点4的已选文献
+        this.state.reviewContent = ''; // 清空节点5的综述内容
         // 在一键生成时，应该重新生成关键词，所以清空它
         this.state.requirementData.keywordsPlan = [];
         
@@ -2264,26 +3064,40 @@ window.WorkflowManager = {
         console.log('[startAutoGenerate] executeNextNode completed');
     },
 
-    // 停止生成
+    // 停止生成（支持停止一键生成和手动运行节点）
     stopAutoGenerate() {
-        if (!this.state.isAutoGenerating) {
+        if (this.state.runningState === null) {
+            // 没有正在运行的任务
             return;
         }
 
+        // 设置停止标志
         this.state.shouldStop = true;
-        this.state.isAutoGenerating = false;
+        
+        // 获取当前运行的节点编号
+        const runningNode = this.state.currentRunningNode;
+        const runningType = this.state.runningState;
+
+        // 清除运行状态
+        this.state.runningState = null;
+        this.state.currentRunningNode = 0;
+        this.state.isAutoGenerating = false; // 兼容旧代码
         this.state.currentAutoNode = 0;
 
         // 更新按钮显示状态
-        const startBtn = document.getElementById('start-auto-generate-btn');
-        const stopBtn = document.getElementById('stop-auto-generate-btn');
-        if (startBtn) startBtn.style.display = 'block';
-        if (stopBtn) stopBtn.style.display = 'none';
+        this.updateGenerateButtonState();
 
         // 更新当前节点的状态为pending（如果正在执行）
-        for (let i = 1; i <= 5; i++) {
-            if (this.state.nodeStates[i] === 'active') {
-                this.updateNodeState(i, 'pending');
+        if (runningNode > 0 && runningNode <= 5) {
+            if (this.state.nodeStates[runningNode] === 'active') {
+                this.updateNodeState(runningNode, 'pending');
+            }
+        } else {
+            // 如果没有明确的节点编号，检查所有active状态的节点
+            for (let i = 1; i <= 5; i++) {
+                if (this.state.nodeStates[i] === 'active') {
+                    this.updateNodeState(i, 'pending');
+                }
             }
         }
 
@@ -2295,7 +3109,14 @@ window.WorkflowManager = {
             }
         }
 
-        window.UIUtils.showToast('已停止生成', 'info');
+        // 显示停止提示
+        if (runningType === 'auto') {
+            window.UIUtils.showToast('已停止一键生成', 'info');
+        } else if (runningType === 'manual') {
+            window.UIUtils.showToast(`已停止节点${runningNode}的运行`, 'info');
+        } else {
+            window.UIUtils.showToast('已停止运行', 'info');
+        }
     },
 
     // 执行下一个节点
@@ -2310,12 +3131,12 @@ window.WorkflowManager = {
         // 检查是否应该停止
         if (this.state.shouldStop) {
             console.log('[executeNextNode] Should stop flag is true, exiting');
+            // 清除运行状态
+            this.state.runningState = null;
+            this.state.currentRunningNode = 0;
             this.state.isAutoGenerating = false;
             this.state.currentAutoNode = 0;
-            const startBtn = document.getElementById('start-auto-generate-btn');
-            const stopBtn = document.getElementById('stop-auto-generate-btn');
-            if (startBtn) startBtn.style.display = 'block';
-            if (stopBtn) stopBtn.style.display = 'none';
+            this.updateGenerateButtonState();
             return;
         }
 
@@ -2324,6 +3145,7 @@ window.WorkflowManager = {
             switch(this.state.currentAutoNode) {
                 case 1:
                     console.log('[executeNextNode] Case 1: Calling autoExecuteNode1...');
+                    this.state.currentRunningNode = 1; // 更新当前运行的节点
                     await this.autoExecuteNode1();
                     console.log('[executeNextNode] autoExecuteNode1 completed');
                     if (this.state.shouldStop) {
@@ -2331,6 +3153,7 @@ window.WorkflowManager = {
                         return;
                     }
                     this.state.currentAutoNode = 2;
+                    this.state.currentRunningNode = 2; // 更新当前运行的节点
                     console.log('[executeNextNode] Moving to node 2');
                     window.UIUtils.showToast('节点1完成，2秒后自动开始文献搜索...', 'success');
                     setTimeout(() => {
@@ -2341,9 +3164,32 @@ window.WorkflowManager = {
                     }, 2000);
                     break;
                 case 2:
-                    await this.autoExecuteNode2();
+                    try {
+                        this.state.currentRunningNode = 2; // 更新当前运行的节点
+                        await this.autoExecuteNode2();
+                        // 检查是否搜索到文献（如果autoExecuteNode2抛出错误，这里不会执行）
+                        if (!this.state.allLiterature || this.state.allLiterature.length === 0) {
+                            console.log('[executeNextNode] 节点2未搜索到文献，停止执行');
+                            this.state.runningState = null;
+                            this.state.currentRunningNode = 0;
+                            this.state.isAutoGenerating = false;
+                            this.state.currentAutoNode = 0;
+                            this.updateGenerateButtonState();
+                            return;
+                        }
+                    } catch (error) {
+                        // 如果节点2执行失败或未搜索到文献，停止执行
+                        console.error('[executeNextNode] 节点2执行失败:', error);
+                        this.state.runningState = null;
+                        this.state.currentRunningNode = 0;
+                        this.state.isAutoGenerating = false;
+                        this.state.currentAutoNode = 0;
+                        this.updateGenerateButtonState();
+                        return;
+                    }
                     if (this.state.shouldStop) return;
                     this.state.currentAutoNode = 3;
+                    this.state.currentRunningNode = 3; // 更新当前运行的节点
                     window.UIUtils.showToast('节点2完成，开始执行节点3：文献补全...', 'success');
                     setTimeout(() => {
                         if (!this.state.shouldStop) {
@@ -2352,9 +3198,19 @@ window.WorkflowManager = {
                     }, 1000);
                     break;
                 case 3:
-                    await this.autoExecuteNode3();
+                    try {
+                        this.state.currentRunningNode = 3; // 更新当前运行的节点
+                        await this.autoExecuteNode3();
+                    } catch (error) {
+                        if (error.message === '用户停止了执行') {
+                            console.log('[executeNextNode] 节点3被用户停止');
+                            return;
+                        }
+                        throw error;
+                    }
                     if (this.state.shouldStop) return;
                     this.state.currentAutoNode = 4;
+                    this.state.currentRunningNode = 4; // 更新当前运行的节点
                     window.UIUtils.showToast('节点3完成，2秒后自动开始精选文献...', 'success');
                     setTimeout(() => {
                         if (!this.state.shouldStop) {
@@ -2364,9 +3220,19 @@ window.WorkflowManager = {
                     }, 2000);
                     break;
                 case 4:
-                    await this.autoExecuteNode4();
+                    try {
+                        this.state.currentRunningNode = 4; // 更新当前运行的节点
+                        await this.autoExecuteNode4();
+                    } catch (error) {
+                        if (error.message === '用户停止了执行') {
+                            console.log('[executeNextNode] 节点4被用户停止');
+                            return;
+                        }
+                        throw error;
+                    }
                     if (this.state.shouldStop) return;
                     this.state.currentAutoNode = 5;
+                    this.state.currentRunningNode = 5; // 更新当前运行的节点
                     window.UIUtils.showToast('节点4完成，2秒后自动开始综述撰写...', 'success');
                     setTimeout(() => {
                         if (!this.state.shouldStop) {
@@ -2376,15 +3242,16 @@ window.WorkflowManager = {
                     }, 2000);
                     break;
                 case 5:
+                    this.state.currentRunningNode = 5; // 更新当前运行的节点
                     await this.autoExecuteNode5();
                     window.UIUtils.showToast('所有节点执行完成！', 'success');
+                    // 清除运行状态
+                    this.state.runningState = null;
+                    this.state.currentRunningNode = 0;
                     this.state.isAutoGenerating = false;
                     this.state.currentAutoNode = 0;
                     // 更新按钮显示状态
-                    const startBtn = document.getElementById('start-auto-generate-btn');
-                    const stopBtn = document.getElementById('stop-auto-generate-btn');
-                    if (startBtn) startBtn.style.display = 'block';
-                    if (stopBtn) stopBtn.style.display = 'none';
+                    this.updateGenerateButtonState();
                     // 恢复所有节点的显示（完成后显示所有节点）
                     for (let i = 1; i <= 5; i++) {
                         const node = document.getElementById(`node-${i}`);
@@ -2480,7 +3347,8 @@ window.WorkflowManager = {
             });
             
             const apiProvider = this.getCurrentApiProvider();
-            const keywordsPlan = await window.Node1Keywords.execute(this.state.globalApiKey, this.state.requirementData, apiProvider);
+            const modelName = this.getCurrentModelName();
+            const keywordsPlan = await window.Node1Keywords.execute(this.state.globalApiKey, this.state.requirementData, apiProvider, modelName);
             console.log('[Node 1] Node1Keywords.execute returned:', {
                 hasResult: !!keywordsPlan,
                 isArray: Array.isArray(keywordsPlan),
@@ -2512,15 +3380,16 @@ window.WorkflowManager = {
             // 完成时更新进度条，不显示结果
             window.UIUtils.updateProgress('keywords-auto-progress', 'keywords-progress-fill', 'keywords-progress-text', 100, '关键词分析完成！');
             
-            // 更新节点状态为已完成
-            this.updateNodeState(1, 'completed');
-            
             console.log('[Node 1] Saving project data...');
-            await this.saveProjectData({ 
-                keywords: this.state.keywords, 
-                requirementData: this.state.requirementData 
+            // 节点1保存自己的数据（keywordsPlan保存在node1中）
+            await this.saveNodeData(1, {
+                keywords: this.state.keywords,
+                keywordsPlan: this.state.requirementData.keywordsPlan || []
             });
             console.log('[Node 1] Project data saved successfully');
+            
+            // 成功完成并保存数据后，才设置为completed
+            this.updateNodeState(1, 'completed');
             console.log('[Node 1] Final state:', {
                 keywordsPlanLength: this.state.requirementData.keywordsPlan.length,
                 keywordsLength: this.state.keywords.length,
@@ -2539,6 +3408,8 @@ window.WorkflowManager = {
                 hasKeywordsPlan: !!this.state.requirementData.keywordsPlan,
                 keywordsPlanLength: this.state.requirementData.keywordsPlan ? this.state.requirementData.keywordsPlan.length : 0
             });
+            // 失败时保持active状态，不改为completed
+            this.updateNodeState(1, 'active');
             throw error; // 重新抛出错误，让上层处理
         }
     },
@@ -2583,38 +3454,118 @@ window.WorkflowManager = {
             );
         };
 
-        const result = await window.Node2Search.execute(
-            this.state.keywords,
-            this.state.requirementData.keywordsPlan,
-            this.state.requirementData.targetCount,
-            onProgress
-        );
+        try {
+            const result = await window.Node2Search.execute(
+                this.state.keywords,
+                this.state.requirementData.keywordsPlan,
+                this.state.requirementData.targetCount,
+                onProgress
+            );
 
-        this.state.searchResults = result.searchResults;
-        this.state.allLiterature = result.allLiterature;
+            // 检查是否被停止
+            if (this.state.shouldStop) {
+                console.log('[autoExecuteNode2] 检测到停止信号，停止节点2执行');
+                // 被停止时保持active状态，不改为pending
+                this.updateNodeState(2, 'active');
+                throw new Error('用户停止了执行');
+            }
 
-        // 完成时更新进度条，不显示结果
-        window.UIUtils.updateProgress(
-            'search-progress',
-            'search-progress-fill',
-            'search-progress-text',
-            100,
-            `搜索完成！共找到 ${result.allLiterature.length} 篇文献`
-        );
+            this.state.searchResults = result.searchResults;
+            this.state.allLiterature = result.allLiterature;
 
-        this.updateNodeState(2, 'completed');
-        await this.saveProjectData({
-            search: { 
-                results: this.state.searchResults 
-            },
-            finalResults: this.state.allLiterature
-        });
+            // 检查是否搜索到文献
+            if (!result.allLiterature || result.allLiterature.length === 0) {
+                // 没有搜索到文献，保持active状态，允许用户重新尝试
+                window.UIUtils.updateProgress(
+                    'search-progress',
+                    'search-progress-fill',
+                    'search-progress-text',
+                    100,
+                    '搜索完成，但未找到任何文献'
+                );
+                
+                // 保持节点状态为active，而不是completed
+                this.updateNodeState(2, 'active');
+                // 节点2只保存自己的数据（searchResults），不保存 allLiterature（那是节点3的数据）
+                await this.saveNodeData(2, {
+                    searchResults: this.state.searchResults,
+                    status: 'active' // 明确保存为active状态
+                });
+                
+                // 停止自动生成流程
+                this.state.isAutoGenerating = false;
+                this.state.currentAutoNode = 0;
+                this.state.shouldStop = true;
+                
+                // 更新按钮显示状态
+                const startBtn = document.getElementById('start-auto-generate-btn');
+                const stopBtn = document.getElementById('stop-auto-generate-btn');
+                if (startBtn) startBtn.style.display = 'block';
+                if (stopBtn) stopBtn.style.display = 'none';
+                
+                // 显示搜索结果区域，让用户可以看到失败信息
+                window.UIUtils.showElement('search-results');
+                const searchResultsList = document.getElementById('search-results-list');
+                if (searchResultsList) {
+                    searchResultsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">未找到任何文献，请检查关键词或网络连接后点击"重新搜索文献"按钮重试</p>';
+                }
+                
+                window.UIUtils.showToast('节点2未搜索到文献，已停止后续流程。请检查关键词或网络连接后重试。', 'error');
+                throw new Error('节点2未搜索到文献，停止执行');
+            }
+
+            // 完成时更新进度条，不显示结果
+            window.UIUtils.updateProgress(
+                'search-progress',
+                'search-progress-fill',
+                'search-progress-text',
+                100,
+                `搜索完成！共找到 ${result.allLiterature.length} 篇文献`
+            );
+
+            // 成功完成并保存数据后，才设置为completed
+            this.updateNodeState(2, 'completed');
+            // 节点2只保存自己的数据（searchResults），不保存 allLiterature（那是节点3的数据）
+            await this.saveNodeData(2, {
+                searchResults: this.state.searchResults
+            });
+        } catch (error) {
+            // 如果错误不是"未搜索到文献"或"用户停止了执行"，说明是其他错误
+            if (error.message !== '节点2未搜索到文献，停止执行' && error.message !== '用户停止了执行') {
+                console.error('节点2执行失败:', error);
+                // 失败时保持active状态，不改为completed
+                this.updateNodeState(2, 'active');
+                // 更新进度条显示错误
+                window.UIUtils.updateProgress(
+                    'search-progress',
+                    'search-progress-fill',
+                    'search-progress-text',
+                    0,
+                    `搜索失败: ${error.message || '未知错误'}`
+                );
+            }
+            throw error; // 重新抛出错误，让上层处理
+        }
     },
 
     async autoExecuteNode3() {
         this.updateNodeState(3, 'active');
         // 自动执行时实时显示节点内容
         this.showNodeContent(3);
+        
+        // 只显示节点3的内容，隐藏其他所有节点
+        for (let i = 1; i <= 5; i++) {
+            if (i === 3) continue; // 跳过节点3
+            const nodeContent = document.getElementById(`content-node-${i}`);
+            if (nodeContent) {
+                nodeContent.style.display = 'none';
+                nodeContent.classList.remove('active');
+                const nodeBody = document.getElementById(`node-body-${i}`);
+                if (nodeBody) {
+                    nodeBody.style.display = 'none';
+                }
+            }
+        }
 
         window.UIUtils.showElement('complete-progress');
         window.UIUtils.hideElement('complete-results');
@@ -2641,26 +3592,51 @@ window.WorkflowManager = {
             );
         };
 
-        const { completed, total, successCount, failCount } = await window.Node3Complete.execute(
-            this.state.globalApiKey, 
-            this.state.allLiterature,
-            onProgress
-        );
+        try {
+            const { completed, total, successCount, failCount } = await window.Node3Complete.execute(
+                this.state.globalApiKey, 
+                this.state.allLiterature,
+                onProgress
+            );
 
-        // 完成时更新进度条，不显示结果
-        window.UIUtils.updateProgress(
-            'complete-progress',
-            'complete-progress-fill',
-            'complete-progress-text',
-            100,
-            `补全完成！成功: ${successCount}篇, 失败: ${failCount}篇`
-        );
+            // 检查是否被停止
+            if (this.state.shouldStop) {
+                console.log('[autoExecuteNode3] 检测到停止信号，停止节点3执行');
+                // 被停止时保持active状态，不改为pending
+                this.updateNodeState(3, 'active');
+                throw new Error('用户停止了执行');
+            }
 
-        this.updateNodeState(3, 'completed');
-        await this.saveProjectData({ 
-            finalResults: this.state.allLiterature 
-        });
-        window.UIUtils.showToast(`文献补全完成，成功: ${successCount}篇, 失败: ${failCount}篇`, 'success');
+            // 完成时更新进度条，不显示结果
+            window.UIUtils.updateProgress(
+                'complete-progress',
+                'complete-progress-fill',
+                'complete-progress-text',
+                100,
+                `补全完成！成功: ${successCount}篇, 失败: ${failCount}篇`
+            );
+
+            // 成功完成并保存数据后，才设置为completed
+            this.updateNodeState(3, 'completed');
+            // 节点3只保存自己的数据（补全后的文献）
+            await this.saveNodeData(3, {
+                allLiterature: this.state.allLiterature
+            });
+            window.UIUtils.showToast(`文献补全完成，成功: ${successCount}篇, 失败: ${failCount}篇`, 'success');
+        } catch (error) {
+            console.error('节点3执行失败:', error);
+            // 失败时保持active状态，不改为completed
+            this.updateNodeState(3, 'active');
+            // 更新进度条显示错误
+            window.UIUtils.updateProgress(
+                'complete-progress',
+                'complete-progress-fill',
+                'complete-progress-text',
+                0,
+                `补全失败: ${error.message || '未知错误'}`
+            );
+            throw error; // 重新抛出错误，让上层处理
+        }
     },
 
     async autoExecuteNode4() {
@@ -2701,14 +3677,24 @@ window.WorkflowManager = {
 
         try {
             const apiProvider = this.getCurrentApiProvider();
+            const modelName = this.getCurrentModelName();
             const result = await window.Node4Filter.execute(
                 this.state.globalApiKey,
                 this.state.allLiterature,
                 this.state.requirementData.requirement,
                 this.state.requirementData.targetCount,
                 onProgress,
-                apiProvider
+                apiProvider,
+                modelName
             );
+
+            // 检查是否被停止
+            if (this.state.shouldStop) {
+                console.log('[autoExecuteNode4] 检测到停止信号，停止节点4执行');
+                // 被停止时保持active状态，不改为pending
+                this.updateNodeState(4, 'active');
+                throw new Error('用户停止了执行');
+            }
 
             // 验证返回结果
             if (!result || typeof result !== 'object') {
@@ -2735,13 +3721,14 @@ window.WorkflowManager = {
             );
 
             this.updateNodeState(4, 'completed');
-            await this.saveProjectData({
-                selectedLiterature: this.state.selectedLiterature,
-                organizedData: this.state.selectedLiterature,
-                finalResults: this.state.allLiterature  // 同时保存所有文献，确保数据同步
+            // 节点4只保存自己的数据
+            await this.saveNodeData(4, {
+                selectedLiterature: this.state.selectedLiterature
             });
         } catch (error) {
             console.error('节点4执行失败:', error);
+            // 失败时保持active状态，不改为completed
+            this.updateNodeState(4, 'active');
             // 更新进度条显示错误
             window.UIUtils.updateProgress(
                 'filter-progress',
@@ -2760,12 +3747,9 @@ window.WorkflowManager = {
     // 保存搜索结果（节点2）
     async saveSearchResults() {
         try {
-            // 保存当前的搜索结果
-            await this.saveProjectData({
-                finalResults: this.state.allLiterature,
-                search: {
-                    results: this.state.searchResults || {}
-                }
+            // 保存节点2的搜索结果（使用标准节点格式）
+            await this.saveNodeData(2, {
+                searchResults: this.state.searchResults || {}
             });
             window.UIUtils.showToast('搜索结果已保存', 'success');
         } catch (error) {
@@ -2777,9 +3761,9 @@ window.WorkflowManager = {
     // 保存补全结果（节点3）
     async saveCompletionResults() {
         try {
-            // 保存当前的补全结果
-            await this.saveProjectData({
-                finalResults: this.state.allLiterature
+            // 保存节点3的补全结果（使用标准节点格式）
+            await this.saveNodeData(3, {
+                allLiterature: this.state.allLiterature
             });
             window.UIUtils.showToast('补全结果已保存', 'success');
         } catch (error) {
@@ -2791,11 +3775,12 @@ window.WorkflowManager = {
     // 保存筛选结果（节点4）
     async saveFilterResults() {
         try {
-            // 保存当前的筛选结果
-            await this.saveProjectData({
-                finalResults: this.state.allLiterature,
-                selectedLiterature: this.state.selectedLiterature,
-                organizedData: this.state.selectedLiterature
+            // 保存节点3和节点4的数据（使用标准节点格式）
+            await this.saveNodeData(3, {
+                allLiterature: this.state.allLiterature
+            });
+            await this.saveNodeData(4, {
+                selectedLiterature: this.state.selectedLiterature
             });
             window.UIUtils.showToast('筛选结果已保存', 'success');
         } catch (error) {
@@ -2843,10 +3828,9 @@ window.WorkflowManager = {
             }
 
             // 保存清空后的状态
-            await this.saveProjectData({
-                finalResults: this.state.allLiterature,
-                selectedLiterature: [],
-                organizedData: []
+            // 清空节点4的数据
+            await this.saveNodeData(4, {
+                selectedLiterature: []
             });
 
             // 隐藏多余的内容，只显示进度条（与一键生成一致）
@@ -2865,13 +3849,30 @@ window.WorkflowManager = {
                 regenerateBtn.style.display = 'none';
             }
 
+            // 设置手动运行状态
+            this.state.runningState = 'manual';
+            this.state.currentRunningNode = 4;
+            this.state.shouldStop = false;
+            this.updateGenerateButtonState();
+            
             // 重新执行节点4
             await this.autoExecuteNode4();
+            
+            // 清除运行状态
+            this.state.runningState = null;
+            this.state.currentRunningNode = 0;
+            this.state.isAutoGenerating = false;
+            this.updateGenerateButtonState();
 
             window.UIUtils.showToast('文献精选完成', 'success');
         } catch (error) {
             console.error('重新精选文献失败:', error);
             window.UIUtils.showToast(`重新精选失败: ${error.message || '未知错误'}`, 'error');
+            // 即使出错，也要确保按钮状态正确
+            this.state.runningState = null;
+            this.state.currentRunningNode = 0;
+            this.state.isAutoGenerating = false;
+            this.updateGenerateButtonState();
         }
     },
 
@@ -2922,9 +3923,9 @@ window.WorkflowManager = {
                 }
             }
 
-            // 保存清空后的状态
-            await this.saveProjectData({
-                finalResults: this.state.allLiterature
+            // 保存清空后的状态（使用节点数据格式）
+            await this.saveNodeData(3, {
+                allLiterature: this.state.allLiterature
             });
 
             // 隐藏多余的内容，只显示进度条（与一键生成一致）
@@ -2938,13 +3939,30 @@ window.WorkflowManager = {
                 regenerateBtn.style.display = 'none';
             }
 
+            // 设置手动运行状态
+            this.state.runningState = 'manual';
+            this.state.currentRunningNode = 3;
+            this.state.shouldStop = false;
+            this.updateGenerateButtonState();
+            
             // 重新执行节点3
             await this.autoExecuteNode3();
+            
+            // 清除运行状态
+            this.state.runningState = null;
+            this.state.currentRunningNode = 0;
+            this.state.isAutoGenerating = false;
+            this.updateGenerateButtonState();
 
             window.UIUtils.showToast('文献补全完成', 'success');
         } catch (error) {
             console.error('重新补全文献失败:', error);
             window.UIUtils.showToast(`重新补全失败: ${error.message || '未知错误'}`, 'error');
+            // 即使出错，也要确保按钮状态正确
+            this.state.runningState = null;
+            this.state.currentRunningNode = 0;
+            this.state.isAutoGenerating = false;
+            this.updateGenerateButtonState();
         }
     },
 
@@ -2956,11 +3974,24 @@ window.WorkflowManager = {
             return;
         }
 
-        // 检查是否已有关键词
-        const hasExistingKeywords = this.state.requirementData.keywordsPlan && 
-                                    this.state.requirementData.keywordsPlan.length > 0;
-        if (hasExistingKeywords) {
-            const confirmed = confirm('当前已存在关键词，重新分析将覆盖现有关键词。\n\n是否继续？');
+        // 检查节点1、2、3、4、5是否有数据
+        const hasNode1Data = this.state.requirementData.keywordsPlan && this.state.requirementData.keywordsPlan.length > 0;
+        const hasNode2Data = this.state.searchResults && Object.keys(this.state.searchResults).length > 0;
+        const hasNode3Data = this.state.allLiterature && this.state.allLiterature.length > 0;
+        const hasNode4Data = this.state.selectedLiterature && this.state.selectedLiterature.length > 0;
+        const hasNode5Data = this.state.reviewContent && this.state.reviewContent.trim().length > 0;
+        const hasExistingData = hasNode1Data || hasNode2Data || hasNode3Data || hasNode4Data || hasNode5Data;
+        
+        if (hasExistingData) {
+            const confirmMessage = '重新分析节点1将清空以下内容：\n\n' +
+                                 '• 节点1：关键词列表\n' +
+                                 '• 节点2：搜索结果\n' +
+                                 '• 节点3：补全的文献\n' +
+                                 '• 节点4：筛选的文献\n' +
+                                 '• 节点5：生成的综述\n\n' +
+                                 '同时会将节点1、2、3、4、5的状态重置为"待开始"（节点1将变为"进行中"）。\n\n' +
+                                 '是否继续？';
+            const confirmed = confirm(confirmMessage);
             if (!confirmed) {
                 return;
             }
@@ -2974,6 +4005,126 @@ window.WorkflowManager = {
         }
 
         try {
+            // 先将节点1的状态设置为active（正在重新分析）
+            this.state.nodeStates[1] = 'active';
+            // 将节点2、3、4、5的状态重置为pending（必须在saveNodeData之前设置）
+            this.state.nodeStates[2] = 'pending';
+            this.state.nodeStates[3] = 'pending';
+            this.state.nodeStates[4] = 'pending';
+            this.state.nodeStates[5] = 'pending';
+            
+            // 节点1重新分析时，先清空JSON中节点1、2、3、4、5的数据（status会自动更新）
+            await this.saveNodeData(1, {
+                keywords: undefined,
+                keywordsPlan: undefined
+            });
+            await this.saveNodeData(2, {
+                searchResults: undefined,
+                allLiterature: undefined
+            });
+            await this.saveNodeData(3, {
+                allLiterature: undefined
+            });
+            await this.saveNodeData(4, {
+                selectedLiterature: undefined
+            });
+            await this.saveNodeData(5, {
+                reviewContent: undefined
+            });
+            
+            // 然后清空state中的数据
+            this.state.requirementData.keywordsPlan = [];
+            this.state.keywords = [];
+            this.state.searchResults = {};
+            this.state.allLiterature = [];
+            this.state.selectedLiterature = [];
+            this.state.reviewContent = '';
+            
+            // 更新节点状态显示
+            this.updateNodeState(1, 'active');
+            this.updateNodeState(2, 'pending');
+            this.updateNodeState(3, 'pending');
+            this.updateNodeState(4, 'pending');
+            this.updateNodeState(5, 'pending');
+            
+            // 清空节点1的UI显示
+            const keywordsList = document.getElementById('keywords-list');
+            if (keywordsList) {
+                keywordsList.innerHTML = '';
+            }
+            
+            // 清空节点2的UI显示
+            const searchResultsList = document.getElementById('search-results-list');
+            if (searchResultsList) {
+                searchResultsList.innerHTML = '';
+            }
+            const searchCount = document.getElementById('search-count');
+            if (searchCount) {
+                searchCount.textContent = '0';
+            }
+            
+            // 清空节点3的UI显示
+            const completeResultsList = document.getElementById('complete-results-list');
+            if (completeResultsList) {
+                completeResultsList.innerHTML = '';
+            }
+            const completeCount = document.getElementById('complete-count');
+            if (completeCount) {
+                completeCount.textContent = '0';
+            }
+            
+            // 清空节点4的UI显示
+            const filterResultsList = document.getElementById('filter-results-list');
+            if (filterResultsList) {
+                filterResultsList.innerHTML = '';
+            }
+            const selectedList = document.getElementById('selected-list');
+            if (selectedList) {
+                selectedList.innerHTML = '';
+            }
+            
+            // 清空节点5的UI显示
+            const reviewContent = document.getElementById('review-content');
+            if (reviewContent) {
+                reviewContent.value = '';
+            }
+            
+            // 隐藏节点2、3、4、5的相关UI元素
+            window.UIUtils.hideElement('search-results');
+            window.UIUtils.hideElement('complete-results');
+            window.UIUtils.hideElement('filter-results');
+            const saveSearchBtn = document.getElementById('save-search-results-btn');
+            const regenerateNode2Btn = document.getElementById('regenerate-node2-btn');
+            const saveCompletionBtn = document.getElementById('save-completion-btn');
+            const regenerateCompletionBtn = document.getElementById('regenerate-completion-btn');
+            const saveFilterBtn = document.getElementById('save-filter-btn');
+            const regenerateFilterBtn = document.getElementById('regenerate-filter-btn');
+            if (saveSearchBtn) saveSearchBtn.style.display = 'none';
+            if (regenerateNode2Btn) regenerateNode2Btn.style.display = 'none';
+            if (saveCompletionBtn) saveCompletionBtn.style.display = 'none';
+            if (regenerateCompletionBtn) regenerateCompletionBtn.style.display = 'none';
+            if (saveFilterBtn) saveFilterBtn.style.display = 'none';
+            if (regenerateFilterBtn) regenerateFilterBtn.style.display = 'none';
+            
+            // 更新总览显示
+            this.updateOverview();
+            
+            // 只显示节点1的内容，隐藏其他所有节点
+            this.showNodeContent(1);
+            // 手动隐藏其他所有节点（2、3、4、5）
+            for (let i = 1; i <= 5; i++) {
+                if (i === 1) continue; // 跳过节点1
+                const nodeContent = document.getElementById(`content-node-${i}`);
+                if (nodeContent) {
+                    nodeContent.style.display = 'none';
+                    nodeContent.classList.remove('active');
+                    const nodeBody = document.getElementById(`node-body-${i}`);
+                    if (nodeBody) {
+                        nodeBody.style.display = 'none';
+                    }
+                }
+            }
+            
             // 禁用按钮
             const regenerateBtn = document.getElementById('regenerate-keywords-btn');
             if (regenerateBtn) {
@@ -2994,8 +4145,16 @@ window.WorkflowManager = {
                 '正在分析关键词...'
             );
 
+            // 设置手动运行状态
+            this.state.runningState = 'manual';
+            this.state.currentRunningNode = 1;
+            this.state.shouldStop = false;
+            this.updateGenerateButtonState();
+            
             // 执行关键词分析
-            const keywordsPlan = await window.Node1Keywords.execute(apiKey, this.state.requirementData);
+            const apiProvider = this.getCurrentApiProvider();
+            const modelName = this.getCurrentModelName();
+            const keywordsPlan = await window.Node1Keywords.execute(apiKey, this.state.requirementData, apiProvider, modelName);
 
             // 验证返回结果
             if (!keywordsPlan || !Array.isArray(keywordsPlan) || keywordsPlan.length === 0) {
@@ -3020,9 +4179,10 @@ window.WorkflowManager = {
             this.updateNodeState(1, 'completed');
 
             // 保存数据
-            await this.saveProjectData({
+            // 节点1保存自己的数据（keywordsPlan保存在node1中）
+            await this.saveNodeData(1, {
                 keywords: this.state.keywords,
-                requirementData: this.state.requirementData
+                keywordsPlan: this.state.requirementData.keywordsPlan || []
             });
 
             // 显示结果（编辑模式）
@@ -3035,10 +4195,21 @@ window.WorkflowManager = {
                 regenerateBtn.style.display = 'inline-block';
             }
 
+            // 清除运行状态
+            this.state.runningState = null;
+            this.state.currentRunningNode = 0;
+            this.state.isAutoGenerating = false;
+            this.updateGenerateButtonState();
+            
             window.UIUtils.showToast('关键词分析完成', 'success');
         } catch (error) {
             console.error('关键词分析失败:', error);
             window.UIUtils.showToast(`关键词分析失败: ${error.message || '未知错误'}`, 'error');
+            // 即使出错，也要确保按钮状态正确
+            this.state.runningState = null;
+            this.state.currentRunningNode = 0;
+            this.state.isAutoGenerating = false;
+            this.updateGenerateButtonState();
         } finally {
             // 恢复按钮状态
             const regenerateBtn = document.getElementById('regenerate-keywords-btn');
@@ -3094,11 +4265,13 @@ window.WorkflowManager = {
 
             // 执行生成
             const apiProvider = this.getCurrentApiProvider();
+            const modelName = this.getCurrentModelName();
             this.state.reviewContent = await window.Node5Review.execute(
                 this.state.globalApiKey,
                 this.state.selectedLiterature,
                 this.state.requirementData,
-                apiProvider
+                apiProvider,
+                modelName
             );
 
             // 更新进度条
@@ -3118,12 +4291,9 @@ window.WorkflowManager = {
             this.updateNodeState(5, 'completed');
 
             // 保存数据
-            await this.saveProjectData({
-                reviewContent: this.state.reviewContent,
-                review: this.state.reviewContent,
-                selectedLiterature: this.state.selectedLiterature,
-                organizedData: this.state.selectedLiterature,
-                finalResults: this.state.allLiterature
+            // 节点5只保存自己的数据
+            await this.saveNodeData(5, {
+                reviewContent: this.state.reviewContent
             });
 
             window.UIUtils.showToast('综述生成完成', 'success');
@@ -3375,35 +4545,59 @@ window.WorkflowManager = {
             '正在生成综述...'
         );
 
-        const apiProvider = this.getCurrentApiProvider();
-        this.state.reviewContent = await window.Node5Review.execute(
-            this.state.globalApiKey,
-            this.state.selectedLiterature,
-            this.state.requirementData,
-            apiProvider
-        );
+        try {
+            const apiProvider = this.getCurrentApiProvider();
+            const modelName = this.getCurrentModelName();
+            this.state.reviewContent = await window.Node5Review.execute(
+                this.state.globalApiKey,
+                this.state.selectedLiterature,
+                this.state.requirementData,
+                apiProvider,
+                modelName
+            );
 
-        // 完成时更新进度条，不显示结果
-        window.UIUtils.updateProgress(
-            'generate-progress',
-            'generate-progress-fill',
-            'generate-progress-text',
-            100,
-            '综述生成完成'
-        );
+            // 检查是否被停止
+            if (this.state.shouldStop) {
+                console.log('[autoExecuteNode5] 检测到停止信号，停止节点5执行');
+                // 被停止时保持active状态，不改为pending
+                this.updateNodeState(5, 'active');
+                throw new Error('用户停止了执行');
+            }
 
-        this.updateNodeState(5, 'completed');
-        await this.saveProjectData({
-            reviewContent: this.state.reviewContent,
-            review: this.state.reviewContent,
-            selectedLiterature: this.state.selectedLiterature,  // 确保保存筛选结果
-            organizedData: this.state.selectedLiterature,
-            finalResults: this.state.allLiterature  // 确保保存所有文献
-        });
-        
-        // 完成后显示已选文献列表（即使是在自动执行模式下）
-        if (this.state.selectedLiterature && this.state.selectedLiterature.length > 0) {
-            window.Node5Review.displaySelectedLiterature(this.state.selectedLiterature);
+            // 完成时更新进度条，不显示结果
+            window.UIUtils.updateProgress(
+                'generate-progress',
+                'generate-progress-fill',
+                'generate-progress-text',
+                100,
+                '综述生成完成'
+            );
+
+            // 节点5只保存自己的数据
+            await this.saveNodeData(5, {
+                reviewContent: this.state.reviewContent
+            });
+            
+            // 成功完成并保存数据后，才设置为completed
+            this.updateNodeState(5, 'completed');
+            
+            // 完成后显示已选文献列表（即使是在自动执行模式下）
+            if (this.state.selectedLiterature && this.state.selectedLiterature.length > 0) {
+                window.Node5Review.displaySelectedLiterature(this.state.selectedLiterature);
+            }
+        } catch (error) {
+            console.error('节点5执行失败:', error);
+            // 失败时保持active状态，不改为completed
+            this.updateNodeState(5, 'active');
+            // 更新进度条显示错误
+            window.UIUtils.updateProgress(
+                'generate-progress',
+                'generate-progress-fill',
+                'generate-progress-text',
+                0,
+                `生成失败: ${error.message || '未知错误'}`
+            );
+            throw error; // 重新抛出错误，让上层处理
         }
     }
 };

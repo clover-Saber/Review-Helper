@@ -1,7 +1,7 @@
 // 节点1：关键词分析模块
 window.Node1Keywords = {
     // 自动执行关键词分析
-    async execute(apiKey, requirementData, apiProvider = 'deepseek') {
+    async execute(apiKey, requirementData, apiProvider = 'deepseek', modelName = null) {
         console.log('[Node1Keywords.execute] ========== STARTING EXECUTE ==========');
         console.log('[Node1Keywords.execute] Parameters:', {
             hasApiKey: !!apiKey,
@@ -42,7 +42,7 @@ ${requirementData.outline}
 - 只返回JSON，不要添加任何其他文字说明`;
 
         console.log('[Node1Keywords.execute] Calling API.callAPI...');
-        const content = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.7);
+        const content = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.7, modelName);
         console.log('[Node1Keywords.execute] API returned, content length:', content ? content.length : 0);
         console.log('[Node1Keywords.execute] Content preview:', content ? content.substring(0, 200) : 'N/A');
         
@@ -374,10 +374,10 @@ ${requirementData.outline}
             // keywords应该是字符串数组，从keywordsPlan中提取
             window.WorkflowManager.state.keywords = keywordsPlan.map(item => item.keyword);
             
-            // 保存到项目数据（确保保存完整的requirementData和keywords）
-            window.WorkflowManager.saveProjectData({
-                requirementData: window.WorkflowManager.state.requirementData,
-                keywords: window.WorkflowManager.state.keywords  // 保存字符串数组
+            // 保存到节点1数据（使用标准节点格式）
+            window.WorkflowManager.saveNodeData(1, {
+                keywords: window.WorkflowManager.state.keywords,
+                keywordsPlan: keywordsPlan
             }).then(() => {
                 window.UIUtils.showToast('关键词已保存', 'success');
             }).catch(error => {

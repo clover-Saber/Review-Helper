@@ -272,13 +272,14 @@
                         // 创建新项目
                         const projectData = {
                             projectName: projectName,
-                            projectDescription: researchTopic.value.trim() || '',
                             status: 'initial',
                             createdAt: new Date().toISOString(),
                             updatedAt: new Date().toISOString(),
-                            step1: { status: 'pending' },
-                            step2: { status: 'pending' },
-                            step3: { status: 'pending' }
+                            node1: { status: 'pending' },
+                            node2: { status: 'pending' },
+                            node3: { status: 'pending' },
+                            node4: { status: 'pending' },
+                            node5: { status: 'pending' }
                         };
                         
                         const result = await window.electronAPI.saveProjectData(projectName, projectData);
@@ -384,7 +385,13 @@
                         'completed': 'status-completed'
                     }[status] || 'status-pending';
                     
-                    const topic = data.projectDescription || data.reviewDescription || data.userNeeds || data.researchTopic || '未设置项目简介';
+                    // 优先从 requirementData.requirement 读取，兼容旧格式
+                    const topic = (data.requirementData && data.requirementData.requirement) || 
+                                  data.projectDescription || 
+                                  data.reviewDescription || 
+                                  data.userNeeds || 
+                                  data.researchTopic || 
+                                  '未设置项目需求';
                     const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleDateString('zh-CN') : '未知';
                     const updatedAt = data.updatedAt ? new Date(data.updatedAt).toLocaleDateString('zh-CN') : '未知';
                     
@@ -515,8 +522,8 @@
             function getProjectDataToSave() {
                 if (!currentProjectData) return null;
                 
+                // 不再保存 projectDescription，需求描述应该在工作流页面保存到 requirementData.requirement
                 return {
-                    projectDescription: researchTopic.value.trim(),
                     updatedAt: new Date().toISOString()
                 };
             }
@@ -653,32 +660,9 @@
                 }
             }
             
-            // 项目简介自动保存（失焦时保存）
-            let saveTimeout = null;
-            researchTopic.addEventListener('input', function() {
-                // 清除之前的定时器
-                if (saveTimeout) clearTimeout(saveTimeout);
-                // 延迟500ms保存，避免频繁保存
-                saveTimeout = setTimeout(async () => {
-                    if (currentProjectData) {
-                        await mergeAndSave(currentProjectData.projectName, {
-                            projectDescription: researchTopic.value.trim(),
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }, 500);
-            });
-            
-            researchTopic.addEventListener('blur', async function() {
-                // 失焦时立即保存
-                if (saveTimeout) clearTimeout(saveTimeout);
-                if (currentProjectData) {
-                    await mergeAndSave(currentProjectData.projectName, {
-                        projectDescription: researchTopic.value.trim(),
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-            });
+            // 项目简介不再保存到 projectDescription，而是保存到 requirementData.requirement
+            // 如果需要保存研究主题，应该保存到 requirementData.requirement
+            // 这里暂时移除自动保存功能，因为研究主题应该在工作流页面中作为需求描述保存
             
             // 模块按钮点击事件（页面跳转）
             stepButtons.forEach(button => {
@@ -703,10 +687,9 @@
                             progressText.textContent = '文献查询完成，正在进行文献整理...';
                             
                             // 更新项目数据（合并保存）
+                            // 不再保存 step1/step2/step3，使用 node1-node5 替代
                             if (currentProjectData) {
                                 await mergeAndSave(currentProjectData.projectName, {
-                                    step1: { status: 'completed' },
-                                    step2: { status: 'in-progress' },
                                     status: 'module2',
                                     updatedAt: new Date().toISOString()
                                 });
@@ -727,10 +710,9 @@
                             progressText.textContent = '文献整理完成，正在生成综述...';
                             
                             // 更新项目数据（合并保存）
+                            // 不再保存 step1/step2/step3，使用 node1-node5 替代
                             if (currentProjectData) {
                                 await mergeAndSave(currentProjectData.projectName, {
-                                    step2: { status: 'completed' },
-                                    step3: { status: 'in-progress' },
                                     status: 'module3',
                                     updatedAt: new Date().toISOString()
                                 });
@@ -749,9 +731,9 @@
                             progressText.textContent = '文献综述生成完成！';
                             
                             // 更新项目数据（合并保存）
+                            // 不再保存 step1/step2/step3，使用 node1-node5 替代
                             if (currentProjectData) {
                                 await mergeAndSave(currentProjectData.projectName, {
-                                    step3: { status: 'completed' },
                                     status: 'completed',
                                     updatedAt: new Date().toISOString()
                                 });

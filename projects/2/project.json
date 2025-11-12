@@ -15,142 +15,74 @@
   },
   "config": {
     "googleScholarVerified": true,
-    "apiKey": "sk-104bbee0909943399d1affcfdae8297e"
+    "apiKey": "sk-104bbee0909943399d1affcfdae8297e",
+    "apiKeys": {
+      "deepseek": "sk-104bbee0909943399d1affcfdae8297e",
+      "gemini": "AIzaSyCNmG76-tpicXA0U3MmbRU51xSXj_roZPc"
+    },
+    "apiProvider": "gemini",
+    "geminiModel": "gemini-2.5-pro"
   },
   "requirementData": {
     "requirement": "在自动驾驶逐步走向实际道路应用的过程中，混合车流已成为不可回避的关键场景。现实道路上自动驾驶车辆与人类驾驶车辆长期共存，而二者在行为模式、反应时延与风险偏好上的巨大差异，使交通流呈现高度不确定性与异质性，传统算法在单一车流假设下的优势难以完全迁移到真实环境中。随着示范区测试规模扩大，混合车流中的交互博弈、长尾风险、突变行为以及在合流、路口、拥堵等场景下的稳定性问题愈发突出，这直接限制了自动驾驶系统的安全性、效率与推广能力。亟需系统梳理混合车流的行为规律、建模方法与决策机制，形成能够支撑自动驾驶在复杂交通中稳健运行的理论框架与技术体系。",
     "targetCount": 20,
-    "outline": "1. 混合车流行为建模与分析\n   人类驾驶行为建模与不确定性分析\n   自动驾驶车辆行为建模与可解释性\n   人车交互行为模式与博弈分析\n2. 混合车流决策与规划方法\n   基于博弈论的交互决策机制\n   考虑长尾风险的鲁棒规划策略\n   多场景适应性决策框架\n3. 混合车流系统验证与稳定性保障\n   混合车流仿真测试与验证方法\n   关键场景下的系统稳定性分析\n   安全性与效率协同优化机制",
-    "keywordsPlan": [
-      {
-        "keyword": "mixed traffic flow behavior modeling",
-        "count": 3
-      },
-      {
-        "keyword": "human driving behavior uncertainty",
-        "count": 2
-      },
-      {
-        "keyword": "autonomous vehicle behavior interpretability",
-        "count": 2
-      },
-      {
-        "keyword": "human-vehicle interaction game theory",
-        "count": 2
-      },
-      {
-        "keyword": "game-theoretic decision-making mixed traffic",
-        "count": 2
-      },
-      {
-        "keyword": "robust planning long-tail risks autonomous driving",
-        "count": 2
-      },
-      {
-        "keyword": "multi-scenario adaptive decision framework",
-        "count": 2
-      },
-      {
-        "keyword": "mixed traffic simulation verification",
-        "count": 2
-      },
-      {
-        "keyword": "system stability critical scenarios autonomous vehicles",
-        "count": 2
-      },
-      {
-        "keyword": "safety efficiency co-optimization mixed traffic",
-        "count": 1
-      }
-    ],
+    "outline": "1. 混合车流的行为特性与交互机理\n   段落1.1: 人类驾驶与自动驾驶车辆的个体驾驶行为模型对比研究\n   段落1.2: 异质车辆间的微观交互行为建模（跟驰与换道）\n   段落1.3: 自动驾驶车辆渗透率对宏观交通流稳定性的影响\n   段落1.4: 混合交通环境下的长尾风险与突变行为识别\n\n2. 混合交通流建模与仿真方法\n   段落2.1: 考虑行为异质性的微观交通流模型研究进展\n   段落2.2: 基于博弈论的自动驾驶与人类驾驶交互决策建模\n   段落2.3: 面向混合车流的宏观与介观交通流建模方法\n   段落2.4: 混合交通流仿真平台与模型验证方法\n\n3. 自动驾驶在混合车流中的决策与控制策略\n   段落3.1: 应对人类驾驶不确定性的自动驾驶决策规划算法\n   段落3.2: 关键场景（合流区、交叉口、拥堵）下的协同与非协同学控制\n   段落3.3: 混合交通环境下自动驾驶系统的安全性与稳定性保证机制",
     "language": "en"
   },
-  "keywords": [
-    "mixed traffic flow behavior modeling",
-    "human driving behavior uncertainty",
-    "autonomous vehicle behavior interpretability",
-    "human-vehicle interaction game theory",
-    "game-theoretic decision-making mixed traffic",
-    "robust planning long-tail risks autonomous driving",
-    "multi-scenario adaptive decision framework",
-    "mixed traffic simulation verification",
-    "system stability critical scenarios autonomous vehicles",
-    "safety efficiency co-optimization mixed traffic"
-  ],
   "search": {
     "results": {
       "mixed traffic flow behavior modeling": [
         {
-          "id": "scholar_0_1762775808889",
+          "id": "scholar_0_1762923544683",
           "title": "Towards behavioral modeling of drivers in mixed traffic conditions",
           "authors": "CR Munigety, TV Mathew",
           "year": "2016",
           "source": "Transportation in Developing Economies, 2016  -  Springer",
           "abstract": "… modeling driver behavior in mixed traffic conditions is presented in this paper. Often, models \ndeveloped for mixed traffic … of the model class in the context of mixed traffic flow modeling is …",
           "cited": 79,
-          "url": "https://link.springer.com/article/10.1007/s40890-016-0012-y",
-          "completionStatus": "completed",
-          "journal": "Transportation in Developing Economies, 2016  -  Springer",
-          "selected": true,
-          "aiRecommendReason": "该文献高度相关。文献标题明确聚焦于'混合交通条件下的驾驶员行为建模'，与研究主题中'混合车流中的行为规律、建模方法与决策机制'的核心需求完全吻合。2016年的研究时间点表明这是混合交通建模领域的早期探索，能够为理解自动驾驶与人类驾驶车辆共存场景下的行为差异提供理论基础。摘要中提到的'mixed traffic conditions'和'mixed traffic flow modeling'直接对应研究主题关注的混合车流特性建模，有助于系统梳理混合车流的行为规律，支撑自动驾驶在复杂交通环境中的决策机制研究。"
+          "url": "https://link.springer.com/article/10.1007/s40890-016-0012-y"
         },
         {
-          "id": "scholar_2_1762775808889",
+          "id": "scholar_2_1762923544683",
           "title": "A mixed traffic car-following behavior model",
           "authors": "X Wang, J Zhang, H Li, Z He",
           "year": "2023",
           "source": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
           "abstract": "… car-following model for mixed traffic flow, which considers both … mixed traffic flow composition \nschemes, communication distance, and human drivers’ characteristics on mixed traffic flow…",
           "cited": 19,
-          "url": "https://www.sciencedirect.com/science/article/pii/S0378437123008543",
-          "completionStatus": "completed",
-          "journal": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
-          "selected": true,
-          "aiRecommendReason": "该文献高度相关。文献标题明确聚焦于混合交通流(mixed traffic flow)的跟车行为建模，与研究主题中'混合车流已成为不可回避的关键场景'、'亟需系统梳理混合车流的行为规律、建模方法'的核心诉求完全吻合。摘要显示该研究考虑了混合交通流组成方案、通信距离和人类驾驶员特性等关键因素，这些正是研究主题中提到的'行为模式、反应时延与风险偏好上的巨大差异'、'交互博弈'等核心挑战的具体体现。作为2023年的最新研究，该文献很可能提供了混合车流建模的前沿方法，能够为构建支撑自动驾驶在复杂交通中稳健运行的理论框架提供直接参考。"
+          "url": "https://www.sciencedirect.com/science/article/pii/S0378437123008543"
         },
         {
-          "id": "scholar_4_1762775808889",
+          "id": "scholar_4_1762923544683",
           "title": "Driving behaviors: Models and challenges for non-lane based mixed traffic",
           "authors": "G Asaithambi, V Kanagaraj, T Toledo",
           "year": "2016",
           "source": "Transportation in Developing …, 2016  -  Springer",
           "abstract": "… driving behavior models in the context of mixed traffic, discusses their limitations and the data \nand modeling … to advance driver behavior models for mixed traffic flows, through improved …",
           "cited": 87,
-          "url": "https://link.springer.com/article/10.1007/s40890-016-0025-6",
-          "completionStatus": "completed",
-          "journal": "Transportation in Developing …, 2016  -  Springer",
-          "selected": true,
-          "aiRecommendReason": "该文献高度相关，原因如下：1）文献直接聚焦于混合交通流中的驾驶行为建模，与研究主题的核心内容完全吻合；2）文献讨论了混合交通流背景下模型的局限性，与研究主题中提到的传统算法在单一车流假设下优势难以迁移的问题相呼应；3）文献旨在通过改进数据采集和建模方法来推进混合交通流中的驾驶行为模型，与研究主题中亟需系统梳理混合车流行为规律、建模方法的需求一致；4）虽然文献发表于2016年，但其探讨的非基于车道的混合交通问题正是当前自动驾驶在实际道路应用中面临的关键挑战，具有重要的参考价值。"
+          "url": "https://link.springer.com/article/10.1007/s40890-016-0025-6"
         }
       ],
       "human driving behavior uncertainty": [
         {
-          "id": "scholar_0_1762775819313",
+          "id": "scholar_0_1762923554158",
           "title": "Modelling of uncertain reactive human driving behavior: a classification approach",
           "authors": "Y Chen, N Sohani, H Peng",
           "year": "2018",
           "source": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
           "abstract": "… Abstract—This paper discusses a novel approach to model human driver behavior. A … \nhuman driving actions given the scenario description (such as the vehicle states and the behavior …",
           "cited": 15,
-          "url": "https://ieeexplore.ieee.org/abstract/document/8619568/",
-          "completionStatus": "completed",
-          "journal": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
-          "selected": true,
-          "aiRecommendReason": "该文献高度相关。研究主题关注自动驾驶与人类驾驶车辆混合车流中的行为模式差异、不确定性和建模方法，而这篇文献专门研究人类驾驶行为的反应不确定性建模，采用分类方法对给定场景下的人类驾驶行为进行建模。这直接对应研究主题中提到的'行为模式差异'、'高度不确定性'和'建模方法'等核心问题，为理解混合车流中人类驾驶行为的不确定性提供了具体的建模技术支撑。"
+          "url": "https://ieeexplore.ieee.org/abstract/document/8619568/"
         },
         {
-          "id": "scholar_2_1762775819313",
+          "id": "scholar_2_1762923554158",
           "title": "Resolving uncertainty on the fly: modeling adaptive driving behavior as active inference",
           "authors": "J Engström, R Wei, AD McDonald, A Garcia…",
           "year": "2024",
           "source": "Frontiers in …, 2024  -  frontiersin.org",
           "abstract": "… We explore how uncertainty can be resolved “on the fly” as an integral part of the general \nplanning objective to minimize expected free energy. Specifically, we demonstrate how a …",
           "cited": 16,
-          "url": "https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2024.1341750/full",
-          "completionStatus": "completed",
-          "journal": "Frontiers in …, 2024  -  frontiersin.org",
-          "selected": true,
-          "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶与人类驾驶车辆在行为模式、反应时延与风险偏好上的差异导致的交通流不确定性与异质性，而该文献正是探讨驾驶过程中如何'实时解决不确定性'，将不确定性解决作为最小化期望自由能规划目标的一部分。这直接对应研究主题中提到的'行为规律、建模方法与决策机制'需求，特别是为理解混合车流中的交互博弈、突变行为等提供了基于主动推理的理论框架，能够支撑自动驾驶在复杂交通环境中形成更稳健的决策机制。"
+          "url": "https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2024.1341750/full"
         }
       ],
       "autonomous vehicle behavior interpretability": [
@@ -381,824 +313,369 @@
       ]
     }
   },
-  "finalResults": [
-    {
-      "id": "scholar_0_1762775808889",
-      "title": "Towards behavioral modeling of drivers in mixed traffic conditions",
-      "authors": "CR Munigety, TV Mathew",
-      "year": "2016",
-      "source": "Transportation in Developing Economies, 2016  -  Springer",
-      "abstract": "… modeling driver behavior in mixed traffic conditions is presented in this paper. Often, models \ndeveloped for mixed traffic … of the model class in the context of mixed traffic flow modeling is …",
-      "url": "https://link.springer.com/article/10.1007/s40890-016-0012-y",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation in Developing Economies, 2016  -  Springer",
-      "cited": 79,
-      "aiRecommendReason": "该文献高度相关。文献标题明确聚焦于混合交通条件下的驾驶员行为建模，与研究主题中'混合车流中的交互博弈、行为规律、建模方法'等核心问题完全吻合。2016年的研究时间点正处于自动驾驶技术快速发展初期，对混合交通行为建模的探索具有前瞻性。摘要内容显示该文献专门研究混合交通流建模，能够为理解人类驾驶员与自动驾驶车辆在行为模式、风险偏好等方面的差异提供理论基础，直接支撑研究主题中'系统梳理混合车流的行为规律、建模方法'的需求。"
+  "node1": {
+    "keywords": [
+      "mixed traffic flow behavior modeling",
+      "human driving behavior uncertainty"
+    ],
+    "keywordsPlan": [
+      {
+        "keyword": "mixed traffic flow behavior modeling",
+        "count": 3
+      },
+      {
+        "keyword": "human driving behavior uncertainty",
+        "count": 2
+      }
+    ],
+    "status": "completed"
+  },
+  "node2": {
+    "searchResults": {
+      "mixed traffic flow behavior modeling": [
+        {
+          "id": "scholar_0_1762923544683",
+          "title": "Towards behavioral modeling of drivers in mixed traffic conditions",
+          "authors": "CR Munigety, TV Mathew",
+          "year": "2016",
+          "source": "Transportation in Developing Economies, 2016  -  Springer",
+          "abstract": "… modeling driver behavior in mixed traffic conditions is presented in this paper. Often, models \ndeveloped for mixed traffic … of the model class in the context of mixed traffic flow modeling is …",
+          "cited": 79,
+          "url": "https://link.springer.com/article/10.1007/s40890-016-0012-y"
+        },
+        {
+          "id": "scholar_2_1762923544683",
+          "title": "A mixed traffic car-following behavior model",
+          "authors": "X Wang, J Zhang, H Li, Z He",
+          "year": "2023",
+          "source": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
+          "abstract": "… car-following model for mixed traffic flow, which considers both … mixed traffic flow composition \nschemes, communication distance, and human drivers’ characteristics on mixed traffic flow…",
+          "cited": 19,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0378437123008543"
+        },
+        {
+          "id": "scholar_4_1762923544683",
+          "title": "Driving behaviors: Models and challenges for non-lane based mixed traffic",
+          "authors": "G Asaithambi, V Kanagaraj, T Toledo",
+          "year": "2016",
+          "source": "Transportation in Developing …, 2016  -  Springer",
+          "abstract": "… driving behavior models in the context of mixed traffic, discusses their limitations and the data \nand modeling … to advance driver behavior models for mixed traffic flows, through improved …",
+          "cited": 87,
+          "url": "https://link.springer.com/article/10.1007/s40890-016-0025-6"
+        }
+      ],
+      "human driving behavior uncertainty": [
+        {
+          "id": "scholar_0_1762923554158",
+          "title": "Modelling of uncertain reactive human driving behavior: a classification approach",
+          "authors": "Y Chen, N Sohani, H Peng",
+          "year": "2018",
+          "source": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
+          "abstract": "… Abstract—This paper discusses a novel approach to model human driver behavior. A … \nhuman driving actions given the scenario description (such as the vehicle states and the behavior …",
+          "cited": 15,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8619568/"
+        },
+        {
+          "id": "scholar_2_1762923554158",
+          "title": "Resolving uncertainty on the fly: modeling adaptive driving behavior as active inference",
+          "authors": "J Engström, R Wei, AD McDonald, A Garcia…",
+          "year": "2024",
+          "source": "Frontiers in …, 2024  -  frontiersin.org",
+          "abstract": "… We explore how uncertainty can be resolved “on the fly” as an integral part of the general \nplanning objective to minimize expected free energy. Specifically, we demonstrate how a …",
+          "cited": 16,
+          "url": "https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2024.1341750/full"
+        }
+      ],
+      "autonomous vehicle behavior interpretability": [
+        {
+          "id": "scholar_0_1762775829864",
+          "title": "Enhancing interpretability of autonomous driving via human-like cognitive maps: a case study on lane change",
+          "authors": "H Lu, Y Liu, M Zhu, C Lu, H Yang…",
+          "year": "2024",
+          "source": "… on Intelligent Vehicles, 2024  -  ieeexplore.ieee.org",
+          "abstract": "… ) empowered autonomous vehicles (AVs), their interpretability per se is … To enhance the \ninterpretability of ML-empowered AVs, … to consider the interpretability of more driving behaviors. …",
+          "cited": 10,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10416370/",
+          "completionStatus": "completed",
+          "journal": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "该文献聚焦于通过人类认知地图增强自动驾驶系统的可解释性，以换道行为为例进行研究。这与研究主题中'混合车流中的交互博弈、行为规律与决策机制'高度契合，因为可解释性是人类驾驶者理解自动驾驶行为、减少交互不确定性的关键。文献对ML赋能自动驾驶的局限性的探讨，直接呼应了主题中'传统算法优势难以迁移'和'决策机制'的挑战，有助于构建更稳健的混合交通理论框架。"
+        },
+        {
+          "id": "scholar_2_1762775829864",
+          "title": "Interpretable Decision-Making for End-to-End Autonomous Driving",
+          "authors": "M Mirzaie, B Rosenhahn",
+          "year": "2025",
+          "source": "Proceedings of the IEEE/CVF …, 2025  -  openaccess.thecvf.com",
+          "abstract": "… the broad deployment of autonomous vehicles. Although end-to… This paper presents a \nmethod to enhance interpretability … feature selection process mimics the behavior of attention. It … 保存 引用 相关文章 所有 3 个版本  HTML 版",
+          "cited": 0,
+          "url": "https://openaccess.thecvf.com/content/ICCV2025W/2COOOL/html/Mirzaie_Interpretable_Decision-Making_for_End-to-End_Autonomous_Driving_ICCVW_2025_paper.html",
+          "completionStatus": "completed",
+          "journal": "Proceedings of the IEEE/CVF …, 2025  -  openaccess.thecvf.com",
+          "selected": true,
+          "aiRecommendReason": "该文献聚焦于端到端自动驾驶的可解释决策方法，与研究主题高度相关。研究主题强调混合车流中自动驾驶系统需要应对行为模式差异、交互博弈和长尾风险等挑战，而该文献提出的可解释性增强方法能够帮助理解自动驾驶在复杂环境中的决策过程，这对于分析混合车流中的交互行为、识别风险因素以及提升系统在合流、路口等场景下的稳定性具有重要价值。其基于注意力机制的行为模仿特征选择过程，有助于揭示自动驾驶与人类驾驶员的交互规律，为构建稳健的决策机制提供技术支撑。"
+        }
+      ],
+      "human-vehicle interaction game theory": [
+        {
+          "id": "scholar_0_1762775839818",
+          "title": "Game theory-based framework for modeling human–vehicle interactions on the road",
+          "authors": "Y Rahmati, A Talebpour, A Mittal…",
+          "year": "2020",
+          "source": "Transportation …, 2020  -  journals.sagepub.com",
+          "abstract": "… motion decisions of human agents in interaction with interfering vehicles and pedestrians. … \nan interactive human–vehicle decision-making framework toward realizing human–vehicle …",
+          "cited": 32,
+          "url": "https://journals.sagepub.com/doi/abs/10.1177/0361198120931513",
+          "completionStatus": "completed",
+          "journal": "Transportation …, 2020  -  journals.sagepub.com",
+          "selected": true,
+          "aiRecommendReason": "AI筛选失败，默认选中"
+        },
+        {
+          "id": "scholar_2_1762775839818",
+          "title": "Game Theory-Based Interactive Control for Human–Machine Cooperative Driving",
+          "authors": "Y Zhou, C Huang, P Hang",
+          "year": "2024",
+          "source": "Applied Sciences, 2024  -  mdpi.com",
+          "abstract": "… A brain emotional learning circuit model (BELCM) was designed in [15] to simulate driver \nsteering behavior, but it did not consider human–vehicle interaction. In terms of shared …",
+          "cited": 7,
+          "url": "https://www.mdpi.com/2076-3417/14/6/2441",
+          "completionStatus": "completed",
+          "journal": "Applied Sciences, 2024  -  mdpi.com",
+          "selected": true,
+          "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶车辆与人类驾驶车辆的交互博弈问题，而该文献标题明确聚焦于'人机协同驾驶的博弈论交互控制'，直接对应研究主题中提到的'交互博弈'核心问题。文献采用博弈论方法研究人车交互控制，为解决混合车流中因行为模式差异导致的不确定性和异质性提供了理论框架，能够支撑自动驾驶在复杂交通环境中的决策机制研究，符合研究主题对'建模方法与决策机制'的技术需求。"
+        }
+      ],
+      "game-theoretic decision-making mixed traffic": [
+        {
+          "id": "scholar_0_1762775849314",
+          "title": "A multi-vehicle game-theoretic framework for decision making and planning of autonomous vehicles in mixed traffic",
+          "authors": "Y Yan, L Peng, T Shen, J Wang, D Pi…",
+          "year": "2023",
+          "source": "IEEE Transactions on …, 2023  -  ieeexplore.ieee.org",
+          "abstract": "… traffic environments where autonomous vehicles (AVs) and humandriven vehicles (HVs) \ncoexist, a game theoretic … as the objectives of comfort and traffic efficiency. Then, the interactive …",
+          "cited": 82,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10268996/",
+          "completionStatus": "completed",
+          "journal": "IEEE Transactions on …, 2023  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "该文献高度相关，因为它直接针对混合交通流中自动驾驶车辆（AVs）与人类驾驶车辆（HVs）的交互问题，提出了一个基于博弈论的多车辆决策与规划框架。这与研究主题中强调的混合车流行为差异、交互博弈、决策机制以及提升自动驾驶系统在复杂环境中的稳健性高度契合。文献聚焦于博弈理论在行为建模中的应用，能够为研究主题提供理论支持和技术参考，有助于解决混合车流中的不确定性和异质性问题。"
+        },
+        {
+          "id": "scholar_2_1762775849314",
+          "title": "Cooperative driving of connected autonomous vehicles in heterogeneous mixed traffic: A game theoretic approach",
+          "authors": "S Fang, P Hang, C Wei, Y Xing…",
+          "year": "2024",
+          "source": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
+          "abstract": "… decisionmaking framework in heterogeneous mixed traffic is … To reproduce HVs in mixed \ntraffic, interactions from … integrated to mimic the decision-making of heterogeneous HVs. …",
+          "cited": 20,
+          "url": "https://ieeexplore.ieee.org/abstract/document/10529605/",
+          "completionStatus": "completed",
+          "journal": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "该文献直接针对混合交通流中自动驾驶车辆与人类驾驶车辆的交互问题，提出了一种基于博弈论的协同驾驶决策框架，与研究主题关注的混合车流行为模式、交互博弈、决策机制及异质性交通建模高度契合。文献通过模拟人类驾驶员的决策过程来应对混合交通的不确定性和异质性，有助于解决研究主题中提到的稳定性、安全性及理论框架构建需求。"
+        }
+      ],
+      "robust planning long-tail risks autonomous driving": [
+        {
+          "id": "scholar_0_1762775858990",
+          "title": "RiskNet: interaction-aware risk forecasting for autonomous driving in long-tail scenarios",
+          "authors": "Q Liu, H Huang, S Zhao, L Shi, S Ahn, X Li",
+          "year": "2026",
+          "source": "Transportation Research Part …, 2026  -  Elsevier",
+          "abstract": "… interactions among ego vehicle, surrounding … risk evaluation across diverse scenarios (highways, \nintersections, and roundabouts), and shows robustness under high-risk and long-tail …",
+          "cited": 1,
+          "url": "https://www.sciencedirect.com/science/article/pii/S1366554525005198",
+          "completionStatus": "completed",
+          "journal": "Transportation Research Part …, 2026  -  Elsevier",
+          "selected": true,
+          "aiRecommendReason": "该文献高度相关，因为其研究内容直接对应研究主题中的多个关键问题：1）聚焦混合车流中的交互行为（interaction-aware），与研究主题关注的'交互博弈'高度契合；2）专门研究长尾场景（long-tail scenarios），与研究主题强调的'长尾风险'问题一致；3）涵盖高速公路、交叉口和环岛等多种场景，与研究主题提到的合流、路口等场景相匹配；4）关注高风险情况下的鲁棒性，与研究主题关切的稳定性、安全性问题相呼应。"
+        },
+        {
+          "id": "scholar_2_1762775858990",
+          "title": "Dynamically conservative self-driving planner for long-tail cases",
+          "authors": "W Zhou, Z Cao, N Deng, X Liu…",
+          "year": "2022",
+          "source": "IEEE Transactions on …, 2022  -  ieeexplore.ieee.org",
+          "abstract": "… To achieve the goal, we first formalize the “longtail” problem in SDV planning as a driving \nconfidence problem. Then, we define the “long-tail” rate to quantify how confident an SDV’s …",
+          "cited": 32,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9971752/",
+          "completionStatus": "completed",
+          "journal": "IEEE Transactions on …, 2022  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "该文献直接针对自动驾驶规划中的'长尾问题'（long-tail cases）展开研究，这与研究主题中提到的'混合车流中的交互博弈、长尾风险、突变行为'高度契合。文献通过形式化长尾问题为驾驶置信度问题，并定义量化指标，为理解混合车流中自动驾驶车辆的不确定行为提供了建模方法，有助于解决传统算法在异质交通流中迁移困难的挑战，对构建稳健的自动驾驶决策机制具有直接参考价值。"
+        }
+      ],
+      "multi-scenario adaptive decision framework": [
+        {
+          "id": "scholar_0_1762775868672",
+          "title": "A novel multi-stage multi-scenario multi-objective optimisation framework for adaptive robust decision-making under deep uncertainty",
+          "authors": "B Shavazipour, TJ Stewart",
+          "year": "2026",
+          "source": "Omega, 2026  -  Elsevier",
+          "abstract": "… Scenarios, instead, should be used to evaluate the consequences of any decisions in … -stage \nmulti-scenario multi-objective optimisation framework for adaptive/dynamic robust decision-…",
+          "cited": 5,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0305048325001318",
+          "completionStatus": "completed",
+          "journal": "Omega, 2026  -  Elsevier",
+          "selected": true,
+          "aiRecommendReason": "该文献高度相关。文献提出的多阶段多场景多目标优化框架专门针对深度不确定性下的自适应鲁棒决策，这与研究主题中提到的混合车流高度不确定性与异质性、交互博弈、长尾风险等挑战高度契合。其多场景评估方法能够有效应对自动驾驶与人类驾驶车辆行为模式差异带来的不确定性，为混合车流中的决策机制提供了理论支撑。特别是框架强调的自适应/动态鲁棒决策特性，能够帮助自动驾驶系统在合流、路口、拥堵等复杂场景下保持稳定性，直接对应研究主题中亟需解决的技术需求。"
+        },
+        {
+          "id": "scholar_2_1762775868672",
+          "title": "Scenario-adaptive and self-supervised model for multi-scenario personalized recommendation",
+          "authors": "Y Zhang, X Wang, J Hu, K Gao, C Lei…",
+          "year": "2022",
+          "source": "Proceedings of the 31st …, 2022  -  dl.acm.org",
+          "abstract": "… We propose a unified framework to solve multi-scenario problem, which is definitely applicable \nto serve both matching and ranking tasks in recommendation system. In this paper, we …",
+          "cited": 26,
+          "url": "https://dl.acm.org/doi/abs/10.1145/3511808.3557154",
+          "completionStatus": "completed",
+          "journal": "Proceedings of the 31st …, 2022  -  dl.acm.org",
+          "selected": false,
+          "aiRecommendReason": "该文献研究的是推荐系统领域的多场景个性化推荐问题，提出的是解决匹配和排序任务的统一框架，与自动驾驶混合车流场景下的行为规律、建模方法、决策机制等研究主题完全无关。文献内容涉及的是信息推荐技术，而非交通流建模或自动驾驶决策算法。"
+        }
+      ],
+      "mixed traffic simulation verification": [
+        {
+          "id": "scholar_0_1762775878218",
+          "title": "Traffic participants in the loop: A mixed reality-based interaction testbed for the verification and validation of autonomous vehicles",
+          "authors": "MR Zofka, S Ulbrich, D Karl, T Fleck…",
+          "year": "2018",
+          "source": "2018 21st …, 2018  -  ieeexplore.ieee.org",
+          "abstract": "… in critical traffic scenarios are hardly … a mixed reality testbed for the verification and validation \nof autonomous vehicles faced with realistic road user behavior in critical, worst case traffic …",
+          "cited": 26,
+          "url": "https://ieeexplore.ieee.org/abstract/document/8569226/",
+          "completionStatus": "completed",
+          "journal": "2018 21st …, 2018  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "该文献提出了一种基于混合现实的测试平台，用于验证自动驾驶车辆在面临真实道路使用者行为（包括人类驾驶员）时的表现，特别是在关键和最坏情况交通场景下。这与研究主题中关注的混合车流交互博弈、长尾风险、突变行为以及复杂场景（如合流、路口）下的稳定性问题高度契合，提供了实验验证方法支撑，有助于弥补传统算法在混合车流假设下的不足，符合主题对技术体系构建的需求。"
+        },
+        {
+          "id": "scholar_2_1762775878218",
+          "title": "Mixsim: A hierarchical framework for mixed reality traffic simulation",
+          "authors": "S Suo, K Wong, J Xu, J Tu, A Cui…",
+          "year": "2023",
+          "source": "Proceedings of the …, 2023  -  openaccess.thecvf.com",
+          "abstract": "… mixed reality traffic simulation, we conduct an analysis of its sim2real domain gap on both \nurban and highway traffic … Using re-simulation to verify an av stack against disengagements, …",
+          "cited": 45,
+          "url": "http://openaccess.thecvf.com/content/CVPR2023/html/Suo_MixSim_A_Hierarchical_Framework_for_Mixed_Reality_Traffic_Simulation_CVPR_2023_paper.html",
+          "completionStatus": "completed",
+          "journal": "Proceedings of the …, 2023  -  openaccess.thecvf.com",
+          "selected": true,
+          "aiRecommendReason": "该文献提出的MixSim混合现实交通仿真框架与研究主题高度相关。研究主题关注自动驾驶与人类驾驶车辆混合车流中的行为差异、不确定性及测试验证问题，而该文献：1）专门研究混合现实交通仿真，直接对应混合车流场景；2）分析仿真与现实领域的差距（sim2real domain gap），涉及混合车流中的行为规律与建模方法；3）通过重新仿真验证自动驾驶系统在脱离场景（disengagements）下的表现，有助于解决混合车流中的长尾风险和突变行为问题；4）涵盖城市和高速公路场景，符合研究主题中提到的合流、路口等复杂环境需求。该框架可为构建支撑自动驾驶在混合车流中稳健运行的理论与技术体系提供仿真验证工具。"
+        }
+      ],
+      "system stability critical scenarios autonomous vehicles": [
+        {
+          "id": "scholar_0_1762775887977",
+          "title": "Identifying and explaining safety-critical scenarios for autonomous vehicles via key features",
+          "authors": "N Neelofar, A Aleti",
+          "year": "2024",
+          "source": "ACM transactions on software engineering and …, 2024  -  dl.acm.org",
+          "abstract": "… ) to identify the significant features of test scenarios that affect their ability to reveal the … -critical \nscenarios from normal driving and visualises the impact of these features on test scenario …",
+          "cited": 21,
+          "url": "https://dl.acm.org/doi/abs/10.1145/3640335",
+          "completionStatus": "completed",
+          "journal": "ACM transactions on software engineering and …, 2024  -  dl.acm.org",
+          "selected": true,
+          "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中的安全风险与测试挑战，而这篇2024年的文献专门研究如何识别和解释影响自动驾驶安全的关键测试场景特征。文献通过识别能够区分安全关键场景与正常驾驶的关键特征，并可视化这些特征对测试场景的影响，直接对应研究主题中提到的'长尾风险、突变行为'等混合车流安全挑战，为系统梳理混合车流行为规律和测试方法提供了技术支撑。"
+        },
+        {
+          "id": "scholar_2_1762775887977",
+          "title": "Finding critical scenarios for automated driving systems: A systematic mapping study",
+          "authors": "X Zhang, J Tao, K Tan, M Törngren…",
+          "year": "2022",
+          "source": "IEEE Transactions …, 2022  -  ieeexplore.ieee.org",
+          "abstract": "… In this survey, we consider critical scenarios as all the scenarios that may lead to harm. \nAs shown in Fig. 3, a critical scenario may contain a triggering condition and a safety-critical …",
+          "cited": 174,
+          "url": "https://ieeexplore.ieee.org/abstract/document/9763411/",
+          "completionStatus": "completed",
+          "journal": "IEEE Transactions …, 2022  -  ieeexplore.ieee.org",
+          "selected": true,
+          "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中的长尾风险、突变行为等安全性问题，而这篇2022年的系统综述专门研究自动驾驶系统的关键场景识别，将关键场景定义为可能导致伤害的所有场景，并分析触发条件与安全关键事件。这直接对应研究主题中提到的混合车流交互博弈、长尾风险和突变行为等挑战，为系统梳理混合车流行为规律和风险识别提供了方法论支持，有助于构建支撑自动驾驶在复杂交通中稳健运行的技术体系。"
+        }
+      ],
+      "safety efficiency co-optimization mixed traffic": [
+        {
+          "id": "scholar_0_1762775897518",
+          "title": "Co-optimization of speed planning and energy management for intelligent fuel cell hybrid vehicle considering complex traffic conditions",
+          "authors": "Z Nie, Y Jia, W Wang, Z Chen, R Outbib",
+          "year": "2022",
+          "source": "Energy, 2022  -  Elsevier",
+          "abstract": "… However, high-quality real-time energy management of FCHV is a difficult task due to different \ninfluences from complex traffic environments, such as dynamic changes of preceding and …",
+          "cited": 64,
+          "url": "https://www.sciencedirect.com/science/article/pii/S0360544222003796",
+          "completionStatus": "completed",
+          "journal": "Energy, 2022  -  Elsevier",
+          "selected": true,
+          "aiRecommendReason": "该文献虽然聚焦于燃料电池混合动力汽车的节能优化问题，但其研究背景与自动驾驶混合车流场景高度契合。文献明确考虑了复杂交通环境对车辆控制的影响，包括前车动态变化等交通流不确定性因素，这与研究主题中提到的混合车流异质性、行为模式差异以及复杂场景下的决策挑战直接相关。该研究在速度规划与能量管理的协同优化方法上，为自动驾驶车辆在真实混合交通环境中实现安全、高效的决策控制提供了技术参考，特别是在处理交通流动态变化方面的建模思路值得借鉴。"
+        }
+      ]
     },
-    {
-      "id": "scholar_2_1762775808889",
-      "title": "A mixed traffic car-following behavior model",
-      "authors": "X Wang, J Zhang, H Li, Z He",
-      "year": "2023",
-      "source": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
-      "abstract": "… car-following model for mixed traffic flow, which considers both … mixed traffic flow composition \nschemes, communication distance, and human drivers’ characteristics on mixed traffic flow…",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0378437123008543",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
-      "cited": 19,
-      "aiRecommendReason": "该文献高度相关。文献标题明确聚焦于混合交通流(mixed traffic flow)的跟车行为建模，与研究主题中提到的\"混合车流已成为不可回避的关键场景\"、\"自动驾驶车辆与人类驾驶车辆长期共存\"等核心问题完全吻合。摘要内容显示该研究考虑了混合交通流的组成方案、通信距离和人类驾驶员特性等关键因素，这些正是研究主题中强调的\"行为模式、反应时延与风险偏好上的巨大差异\"以及\"交互博弈\"等挑战的具体体现。作为2023年的最新研究，该文献能够为系统梳理混合车流行为规律和建模方法提供直接的理论支撑。"
-    },
-    {
-      "id": "scholar_4_1762775808889",
-      "title": "Driving behaviors: Models and challenges for non-lane based mixed traffic",
-      "authors": "G Asaithambi, V Kanagaraj, T Toledo",
-      "year": "2016",
-      "source": "Transportation in Developing …, 2016  -  Springer",
-      "abstract": "… driving behavior models in the context of mixed traffic, discusses their limitations and the data \nand modeling … to advance driver behavior models for mixed traffic flows, through improved …",
-      "url": "https://link.springer.com/article/10.1007/s40890-016-0025-6",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation in Developing …, 2016  -  Springer",
-      "cited": 87,
-      "aiRecommendReason": "该文献标题和摘要明确聚焦于混合交通流（mixed traffic）中的驾驶行为建模，与研究主题高度契合。文献讨论了混合交通环境下驾驶行为模型的局限性、数据需求及改进方向，这与研究主题中关注的混合车流行为规律、建模方法、决策机制等核心问题直接对应。尽管文献发表于2016年，但其对非车道化混合交通的探讨仍为理解异质交通流特性、模型挑战及技术发展路径提供了基础理论支撑，有助于系统梳理混合车流研究的关键难点。"
-    },
-    {
-      "id": "scholar_0_1762775819313",
-      "title": "Modelling of uncertain reactive human driving behavior: a classification approach",
-      "authors": "Y Chen, N Sohani, H Peng",
-      "year": "2018",
-      "source": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
-      "abstract": "… Abstract—This paper discusses a novel approach to model human driver behavior. A … \nhuman driving actions given the scenario description (such as the vehicle states and the behavior …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/8619568/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
-      "cited": 15,
-      "aiRecommendReason": "该文献高度相关。研究主题关注自动驾驶与人类驾驶车辆混合车流中的行为差异、不确定性和建模方法，而该文献专门研究人类驾驶行为的建模，特别是对不确定反应性驾驶行为的分类方法。文献提出的基于场景描述（如车辆状态和行为）来建模人类驾驶动作的方法，直接对应研究主题中提到的'行为规律、建模方法与决策机制'需求，能为理解混合车流中人类驾驶员的行为模式提供理论基础和技术支撑。"
-    },
-    {
-      "id": "scholar_2_1762775819313",
-      "title": "Resolving uncertainty on the fly: modeling adaptive driving behavior as active inference",
-      "authors": "J Engström, R Wei, AD McDonald, A Garcia…",
-      "year": "2024",
-      "source": "Frontiers in …, 2024  -  frontiersin.org",
-      "abstract": "… We explore how uncertainty can be resolved “on the fly” as an integral part of the general \nplanning objective to minimize expected free energy. Specifically, we demonstrate how a …",
-      "url": "https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2024.1341750/full",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Frontiers in …, 2024  -  frontiersin.org",
-      "cited": 16,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶与人类驾驶车辆在行为模式、反应时延与风险偏好上的差异导致的交通流不确定性与异质性，而该文献正是探讨驾驶过程中如何\"实时解决不确定性\"，将不确定性解决作为最小化期望自由能规划目标的一部分。这直接对应研究主题中提到的混合车流交互博弈、突变行为等挑战，特别是为理解人类驾驶员的适应性行为规律和建模方法提供了理论框架——主动推理，能够为构建自动驾驶在复杂交通中稳健运行的决策机制提供重要参考。"
-    },
-    {
-      "id": "scholar_0_1762775829864",
-      "title": "Enhancing interpretability of autonomous driving via human-like cognitive maps: a case study on lane change",
-      "authors": "H Lu, Y Liu, M Zhu, C Lu, H Yang…",
-      "year": "2024",
-      "source": "… on Intelligent Vehicles, 2024  -  ieeexplore.ieee.org",
-      "abstract": "… ) empowered autonomous vehicles (AVs), their interpretability per se is … To enhance the \ninterpretability of ML-empowered AVs, … to consider the interpretability of more driving behaviors. …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/10416370/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
-      "cited": 10,
-      "aiRecommendReason": "该文献聚焦于通过人类认知地图增强自动驾驶的可解释性，以车道变换为例进行研究。这与研究主题中提到的'混合车流中的交互博弈、行为规律与决策机制'高度相关，因为可解释性正是解决自动驾驶与人类驾驶车辆在行为模式差异、风险偏好不同等问题的关键技术路径。文献提出的认知地图方法有助于弥合人类与自动驾驶系统之间的理解鸿沟，提升混合交通流中的交互安全性和稳定性，为构建'能够支撑自动驾驶在复杂交通中稳健运行的理论框架'提供了具体的技术思路。"
-    },
-    {
-      "id": "scholar_2_1762775829864",
-      "title": "Interpretable Decision-Making for End-to-End Autonomous Driving",
-      "authors": "M Mirzaie, B Rosenhahn",
-      "year": "2025",
-      "source": "Proceedings of the IEEE/CVF …, 2025  -  openaccess.thecvf.com",
-      "abstract": "… the broad deployment of autonomous vehicles. Although end-to… This paper presents a \nmethod to enhance interpretability … feature selection process mimics the behavior of attention. It … 保存 引用 相关文章 所有 3 个版本  HTML 版",
-      "url": "https://openaccess.thecvf.com/content/ICCV2025W/2COOOL/html/Mirzaie_Interpretable_Decision-Making_for_End-to-End_Autonomous_Driving_ICCVW_2025_paper.html",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Proceedings of the IEEE/CVF …, 2025  -  openaccess.thecvf.com",
-      "cited": 0,
-      "aiRecommendReason": "该文献聚焦于端到端自动驾驶的可解释决策，与研究主题高度相关。研究主题强调混合车流中自动驾驶与人类驾驶车辆的行为差异、交互博弈及决策机制，而该文献提出的可解释性方法（如注意力机制模拟行为特征）有助于理解自动驾驶在混合交通环境中的决策逻辑，提升系统透明度和稳定性，直接支持'梳理混合车流行为规律与决策机制'这一核心需求。"
-    },
-    {
-      "id": "scholar_0_1762775839818",
-      "title": "Game theory-based framework for modeling human–vehicle interactions on the road",
-      "authors": "Y Rahmati, A Talebpour, A Mittal…",
-      "year": "2020",
-      "source": "Transportation …, 2020  -  journals.sagepub.com",
-      "abstract": "… motion decisions of human agents in interaction with interfering vehicles and pedestrians. … \nan interactive human–vehicle decision-making framework toward realizing human–vehicle …",
-      "url": "https://journals.sagepub.com/doi/abs/10.1177/0361198120931513",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation …, 2020  -  journals.sagepub.com",
-      "cited": 32,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶车辆与人类驾驶车辆的交互博弈问题，而该文献提出了基于博弈论的人车交互建模框架，直接针对人类与车辆在道路上的交互决策机制。文献中提到的'human–vehicle interactions'和'interactive human–vehicle decision-making framework'与研究主题中强调的'交互博弈'、'行为模式差异'和'决策机制'完全吻合，且博弈论方法正是解决混合车流中异质行为主体交互问题的有效理论工具，能够为构建稳健的自动驾驶决策系统提供重要参考。"
-    },
-    {
-      "id": "scholar_2_1762775839818",
-      "title": "Game Theory-Based Interactive Control for Human–Machine Cooperative Driving",
-      "authors": "Y Zhou, C Huang, P Hang",
-      "year": "2024",
-      "source": "Applied Sciences, 2024  -  mdpi.com",
-      "abstract": "… A brain emotional learning circuit model (BELCM) was designed in [15] to simulate driver \nsteering behavior, but it did not consider human–vehicle interaction. In terms of shared …",
-      "url": "https://www.mdpi.com/2076-3417/14/6/2441",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Applied Sciences, 2024  -  mdpi.com",
-      "cited": 7,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶车辆与人类驾驶车辆的交互博弈问题，而这篇文献标题明确聚焦于'人机协同驾驶的博弈论交互控制'，直接对应了混合车流中的核心挑战。文献采用博弈论方法研究人车交互控制，正好契合研究主题中提到的'交互博弈'、'决策机制'等关键问题，为解决混合车流中的不确定性、异质性和稳定性问题提供了理论框架和技术路径。"
-    },
-    {
-      "id": "scholar_0_1762775849314",
-      "title": "A multi-vehicle game-theoretic framework for decision making and planning of autonomous vehicles in mixed traffic",
-      "authors": "Y Yan, L Peng, T Shen, J Wang, D Pi…",
-      "year": "2023",
-      "source": "IEEE Transactions on …, 2023  -  ieeexplore.ieee.org",
-      "abstract": "… traffic environments where autonomous vehicles (AVs) and humandriven vehicles (HVs) \ncoexist, a game theoretic … as the objectives of comfort and traffic efficiency. Then, the interactive …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/10268996/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2023  -  ieeexplore.ieee.org",
-      "cited": 82,
-      "aiRecommendReason": "该文献高度相关，原因如下：1) 研究主题聚焦于自动驾驶车辆与人类驾驶车辆共存的混合车流场景，与文献标题和摘要中'autonomous vehicles (AVs) and human-driven vehicles (HVs) coexist'的描述完全吻合；2) 文献采用博弈论框架研究混合车流中的决策与规划问题，直接对应研究主题中提到的'交互博弈'关键挑战；3) 文献关注舒适性和交通效率等目标，与研究主题强调的安全性、效率与推广能力高度一致；4) 2023年的最新研究成果能够为'系统梳理混合车流的行为规律、建模方法与决策机制'提供前沿的理论框架支持。"
-    },
-    {
-      "id": "scholar_2_1762775849314",
-      "title": "Cooperative driving of connected autonomous vehicles in heterogeneous mixed traffic: A game theoretic approach",
-      "authors": "S Fang, P Hang, C Wei, Y Xing…",
-      "year": "2024",
-      "source": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
-      "abstract": "… decisionmaking framework in heterogeneous mixed traffic is … To reproduce HVs in mixed \ntraffic, interactions from … integrated to mimic the decision-making of heterogeneous HVs. …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/10529605/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
-      "cited": 20,
-      "aiRecommendReason": "该文献高度相关，主要体现在以下几个方面：1) 研究主题直接聚焦于混合交通流中的自动驾驶决策问题，与主题中提到的\"混合车流\"、\"异质性\"等核心概念完全吻合；2) 采用博弈论方法研究车车交互，直接对应主题中强调的\"交互博弈\"挑战；3) 文献关注异构混合交通环境，涉及人类驾驶车辆的行为建模，与主题中\"行为模式差异\"、\"决策机制\"等研究方向一致；4) 2024年的最新研究成果，能够为构建支撑自动驾驶在复杂交通中稳健运行的理论框架提供技术参考。"
-    },
-    {
-      "id": "scholar_0_1762775858990",
-      "title": "RiskNet: interaction-aware risk forecasting for autonomous driving in long-tail scenarios",
-      "authors": "Q Liu, H Huang, S Zhao, L Shi, S Ahn, X Li",
-      "year": "2026",
-      "source": "Transportation Research Part …, 2026  -  Elsevier",
-      "abstract": "… interactions among ego vehicle, surrounding … risk evaluation across diverse scenarios (highways, \nintersections, and roundabouts), and shows robustness under high-risk and long-tail …",
-      "url": "https://www.sciencedirect.com/science/article/pii/S1366554525005198",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation Research Part …, 2026  -  Elsevier",
-      "cited": 1,
-      "aiRecommendReason": "该文献高度相关，原因如下：1）文献聚焦于自动驾驶在长尾场景下的风险预测，与研究主题中提到的'长尾风险'问题直接对应；2）文献涉及车辆交互建模（interaction-aware），与研究主题关注的'混合车流中的交互博弈'高度契合；3）文献验证场景包含高速公路、交叉口和环岛等混合车流典型场景（合流、路口），与研究主题的应用场景一致；4）文献强调高风险场景下的鲁棒性，与研究主题关注的'突变行为'和'稳定性问题'相呼应。"
-    },
-    {
-      "id": "scholar_2_1762775858990",
-      "title": "Dynamically conservative self-driving planner for long-tail cases",
-      "authors": "W Zhou, Z Cao, N Deng, X Liu…",
-      "year": "2022",
-      "source": "IEEE Transactions on …, 2022  -  ieeexplore.ieee.org",
-      "abstract": "… To achieve the goal, we first formalize the “longtail” problem in SDV planning as a driving \nconfidence problem. Then, we define the “long-tail” rate to quantify how confident an SDV’s …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/9971752/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2022  -  ieeexplore.ieee.org",
-      "cited": 32,
-      "aiRecommendReason": "该文献直接针对自动驾驶规划中的'长尾问题'，与研究主题中提到的'混合车流中的交互博弈、长尾风险、突变行为'高度契合。文献提出将长尾问题形式化为驾驶置信度问题，并定义了'长尾率'量化指标，这为研究主题中'系统梳理混合车流的行为规律、建模方法与决策机制'提供了具体的技术思路，特别是对解决混合车流场景下的不确定性和异质性挑战具有直接参考价值。"
-    },
-    {
-      "id": "scholar_0_1762775868672",
-      "title": "A novel multi-stage multi-scenario multi-objective optimisation framework for adaptive robust decision-making under deep uncertainty",
-      "authors": "B Shavazipour, TJ Stewart",
-      "year": "2026",
-      "source": "Omega, 2026  -  Elsevier",
-      "abstract": "… Scenarios, instead, should be used to evaluate the consequences of any decisions in … -stage \nmulti-scenario multi-objective optimisation framework for adaptive/dynamic robust decision-…",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0305048325001318",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Omega, 2026  -  Elsevier",
-      "cited": 5,
-      "aiRecommendReason": "该文献提出的多阶段多场景多目标优化框架与混合车流决策问题高度相关。研究主题强调混合车流中自动驾驶车辆需要应对高度不确定性和异质性环境，而文献中的'自适应鲁棒决策'和'深度不确定性'方法正好针对这类复杂决策场景。文献框架通过多场景评估决策后果，能够有效处理混合车流中的交互博弈、长尾风险和突变行为等挑战，为自动驾驶在合流、路口等复杂场景下的稳定性问题提供理论支持，符合研究主题对稳健决策机制的需求。"
-    },
-    {
-      "id": "scholar_2_1762775868672",
-      "title": "Scenario-adaptive and self-supervised model for multi-scenario personalized recommendation",
-      "authors": "Y Zhang, X Wang, J Hu, K Gao, C Lei…",
-      "year": "2022",
-      "source": "Proceedings of the 31st …, 2022  -  dl.acm.org",
-      "abstract": "… We propose a unified framework to solve multi-scenario problem, which is definitely applicable \nto serve both matching and ranking tasks in recommendation system. In this paper, we …",
-      "url": "https://dl.acm.org/doi/abs/10.1145/3511808.3557154",
-      "selected": false,
-      "completionStatus": "completed",
-      "journal": "Proceedings of the 31st …, 2022  -  dl.acm.org",
-      "cited": 26,
-      "aiRecommendReason": "该文献研究的是推荐系统领域的多场景个性化推荐问题，提出了一个统一的框架来解决推荐系统中的匹配和排序任务。而研究主题聚焦于自动驾驶混合车流场景下的行为规律、建模方法与决策机制，涉及交通流的不确定性、异质性、交互博弈、长尾风险等技术挑战。两者在研究对象（推荐系统vs自动驾驶）、技术领域（信息检索vs交通工程）和应用场景（电商推荐vs混合车流）上完全不同，没有直接相关性。"
-    },
-    {
-      "id": "scholar_0_1762775878218",
-      "title": "Traffic participants in the loop: A mixed reality-based interaction testbed for the verification and validation of autonomous vehicles",
-      "authors": "MR Zofka, S Ulbrich, D Karl, T Fleck…",
-      "year": "2018",
-      "source": "2018 21st …, 2018  -  ieeexplore.ieee.org",
-      "abstract": "… in critical traffic scenarios are hardly … a mixed reality testbed for the verification and validation \nof autonomous vehicles faced with realistic road user behavior in critical, worst case traffic …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/8569226/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "2018 21st …, 2018  -  ieeexplore.ieee.org",
-      "cited": 26,
-      "aiRecommendReason": "该文献提出了一种基于混合现实的测试平台，用于验证自动驾驶车辆在关键交通场景中与真实道路使用者的交互行为，这与研究主题中关注的混合车流交互博弈、长尾风险和突变行为等核心问题高度契合。文献中强调的'最坏情况交通场景'测试，直接对应研究主题中提到的合流、路口等复杂场景下的稳定性与风险验证需求，为混合车流行为规律研究和自动驾驶决策机制验证提供了可行的技术路径。"
-    },
-    {
-      "id": "scholar_2_1762775878218",
-      "title": "Mixsim: A hierarchical framework for mixed reality traffic simulation",
-      "authors": "S Suo, K Wong, J Xu, J Tu, A Cui…",
-      "year": "2023",
-      "source": "Proceedings of the …, 2023  -  openaccess.thecvf.com",
-      "abstract": "… mixed reality traffic simulation, we conduct an analysis of its sim2real domain gap on both \nurban and highway traffic … Using re-simulation to verify an av stack against disengagements, …",
-      "url": "http://openaccess.thecvf.com/content/CVPR2023/html/Suo_MixSim_A_Hierarchical_Framework_for_Mixed_Reality_Traffic_Simulation_CVPR_2023_paper.html",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Proceedings of the …, 2023  -  openaccess.thecvf.com",
-      "cited": 45,
-      "aiRecommendReason": "该文献高度相关。文献提出的MixSim混合现实交通仿真框架专门针对混合交通流场景，与研究主题关注的自动驾驶车辆与人类驾驶车辆共存问题完全契合。其核心价值在于：1）通过混合现实仿真分析sim2real领域差距，直接对应研究主题中混合车流的高度不确定性与异质性挑战；2）采用重仿真方法验证自动驾驶系统在真实交通场景中的表现，与研究主题关注的决策机制验证和长尾风险分析高度一致；3）涵盖城市和高速公路场景，能够支持合流、路口等关键场景的稳定性研究。该框架为系统梳理混合车流行为规律和构建稳健决策理论提供了先进的技术工具。"
-    },
-    {
-      "id": "scholar_0_1762775887977",
-      "title": "Identifying and explaining safety-critical scenarios for autonomous vehicles via key features",
-      "authors": "N Neelofar, A Aleti",
-      "year": "2024",
-      "source": "ACM transactions on software engineering and …, 2024  -  dl.acm.org",
-      "abstract": "… ) to identify the significant features of test scenarios that affect their ability to reveal the … -critical \nscenarios from normal driving and visualises the impact of these features on test scenario …",
-      "url": "https://dl.acm.org/doi/abs/10.1145/3640335",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "ACM transactions on software engineering and …, 2024  -  dl.acm.org",
-      "cited": 21,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶系统的安全性挑战，特别是长尾风险和突变行为等问题。文献标题和摘要表明其核心内容是识别和解释影响自动驾驶安全性的关键场景特征，这正是研究主题中提到的“长尾风险、突变行为”等安全关键问题的具体研究。文献通过特征识别方法揭示测试场景中的安全关键因素，能够为理解混合车流中自动驾驶车辆面临的风险提供方法论支持，有助于构建更稳健的自动驾驶决策机制。"
-    },
-    {
-      "id": "scholar_2_1762775887977",
-      "title": "Finding critical scenarios for automated driving systems: A systematic mapping study",
-      "authors": "X Zhang, J Tao, K Tan, M Törngren…",
-      "year": "2022",
-      "source": "IEEE Transactions …, 2022  -  ieeexplore.ieee.org",
-      "abstract": "… In this survey, we consider critical scenarios as all the scenarios that may lead to harm. \nAs shown in Fig. 3, a critical scenario may contain a triggering condition and a safety-critical …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/9763411/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions …, 2022  -  ieeexplore.ieee.org",
-      "cited": 173,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中的长尾风险、突变行为等安全问题，而这篇2022年的系统综述专门研究自动驾驶系统的关键场景识别，将可能导致危害的场景定义为关键场景，并分析触发条件与安全临界状态。这直接对应研究主题中提到的混合车流交互博弈、长尾风险和突变行为等挑战，为系统梳理混合车流行为规律和风险识别提供了方法论参考，有助于构建支撑自动驾驶在复杂交通中稳健运行的技术体系。"
-    },
-    {
-      "id": "scholar_0_1762775897518",
-      "title": "Co-optimization of speed planning and energy management for intelligent fuel cell hybrid vehicle considering complex traffic conditions",
-      "authors": "Z Nie, Y Jia, W Wang, Z Chen, R Outbib",
-      "year": "2022",
-      "source": "Energy, 2022  -  Elsevier",
-      "abstract": "… However, high-quality real-time energy management of FCHV is a difficult task due to different \ninfluences from complex traffic environments, such as dynamic changes of preceding and …",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0360544222003796",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Energy, 2022  -  Elsevier",
-      "cited": 64,
-      "aiRecommendReason": "该文献虽然聚焦于燃料电池混合动力汽车的节能优化问题，但其研究背景和核心挑战与研究主题高度契合。文献明确考虑了复杂交通环境对车辆决策的影响，包括前车动态变化等交通流不确定性因素，这与研究主题中提到的混合车流行为模式差异、交通流不确定性以及自动驾驶在复杂交通中的决策机制等关键问题直接相关。该研究在速度规划与能量管理的协同优化方法上，为混合车流环境下自动驾驶车辆的决策框架提供了技术参考，特别是在处理动态交通条件对车辆行为的影响方面具有借鉴价值。"
-    }
-  ],
-  "selectedLiterature": [
-    {
-      "id": "scholar_0_1762775808889",
-      "title": "Towards behavioral modeling of drivers in mixed traffic conditions",
-      "authors": "CR Munigety, TV Mathew",
-      "year": "2016",
-      "source": "Transportation in Developing Economies, 2016  -  Springer",
-      "abstract": "… modeling driver behavior in mixed traffic conditions is presented in this paper. Often, models \ndeveloped for mixed traffic … of the model class in the context of mixed traffic flow modeling is …",
-      "url": "https://link.springer.com/article/10.1007/s40890-016-0012-y",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation in Developing Economies, 2016  -  Springer",
-      "cited": 79,
-      "aiRecommendReason": "该文献高度相关。文献标题明确聚焦于混合交通条件下的驾驶员行为建模，与研究主题中'混合车流中的交互博弈、行为规律、建模方法'等核心问题完全吻合。2016年的研究时间点正处于自动驾驶技术快速发展初期，对混合交通行为建模的探索具有前瞻性。摘要内容显示该文献专门研究混合交通流建模，能够为理解人类驾驶员与自动驾驶车辆在行为模式、风险偏好等方面的差异提供理论基础，直接支撑研究主题中'系统梳理混合车流的行为规律、建模方法'的需求。"
-    },
-    {
-      "id": "scholar_2_1762775808889",
-      "title": "A mixed traffic car-following behavior model",
-      "authors": "X Wang, J Zhang, H Li, Z He",
-      "year": "2023",
-      "source": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
-      "abstract": "… car-following model for mixed traffic flow, which considers both … mixed traffic flow composition \nschemes, communication distance, and human drivers’ characteristics on mixed traffic flow…",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0378437123008543",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
-      "cited": 19,
-      "aiRecommendReason": "该文献高度相关。文献标题明确聚焦于混合交通流(mixed traffic flow)的跟车行为建模，与研究主题中提到的\"混合车流已成为不可回避的关键场景\"、\"自动驾驶车辆与人类驾驶车辆长期共存\"等核心问题完全吻合。摘要内容显示该研究考虑了混合交通流的组成方案、通信距离和人类驾驶员特性等关键因素，这些正是研究主题中强调的\"行为模式、反应时延与风险偏好上的巨大差异\"以及\"交互博弈\"等挑战的具体体现。作为2023年的最新研究，该文献能够为系统梳理混合车流行为规律和建模方法提供直接的理论支撑。"
-    },
-    {
-      "id": "scholar_4_1762775808889",
-      "title": "Driving behaviors: Models and challenges for non-lane based mixed traffic",
-      "authors": "G Asaithambi, V Kanagaraj, T Toledo",
-      "year": "2016",
-      "source": "Transportation in Developing …, 2016  -  Springer",
-      "abstract": "… driving behavior models in the context of mixed traffic, discusses their limitations and the data \nand modeling … to advance driver behavior models for mixed traffic flows, through improved …",
-      "url": "https://link.springer.com/article/10.1007/s40890-016-0025-6",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation in Developing …, 2016  -  Springer",
-      "cited": 87,
-      "aiRecommendReason": "该文献标题和摘要明确聚焦于混合交通流（mixed traffic）中的驾驶行为建模，与研究主题高度契合。文献讨论了混合交通环境下驾驶行为模型的局限性、数据需求及改进方向，这与研究主题中关注的混合车流行为规律、建模方法、决策机制等核心问题直接对应。尽管文献发表于2016年，但其对非车道化混合交通的探讨仍为理解异质交通流特性、模型挑战及技术发展路径提供了基础理论支撑，有助于系统梳理混合车流研究的关键难点。"
-    },
-    {
-      "id": "scholar_0_1762775819313",
-      "title": "Modelling of uncertain reactive human driving behavior: a classification approach",
-      "authors": "Y Chen, N Sohani, H Peng",
-      "year": "2018",
-      "source": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
-      "abstract": "… Abstract—This paper discusses a novel approach to model human driver behavior. A … \nhuman driving actions given the scenario description (such as the vehicle states and the behavior …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/8619568/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
-      "cited": 15,
-      "aiRecommendReason": "该文献高度相关。研究主题关注自动驾驶与人类驾驶车辆混合车流中的行为差异、不确定性和建模方法，而该文献专门研究人类驾驶行为的建模，特别是对不确定反应性驾驶行为的分类方法。文献提出的基于场景描述（如车辆状态和行为）来建模人类驾驶动作的方法，直接对应研究主题中提到的'行为规律、建模方法与决策机制'需求，能为理解混合车流中人类驾驶员的行为模式提供理论基础和技术支撑。"
-    },
-    {
-      "id": "scholar_2_1762775819313",
-      "title": "Resolving uncertainty on the fly: modeling adaptive driving behavior as active inference",
-      "authors": "J Engström, R Wei, AD McDonald, A Garcia…",
-      "year": "2024",
-      "source": "Frontiers in …, 2024  -  frontiersin.org",
-      "abstract": "… We explore how uncertainty can be resolved “on the fly” as an integral part of the general \nplanning objective to minimize expected free energy. Specifically, we demonstrate how a …",
-      "url": "https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2024.1341750/full",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Frontiers in …, 2024  -  frontiersin.org",
-      "cited": 16,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶与人类驾驶车辆在行为模式、反应时延与风险偏好上的差异导致的交通流不确定性与异质性，而该文献正是探讨驾驶过程中如何\"实时解决不确定性\"，将不确定性解决作为最小化期望自由能规划目标的一部分。这直接对应研究主题中提到的混合车流交互博弈、突变行为等挑战，特别是为理解人类驾驶员的适应性行为规律和建模方法提供了理论框架——主动推理，能够为构建自动驾驶在复杂交通中稳健运行的决策机制提供重要参考。"
-    },
-    {
-      "id": "scholar_0_1762775829864",
-      "title": "Enhancing interpretability of autonomous driving via human-like cognitive maps: a case study on lane change",
-      "authors": "H Lu, Y Liu, M Zhu, C Lu, H Yang…",
-      "year": "2024",
-      "source": "… on Intelligent Vehicles, 2024  -  ieeexplore.ieee.org",
-      "abstract": "… ) empowered autonomous vehicles (AVs), their interpretability per se is … To enhance the \ninterpretability of ML-empowered AVs, … to consider the interpretability of more driving behaviors. …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/10416370/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
-      "cited": 10,
-      "aiRecommendReason": "该文献聚焦于通过人类认知地图增强自动驾驶的可解释性，以车道变换为例进行研究。这与研究主题中提到的'混合车流中的交互博弈、行为规律与决策机制'高度相关，因为可解释性正是解决自动驾驶与人类驾驶车辆在行为模式差异、风险偏好不同等问题的关键技术路径。文献提出的认知地图方法有助于弥合人类与自动驾驶系统之间的理解鸿沟，提升混合交通流中的交互安全性和稳定性，为构建'能够支撑自动驾驶在复杂交通中稳健运行的理论框架'提供了具体的技术思路。"
-    },
-    {
-      "id": "scholar_2_1762775829864",
-      "title": "Interpretable Decision-Making for End-to-End Autonomous Driving",
-      "authors": "M Mirzaie, B Rosenhahn",
-      "year": "2025",
-      "source": "Proceedings of the IEEE/CVF …, 2025  -  openaccess.thecvf.com",
-      "abstract": "… the broad deployment of autonomous vehicles. Although end-to… This paper presents a \nmethod to enhance interpretability … feature selection process mimics the behavior of attention. It … 保存 引用 相关文章 所有 3 个版本  HTML 版",
-      "url": "https://openaccess.thecvf.com/content/ICCV2025W/2COOOL/html/Mirzaie_Interpretable_Decision-Making_for_End-to-End_Autonomous_Driving_ICCVW_2025_paper.html",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Proceedings of the IEEE/CVF …, 2025  -  openaccess.thecvf.com",
-      "cited": 0,
-      "aiRecommendReason": "该文献聚焦于端到端自动驾驶的可解释决策，与研究主题高度相关。研究主题强调混合车流中自动驾驶与人类驾驶车辆的行为差异、交互博弈及决策机制，而该文献提出的可解释性方法（如注意力机制模拟行为特征）有助于理解自动驾驶在混合交通环境中的决策逻辑，提升系统透明度和稳定性，直接支持'梳理混合车流行为规律与决策机制'这一核心需求。"
-    },
-    {
-      "id": "scholar_0_1762775839818",
-      "title": "Game theory-based framework for modeling human–vehicle interactions on the road",
-      "authors": "Y Rahmati, A Talebpour, A Mittal…",
-      "year": "2020",
-      "source": "Transportation …, 2020  -  journals.sagepub.com",
-      "abstract": "… motion decisions of human agents in interaction with interfering vehicles and pedestrians. … \nan interactive human–vehicle decision-making framework toward realizing human–vehicle …",
-      "url": "https://journals.sagepub.com/doi/abs/10.1177/0361198120931513",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation …, 2020  -  journals.sagepub.com",
-      "cited": 32,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶车辆与人类驾驶车辆的交互博弈问题，而该文献提出了基于博弈论的人车交互建模框架，直接针对人类与车辆在道路上的交互决策机制。文献中提到的'human–vehicle interactions'和'interactive human–vehicle decision-making framework'与研究主题中强调的'交互博弈'、'行为模式差异'和'决策机制'完全吻合，且博弈论方法正是解决混合车流中异质行为主体交互问题的有效理论工具，能够为构建稳健的自动驾驶决策系统提供重要参考。"
-    },
-    {
-      "id": "scholar_2_1762775839818",
-      "title": "Game Theory-Based Interactive Control for Human–Machine Cooperative Driving",
-      "authors": "Y Zhou, C Huang, P Hang",
-      "year": "2024",
-      "source": "Applied Sciences, 2024  -  mdpi.com",
-      "abstract": "… A brain emotional learning circuit model (BELCM) was designed in [15] to simulate driver \nsteering behavior, but it did not consider human–vehicle interaction. In terms of shared …",
-      "url": "https://www.mdpi.com/2076-3417/14/6/2441",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Applied Sciences, 2024  -  mdpi.com",
-      "cited": 7,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶车辆与人类驾驶车辆的交互博弈问题，而这篇文献标题明确聚焦于'人机协同驾驶的博弈论交互控制'，直接对应了混合车流中的核心挑战。文献采用博弈论方法研究人车交互控制，正好契合研究主题中提到的'交互博弈'、'决策机制'等关键问题，为解决混合车流中的不确定性、异质性和稳定性问题提供了理论框架和技术路径。"
-    },
-    {
-      "id": "scholar_0_1762775849314",
-      "title": "A multi-vehicle game-theoretic framework for decision making and planning of autonomous vehicles in mixed traffic",
-      "authors": "Y Yan, L Peng, T Shen, J Wang, D Pi…",
-      "year": "2023",
-      "source": "IEEE Transactions on …, 2023  -  ieeexplore.ieee.org",
-      "abstract": "… traffic environments where autonomous vehicles (AVs) and humandriven vehicles (HVs) \ncoexist, a game theoretic … as the objectives of comfort and traffic efficiency. Then, the interactive …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/10268996/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2023  -  ieeexplore.ieee.org",
-      "cited": 82,
-      "aiRecommendReason": "该文献高度相关，原因如下：1) 研究主题聚焦于自动驾驶车辆与人类驾驶车辆共存的混合车流场景，与文献标题和摘要中'autonomous vehicles (AVs) and human-driven vehicles (HVs) coexist'的描述完全吻合；2) 文献采用博弈论框架研究混合车流中的决策与规划问题，直接对应研究主题中提到的'交互博弈'关键挑战；3) 文献关注舒适性和交通效率等目标，与研究主题强调的安全性、效率与推广能力高度一致；4) 2023年的最新研究成果能够为'系统梳理混合车流的行为规律、建模方法与决策机制'提供前沿的理论框架支持。"
-    },
-    {
-      "id": "scholar_2_1762775849314",
-      "title": "Cooperative driving of connected autonomous vehicles in heterogeneous mixed traffic: A game theoretic approach",
-      "authors": "S Fang, P Hang, C Wei, Y Xing…",
-      "year": "2024",
-      "source": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
-      "abstract": "… decisionmaking framework in heterogeneous mixed traffic is … To reproduce HVs in mixed \ntraffic, interactions from … integrated to mimic the decision-making of heterogeneous HVs. …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/10529605/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
-      "cited": 20,
-      "aiRecommendReason": "该文献高度相关，主要体现在以下几个方面：1) 研究主题直接聚焦于混合交通流中的自动驾驶决策问题，与主题中提到的\"混合车流\"、\"异质性\"等核心概念完全吻合；2) 采用博弈论方法研究车车交互，直接对应主题中强调的\"交互博弈\"挑战；3) 文献关注异构混合交通环境，涉及人类驾驶车辆的行为建模，与主题中\"行为模式差异\"、\"决策机制\"等研究方向一致；4) 2024年的最新研究成果，能够为构建支撑自动驾驶在复杂交通中稳健运行的理论框架提供技术参考。"
-    },
-    {
-      "id": "scholar_0_1762775858990",
-      "title": "RiskNet: interaction-aware risk forecasting for autonomous driving in long-tail scenarios",
-      "authors": "Q Liu, H Huang, S Zhao, L Shi, S Ahn, X Li",
-      "year": "2026",
-      "source": "Transportation Research Part …, 2026  -  Elsevier",
-      "abstract": "… interactions among ego vehicle, surrounding … risk evaluation across diverse scenarios (highways, \nintersections, and roundabouts), and shows robustness under high-risk and long-tail …",
-      "url": "https://www.sciencedirect.com/science/article/pii/S1366554525005198",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation Research Part …, 2026  -  Elsevier",
-      "cited": 1,
-      "aiRecommendReason": "该文献高度相关，原因如下：1）文献聚焦于自动驾驶在长尾场景下的风险预测，与研究主题中提到的'长尾风险'问题直接对应；2）文献涉及车辆交互建模（interaction-aware），与研究主题关注的'混合车流中的交互博弈'高度契合；3）文献验证场景包含高速公路、交叉口和环岛等混合车流典型场景（合流、路口），与研究主题的应用场景一致；4）文献强调高风险场景下的鲁棒性，与研究主题关注的'突变行为'和'稳定性问题'相呼应。"
-    },
-    {
-      "id": "scholar_2_1762775858990",
-      "title": "Dynamically conservative self-driving planner for long-tail cases",
-      "authors": "W Zhou, Z Cao, N Deng, X Liu…",
-      "year": "2022",
-      "source": "IEEE Transactions on …, 2022  -  ieeexplore.ieee.org",
-      "abstract": "… To achieve the goal, we first formalize the “longtail” problem in SDV planning as a driving \nconfidence problem. Then, we define the “long-tail” rate to quantify how confident an SDV’s …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/9971752/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2022  -  ieeexplore.ieee.org",
-      "cited": 32,
-      "aiRecommendReason": "该文献直接针对自动驾驶规划中的'长尾问题'，与研究主题中提到的'混合车流中的交互博弈、长尾风险、突变行为'高度契合。文献提出将长尾问题形式化为驾驶置信度问题，并定义了'长尾率'量化指标，这为研究主题中'系统梳理混合车流的行为规律、建模方法与决策机制'提供了具体的技术思路，特别是对解决混合车流场景下的不确定性和异质性挑战具有直接参考价值。"
-    },
-    {
-      "id": "scholar_0_1762775868672",
-      "title": "A novel multi-stage multi-scenario multi-objective optimisation framework for adaptive robust decision-making under deep uncertainty",
-      "authors": "B Shavazipour, TJ Stewart",
-      "year": "2026",
-      "source": "Omega, 2026  -  Elsevier",
-      "abstract": "… Scenarios, instead, should be used to evaluate the consequences of any decisions in … -stage \nmulti-scenario multi-objective optimisation framework for adaptive/dynamic robust decision-…",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0305048325001318",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Omega, 2026  -  Elsevier",
-      "cited": 5,
-      "aiRecommendReason": "该文献提出的多阶段多场景多目标优化框架与混合车流决策问题高度相关。研究主题强调混合车流中自动驾驶车辆需要应对高度不确定性和异质性环境，而文献中的'自适应鲁棒决策'和'深度不确定性'方法正好针对这类复杂决策场景。文献框架通过多场景评估决策后果，能够有效处理混合车流中的交互博弈、长尾风险和突变行为等挑战，为自动驾驶在合流、路口等复杂场景下的稳定性问题提供理论支持，符合研究主题对稳健决策机制的需求。"
-    },
-    {
-      "id": "scholar_0_1762775878218",
-      "title": "Traffic participants in the loop: A mixed reality-based interaction testbed for the verification and validation of autonomous vehicles",
-      "authors": "MR Zofka, S Ulbrich, D Karl, T Fleck…",
-      "year": "2018",
-      "source": "2018 21st …, 2018  -  ieeexplore.ieee.org",
-      "abstract": "… in critical traffic scenarios are hardly … a mixed reality testbed for the verification and validation \nof autonomous vehicles faced with realistic road user behavior in critical, worst case traffic …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/8569226/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "2018 21st …, 2018  -  ieeexplore.ieee.org",
-      "cited": 26,
-      "aiRecommendReason": "该文献提出了一种基于混合现实的测试平台，用于验证自动驾驶车辆在关键交通场景中与真实道路使用者的交互行为，这与研究主题中关注的混合车流交互博弈、长尾风险和突变行为等核心问题高度契合。文献中强调的'最坏情况交通场景'测试，直接对应研究主题中提到的合流、路口等复杂场景下的稳定性与风险验证需求，为混合车流行为规律研究和自动驾驶决策机制验证提供了可行的技术路径。"
-    },
-    {
-      "id": "scholar_2_1762775878218",
-      "title": "Mixsim: A hierarchical framework for mixed reality traffic simulation",
-      "authors": "S Suo, K Wong, J Xu, J Tu, A Cui…",
-      "year": "2023",
-      "source": "Proceedings of the …, 2023  -  openaccess.thecvf.com",
-      "abstract": "… mixed reality traffic simulation, we conduct an analysis of its sim2real domain gap on both \nurban and highway traffic … Using re-simulation to verify an av stack against disengagements, …",
-      "url": "http://openaccess.thecvf.com/content/CVPR2023/html/Suo_MixSim_A_Hierarchical_Framework_for_Mixed_Reality_Traffic_Simulation_CVPR_2023_paper.html",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Proceedings of the …, 2023  -  openaccess.thecvf.com",
-      "cited": 45,
-      "aiRecommendReason": "该文献高度相关。文献提出的MixSim混合现实交通仿真框架专门针对混合交通流场景，与研究主题关注的自动驾驶车辆与人类驾驶车辆共存问题完全契合。其核心价值在于：1）通过混合现实仿真分析sim2real领域差距，直接对应研究主题中混合车流的高度不确定性与异质性挑战；2）采用重仿真方法验证自动驾驶系统在真实交通场景中的表现，与研究主题关注的决策机制验证和长尾风险分析高度一致；3）涵盖城市和高速公路场景，能够支持合流、路口等关键场景的稳定性研究。该框架为系统梳理混合车流行为规律和构建稳健决策理论提供了先进的技术工具。"
-    },
-    {
-      "id": "scholar_0_1762775887977",
-      "title": "Identifying and explaining safety-critical scenarios for autonomous vehicles via key features",
-      "authors": "N Neelofar, A Aleti",
-      "year": "2024",
-      "source": "ACM transactions on software engineering and …, 2024  -  dl.acm.org",
-      "abstract": "… ) to identify the significant features of test scenarios that affect their ability to reveal the … -critical \nscenarios from normal driving and visualises the impact of these features on test scenario …",
-      "url": "https://dl.acm.org/doi/abs/10.1145/3640335",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "ACM transactions on software engineering and …, 2024  -  dl.acm.org",
-      "cited": 21,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶系统的安全性挑战，特别是长尾风险和突变行为等问题。文献标题和摘要表明其核心内容是识别和解释影响自动驾驶安全性的关键场景特征，这正是研究主题中提到的“长尾风险、突变行为”等安全关键问题的具体研究。文献通过特征识别方法揭示测试场景中的安全关键因素，能够为理解混合车流中自动驾驶车辆面临的风险提供方法论支持，有助于构建更稳健的自动驾驶决策机制。"
-    },
-    {
-      "id": "scholar_2_1762775887977",
-      "title": "Finding critical scenarios for automated driving systems: A systematic mapping study",
-      "authors": "X Zhang, J Tao, K Tan, M Törngren…",
-      "year": "2022",
-      "source": "IEEE Transactions …, 2022  -  ieeexplore.ieee.org",
-      "abstract": "… In this survey, we consider critical scenarios as all the scenarios that may lead to harm. \nAs shown in Fig. 3, a critical scenario may contain a triggering condition and a safety-critical …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/9763411/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions …, 2022  -  ieeexplore.ieee.org",
-      "cited": 173,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中的长尾风险、突变行为等安全问题，而这篇2022年的系统综述专门研究自动驾驶系统的关键场景识别，将可能导致危害的场景定义为关键场景，并分析触发条件与安全临界状态。这直接对应研究主题中提到的混合车流交互博弈、长尾风险和突变行为等挑战，为系统梳理混合车流行为规律和风险识别提供了方法论参考，有助于构建支撑自动驾驶在复杂交通中稳健运行的技术体系。"
-    },
-    {
-      "id": "scholar_0_1762775897518",
-      "title": "Co-optimization of speed planning and energy management for intelligent fuel cell hybrid vehicle considering complex traffic conditions",
-      "authors": "Z Nie, Y Jia, W Wang, Z Chen, R Outbib",
-      "year": "2022",
-      "source": "Energy, 2022  -  Elsevier",
-      "abstract": "… However, high-quality real-time energy management of FCHV is a difficult task due to different \ninfluences from complex traffic environments, such as dynamic changes of preceding and …",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0360544222003796",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Energy, 2022  -  Elsevier",
-      "cited": 64,
-      "aiRecommendReason": "该文献虽然聚焦于燃料电池混合动力汽车的节能优化问题，但其研究背景和核心挑战与研究主题高度契合。文献明确考虑了复杂交通环境对车辆决策的影响，包括前车动态变化等交通流不确定性因素，这与研究主题中提到的混合车流行为模式差异、交通流不确定性以及自动驾驶在复杂交通中的决策机制等关键问题直接相关。该研究在速度规划与能量管理的协同优化方法上，为混合车流环境下自动驾驶车辆的决策框架提供了技术参考，特别是在处理动态交通条件对车辆行为的影响方面具有借鉴价值。"
-    }
-  ],
-  "organizedData": [
-    {
-      "id": "scholar_0_1762775808889",
-      "title": "Towards behavioral modeling of drivers in mixed traffic conditions",
-      "authors": "CR Munigety, TV Mathew",
-      "year": "2016",
-      "source": "Transportation in Developing Economies, 2016  -  Springer",
-      "abstract": "… modeling driver behavior in mixed traffic conditions is presented in this paper. Often, models \ndeveloped for mixed traffic … of the model class in the context of mixed traffic flow modeling is …",
-      "url": "https://link.springer.com/article/10.1007/s40890-016-0012-y",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation in Developing Economies, 2016  -  Springer",
-      "cited": 79,
-      "aiRecommendReason": "该文献高度相关。文献标题明确聚焦于混合交通条件下的驾驶员行为建模，与研究主题中'混合车流中的交互博弈、行为规律、建模方法'等核心问题完全吻合。2016年的研究时间点正处于自动驾驶技术快速发展初期，对混合交通行为建模的探索具有前瞻性。摘要内容显示该文献专门研究混合交通流建模，能够为理解人类驾驶员与自动驾驶车辆在行为模式、风险偏好等方面的差异提供理论基础，直接支撑研究主题中'系统梳理混合车流的行为规律、建模方法'的需求。"
-    },
-    {
-      "id": "scholar_2_1762775808889",
-      "title": "A mixed traffic car-following behavior model",
-      "authors": "X Wang, J Zhang, H Li, Z He",
-      "year": "2023",
-      "source": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
-      "abstract": "… car-following model for mixed traffic flow, which considers both … mixed traffic flow composition \nschemes, communication distance, and human drivers’ characteristics on mixed traffic flow…",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0378437123008543",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
-      "cited": 19,
-      "aiRecommendReason": "该文献高度相关。文献标题明确聚焦于混合交通流(mixed traffic flow)的跟车行为建模，与研究主题中提到的\"混合车流已成为不可回避的关键场景\"、\"自动驾驶车辆与人类驾驶车辆长期共存\"等核心问题完全吻合。摘要内容显示该研究考虑了混合交通流的组成方案、通信距离和人类驾驶员特性等关键因素，这些正是研究主题中强调的\"行为模式、反应时延与风险偏好上的巨大差异\"以及\"交互博弈\"等挑战的具体体现。作为2023年的最新研究，该文献能够为系统梳理混合车流行为规律和建模方法提供直接的理论支撑。"
-    },
-    {
-      "id": "scholar_4_1762775808889",
-      "title": "Driving behaviors: Models and challenges for non-lane based mixed traffic",
-      "authors": "G Asaithambi, V Kanagaraj, T Toledo",
-      "year": "2016",
-      "source": "Transportation in Developing …, 2016  -  Springer",
-      "abstract": "… driving behavior models in the context of mixed traffic, discusses their limitations and the data \nand modeling … to advance driver behavior models for mixed traffic flows, through improved …",
-      "url": "https://link.springer.com/article/10.1007/s40890-016-0025-6",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation in Developing …, 2016  -  Springer",
-      "cited": 87,
-      "aiRecommendReason": "该文献标题和摘要明确聚焦于混合交通流（mixed traffic）中的驾驶行为建模，与研究主题高度契合。文献讨论了混合交通环境下驾驶行为模型的局限性、数据需求及改进方向，这与研究主题中关注的混合车流行为规律、建模方法、决策机制等核心问题直接对应。尽管文献发表于2016年，但其对非车道化混合交通的探讨仍为理解异质交通流特性、模型挑战及技术发展路径提供了基础理论支撑，有助于系统梳理混合车流研究的关键难点。"
-    },
-    {
-      "id": "scholar_0_1762775819313",
-      "title": "Modelling of uncertain reactive human driving behavior: a classification approach",
-      "authors": "Y Chen, N Sohani, H Peng",
-      "year": "2018",
-      "source": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
-      "abstract": "… Abstract—This paper discusses a novel approach to model human driver behavior. A … \nhuman driving actions given the scenario description (such as the vehicle states and the behavior …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/8619568/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
-      "cited": 15,
-      "aiRecommendReason": "该文献高度相关。研究主题关注自动驾驶与人类驾驶车辆混合车流中的行为差异、不确定性和建模方法，而该文献专门研究人类驾驶行为的建模，特别是对不确定反应性驾驶行为的分类方法。文献提出的基于场景描述（如车辆状态和行为）来建模人类驾驶动作的方法，直接对应研究主题中提到的'行为规律、建模方法与决策机制'需求，能为理解混合车流中人类驾驶员的行为模式提供理论基础和技术支撑。"
-    },
-    {
-      "id": "scholar_2_1762775819313",
-      "title": "Resolving uncertainty on the fly: modeling adaptive driving behavior as active inference",
-      "authors": "J Engström, R Wei, AD McDonald, A Garcia…",
-      "year": "2024",
-      "source": "Frontiers in …, 2024  -  frontiersin.org",
-      "abstract": "… We explore how uncertainty can be resolved “on the fly” as an integral part of the general \nplanning objective to minimize expected free energy. Specifically, we demonstrate how a …",
-      "url": "https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2024.1341750/full",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Frontiers in …, 2024  -  frontiersin.org",
-      "cited": 16,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶与人类驾驶车辆在行为模式、反应时延与风险偏好上的差异导致的交通流不确定性与异质性，而该文献正是探讨驾驶过程中如何\"实时解决不确定性\"，将不确定性解决作为最小化期望自由能规划目标的一部分。这直接对应研究主题中提到的混合车流交互博弈、突变行为等挑战，特别是为理解人类驾驶员的适应性行为规律和建模方法提供了理论框架——主动推理，能够为构建自动驾驶在复杂交通中稳健运行的决策机制提供重要参考。"
-    },
-    {
-      "id": "scholar_0_1762775829864",
-      "title": "Enhancing interpretability of autonomous driving via human-like cognitive maps: a case study on lane change",
-      "authors": "H Lu, Y Liu, M Zhu, C Lu, H Yang…",
-      "year": "2024",
-      "source": "… on Intelligent Vehicles, 2024  -  ieeexplore.ieee.org",
-      "abstract": "… ) empowered autonomous vehicles (AVs), their interpretability per se is … To enhance the \ninterpretability of ML-empowered AVs, … to consider the interpretability of more driving behaviors. …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/10416370/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
-      "cited": 10,
-      "aiRecommendReason": "该文献聚焦于通过人类认知地图增强自动驾驶的可解释性，以车道变换为例进行研究。这与研究主题中提到的'混合车流中的交互博弈、行为规律与决策机制'高度相关，因为可解释性正是解决自动驾驶与人类驾驶车辆在行为模式差异、风险偏好不同等问题的关键技术路径。文献提出的认知地图方法有助于弥合人类与自动驾驶系统之间的理解鸿沟，提升混合交通流中的交互安全性和稳定性，为构建'能够支撑自动驾驶在复杂交通中稳健运行的理论框架'提供了具体的技术思路。"
-    },
-    {
-      "id": "scholar_2_1762775829864",
-      "title": "Interpretable Decision-Making for End-to-End Autonomous Driving",
-      "authors": "M Mirzaie, B Rosenhahn",
-      "year": "2025",
-      "source": "Proceedings of the IEEE/CVF …, 2025  -  openaccess.thecvf.com",
-      "abstract": "… the broad deployment of autonomous vehicles. Although end-to… This paper presents a \nmethod to enhance interpretability … feature selection process mimics the behavior of attention. It … 保存 引用 相关文章 所有 3 个版本  HTML 版",
-      "url": "https://openaccess.thecvf.com/content/ICCV2025W/2COOOL/html/Mirzaie_Interpretable_Decision-Making_for_End-to-End_Autonomous_Driving_ICCVW_2025_paper.html",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Proceedings of the IEEE/CVF …, 2025  -  openaccess.thecvf.com",
-      "cited": 0,
-      "aiRecommendReason": "该文献聚焦于端到端自动驾驶的可解释决策，与研究主题高度相关。研究主题强调混合车流中自动驾驶与人类驾驶车辆的行为差异、交互博弈及决策机制，而该文献提出的可解释性方法（如注意力机制模拟行为特征）有助于理解自动驾驶在混合交通环境中的决策逻辑，提升系统透明度和稳定性，直接支持'梳理混合车流行为规律与决策机制'这一核心需求。"
-    },
-    {
-      "id": "scholar_0_1762775839818",
-      "title": "Game theory-based framework for modeling human–vehicle interactions on the road",
-      "authors": "Y Rahmati, A Talebpour, A Mittal…",
-      "year": "2020",
-      "source": "Transportation …, 2020  -  journals.sagepub.com",
-      "abstract": "… motion decisions of human agents in interaction with interfering vehicles and pedestrians. … \nan interactive human–vehicle decision-making framework toward realizing human–vehicle …",
-      "url": "https://journals.sagepub.com/doi/abs/10.1177/0361198120931513",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation …, 2020  -  journals.sagepub.com",
-      "cited": 32,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶车辆与人类驾驶车辆的交互博弈问题，而该文献提出了基于博弈论的人车交互建模框架，直接针对人类与车辆在道路上的交互决策机制。文献中提到的'human–vehicle interactions'和'interactive human–vehicle decision-making framework'与研究主题中强调的'交互博弈'、'行为模式差异'和'决策机制'完全吻合，且博弈论方法正是解决混合车流中异质行为主体交互问题的有效理论工具，能够为构建稳健的自动驾驶决策系统提供重要参考。"
-    },
-    {
-      "id": "scholar_2_1762775839818",
-      "title": "Game Theory-Based Interactive Control for Human–Machine Cooperative Driving",
-      "authors": "Y Zhou, C Huang, P Hang",
-      "year": "2024",
-      "source": "Applied Sciences, 2024  -  mdpi.com",
-      "abstract": "… A brain emotional learning circuit model (BELCM) was designed in [15] to simulate driver \nsteering behavior, but it did not consider human–vehicle interaction. In terms of shared …",
-      "url": "https://www.mdpi.com/2076-3417/14/6/2441",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Applied Sciences, 2024  -  mdpi.com",
-      "cited": 7,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶车辆与人类驾驶车辆的交互博弈问题，而这篇文献标题明确聚焦于'人机协同驾驶的博弈论交互控制'，直接对应了混合车流中的核心挑战。文献采用博弈论方法研究人车交互控制，正好契合研究主题中提到的'交互博弈'、'决策机制'等关键问题，为解决混合车流中的不确定性、异质性和稳定性问题提供了理论框架和技术路径。"
-    },
-    {
-      "id": "scholar_0_1762775849314",
-      "title": "A multi-vehicle game-theoretic framework for decision making and planning of autonomous vehicles in mixed traffic",
-      "authors": "Y Yan, L Peng, T Shen, J Wang, D Pi…",
-      "year": "2023",
-      "source": "IEEE Transactions on …, 2023  -  ieeexplore.ieee.org",
-      "abstract": "… traffic environments where autonomous vehicles (AVs) and humandriven vehicles (HVs) \ncoexist, a game theoretic … as the objectives of comfort and traffic efficiency. Then, the interactive …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/10268996/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2023  -  ieeexplore.ieee.org",
-      "cited": 82,
-      "aiRecommendReason": "该文献高度相关，原因如下：1) 研究主题聚焦于自动驾驶车辆与人类驾驶车辆共存的混合车流场景，与文献标题和摘要中'autonomous vehicles (AVs) and human-driven vehicles (HVs) coexist'的描述完全吻合；2) 文献采用博弈论框架研究混合车流中的决策与规划问题，直接对应研究主题中提到的'交互博弈'关键挑战；3) 文献关注舒适性和交通效率等目标，与研究主题强调的安全性、效率与推广能力高度一致；4) 2023年的最新研究成果能够为'系统梳理混合车流的行为规律、建模方法与决策机制'提供前沿的理论框架支持。"
-    },
-    {
-      "id": "scholar_2_1762775849314",
-      "title": "Cooperative driving of connected autonomous vehicles in heterogeneous mixed traffic: A game theoretic approach",
-      "authors": "S Fang, P Hang, C Wei, Y Xing…",
-      "year": "2024",
-      "source": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
-      "abstract": "… decisionmaking framework in heterogeneous mixed traffic is … To reproduce HVs in mixed \ntraffic, interactions from … integrated to mimic the decision-making of heterogeneous HVs. …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/10529605/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2024  -  ieeexplore.ieee.org",
-      "cited": 20,
-      "aiRecommendReason": "该文献高度相关，主要体现在以下几个方面：1) 研究主题直接聚焦于混合交通流中的自动驾驶决策问题，与主题中提到的\"混合车流\"、\"异质性\"等核心概念完全吻合；2) 采用博弈论方法研究车车交互，直接对应主题中强调的\"交互博弈\"挑战；3) 文献关注异构混合交通环境，涉及人类驾驶车辆的行为建模，与主题中\"行为模式差异\"、\"决策机制\"等研究方向一致；4) 2024年的最新研究成果，能够为构建支撑自动驾驶在复杂交通中稳健运行的理论框架提供技术参考。"
-    },
-    {
-      "id": "scholar_0_1762775858990",
-      "title": "RiskNet: interaction-aware risk forecasting for autonomous driving in long-tail scenarios",
-      "authors": "Q Liu, H Huang, S Zhao, L Shi, S Ahn, X Li",
-      "year": "2026",
-      "source": "Transportation Research Part …, 2026  -  Elsevier",
-      "abstract": "… interactions among ego vehicle, surrounding … risk evaluation across diverse scenarios (highways, \nintersections, and roundabouts), and shows robustness under high-risk and long-tail …",
-      "url": "https://www.sciencedirect.com/science/article/pii/S1366554525005198",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Transportation Research Part …, 2026  -  Elsevier",
-      "cited": 1,
-      "aiRecommendReason": "该文献高度相关，原因如下：1）文献聚焦于自动驾驶在长尾场景下的风险预测，与研究主题中提到的'长尾风险'问题直接对应；2）文献涉及车辆交互建模（interaction-aware），与研究主题关注的'混合车流中的交互博弈'高度契合；3）文献验证场景包含高速公路、交叉口和环岛等混合车流典型场景（合流、路口），与研究主题的应用场景一致；4）文献强调高风险场景下的鲁棒性，与研究主题关注的'突变行为'和'稳定性问题'相呼应。"
-    },
-    {
-      "id": "scholar_2_1762775858990",
-      "title": "Dynamically conservative self-driving planner for long-tail cases",
-      "authors": "W Zhou, Z Cao, N Deng, X Liu…",
-      "year": "2022",
-      "source": "IEEE Transactions on …, 2022  -  ieeexplore.ieee.org",
-      "abstract": "… To achieve the goal, we first formalize the “longtail” problem in SDV planning as a driving \nconfidence problem. Then, we define the “long-tail” rate to quantify how confident an SDV’s …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/9971752/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions on …, 2022  -  ieeexplore.ieee.org",
-      "cited": 32,
-      "aiRecommendReason": "该文献直接针对自动驾驶规划中的'长尾问题'，与研究主题中提到的'混合车流中的交互博弈、长尾风险、突变行为'高度契合。文献提出将长尾问题形式化为驾驶置信度问题，并定义了'长尾率'量化指标，这为研究主题中'系统梳理混合车流的行为规律、建模方法与决策机制'提供了具体的技术思路，特别是对解决混合车流场景下的不确定性和异质性挑战具有直接参考价值。"
-    },
-    {
-      "id": "scholar_0_1762775868672",
-      "title": "A novel multi-stage multi-scenario multi-objective optimisation framework for adaptive robust decision-making under deep uncertainty",
-      "authors": "B Shavazipour, TJ Stewart",
-      "year": "2026",
-      "source": "Omega, 2026  -  Elsevier",
-      "abstract": "… Scenarios, instead, should be used to evaluate the consequences of any decisions in … -stage \nmulti-scenario multi-objective optimisation framework for adaptive/dynamic robust decision-…",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0305048325001318",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Omega, 2026  -  Elsevier",
-      "cited": 5,
-      "aiRecommendReason": "该文献提出的多阶段多场景多目标优化框架与混合车流决策问题高度相关。研究主题强调混合车流中自动驾驶车辆需要应对高度不确定性和异质性环境，而文献中的'自适应鲁棒决策'和'深度不确定性'方法正好针对这类复杂决策场景。文献框架通过多场景评估决策后果，能够有效处理混合车流中的交互博弈、长尾风险和突变行为等挑战，为自动驾驶在合流、路口等复杂场景下的稳定性问题提供理论支持，符合研究主题对稳健决策机制的需求。"
-    },
-    {
-      "id": "scholar_0_1762775878218",
-      "title": "Traffic participants in the loop: A mixed reality-based interaction testbed for the verification and validation of autonomous vehicles",
-      "authors": "MR Zofka, S Ulbrich, D Karl, T Fleck…",
-      "year": "2018",
-      "source": "2018 21st …, 2018  -  ieeexplore.ieee.org",
-      "abstract": "… in critical traffic scenarios are hardly … a mixed reality testbed for the verification and validation \nof autonomous vehicles faced with realistic road user behavior in critical, worst case traffic …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/8569226/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "2018 21st …, 2018  -  ieeexplore.ieee.org",
-      "cited": 26,
-      "aiRecommendReason": "该文献提出了一种基于混合现实的测试平台，用于验证自动驾驶车辆在关键交通场景中与真实道路使用者的交互行为，这与研究主题中关注的混合车流交互博弈、长尾风险和突变行为等核心问题高度契合。文献中强调的'最坏情况交通场景'测试，直接对应研究主题中提到的合流、路口等复杂场景下的稳定性与风险验证需求，为混合车流行为规律研究和自动驾驶决策机制验证提供了可行的技术路径。"
-    },
-    {
-      "id": "scholar_2_1762775878218",
-      "title": "Mixsim: A hierarchical framework for mixed reality traffic simulation",
-      "authors": "S Suo, K Wong, J Xu, J Tu, A Cui…",
-      "year": "2023",
-      "source": "Proceedings of the …, 2023  -  openaccess.thecvf.com",
-      "abstract": "… mixed reality traffic simulation, we conduct an analysis of its sim2real domain gap on both \nurban and highway traffic … Using re-simulation to verify an av stack against disengagements, …",
-      "url": "http://openaccess.thecvf.com/content/CVPR2023/html/Suo_MixSim_A_Hierarchical_Framework_for_Mixed_Reality_Traffic_Simulation_CVPR_2023_paper.html",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Proceedings of the …, 2023  -  openaccess.thecvf.com",
-      "cited": 45,
-      "aiRecommendReason": "该文献高度相关。文献提出的MixSim混合现实交通仿真框架专门针对混合交通流场景，与研究主题关注的自动驾驶车辆与人类驾驶车辆共存问题完全契合。其核心价值在于：1）通过混合现实仿真分析sim2real领域差距，直接对应研究主题中混合车流的高度不确定性与异质性挑战；2）采用重仿真方法验证自动驾驶系统在真实交通场景中的表现，与研究主题关注的决策机制验证和长尾风险分析高度一致；3）涵盖城市和高速公路场景，能够支持合流、路口等关键场景的稳定性研究。该框架为系统梳理混合车流行为规律和构建稳健决策理论提供了先进的技术工具。"
-    },
-    {
-      "id": "scholar_0_1762775887977",
-      "title": "Identifying and explaining safety-critical scenarios for autonomous vehicles via key features",
-      "authors": "N Neelofar, A Aleti",
-      "year": "2024",
-      "source": "ACM transactions on software engineering and …, 2024  -  dl.acm.org",
-      "abstract": "… ) to identify the significant features of test scenarios that affect their ability to reveal the … -critical \nscenarios from normal driving and visualises the impact of these features on test scenario …",
-      "url": "https://dl.acm.org/doi/abs/10.1145/3640335",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "ACM transactions on software engineering and …, 2024  -  dl.acm.org",
-      "cited": 21,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中自动驾驶系统的安全性挑战，特别是长尾风险和突变行为等问题。文献标题和摘要表明其核心内容是识别和解释影响自动驾驶安全性的关键场景特征，这正是研究主题中提到的“长尾风险、突变行为”等安全关键问题的具体研究。文献通过特征识别方法揭示测试场景中的安全关键因素，能够为理解混合车流中自动驾驶车辆面临的风险提供方法论支持，有助于构建更稳健的自动驾驶决策机制。"
-    },
-    {
-      "id": "scholar_2_1762775887977",
-      "title": "Finding critical scenarios for automated driving systems: A systematic mapping study",
-      "authors": "X Zhang, J Tao, K Tan, M Törngren…",
-      "year": "2022",
-      "source": "IEEE Transactions …, 2022  -  ieeexplore.ieee.org",
-      "abstract": "… In this survey, we consider critical scenarios as all the scenarios that may lead to harm. \nAs shown in Fig. 3, a critical scenario may contain a triggering condition and a safety-critical …",
-      "url": "https://ieeexplore.ieee.org/abstract/document/9763411/",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "IEEE Transactions …, 2022  -  ieeexplore.ieee.org",
-      "cited": 173,
-      "aiRecommendReason": "该文献高度相关。研究主题关注混合车流中的长尾风险、突变行为等安全问题，而这篇2022年的系统综述专门研究自动驾驶系统的关键场景识别，将可能导致危害的场景定义为关键场景，并分析触发条件与安全临界状态。这直接对应研究主题中提到的混合车流交互博弈、长尾风险和突变行为等挑战，为系统梳理混合车流行为规律和风险识别提供了方法论参考，有助于构建支撑自动驾驶在复杂交通中稳健运行的技术体系。"
-    },
-    {
-      "id": "scholar_0_1762775897518",
-      "title": "Co-optimization of speed planning and energy management for intelligent fuel cell hybrid vehicle considering complex traffic conditions",
-      "authors": "Z Nie, Y Jia, W Wang, Z Chen, R Outbib",
-      "year": "2022",
-      "source": "Energy, 2022  -  Elsevier",
-      "abstract": "… However, high-quality real-time energy management of FCHV is a difficult task due to different \ninfluences from complex traffic environments, such as dynamic changes of preceding and …",
-      "url": "https://www.sciencedirect.com/science/article/pii/S0360544222003796",
-      "selected": true,
-      "completionStatus": "completed",
-      "journal": "Energy, 2022  -  Elsevier",
-      "cited": 64,
-      "aiRecommendReason": "该文献虽然聚焦于燃料电池混合动力汽车的节能优化问题，但其研究背景和核心挑战与研究主题高度契合。文献明确考虑了复杂交通环境对车辆决策的影响，包括前车动态变化等交通流不确定性因素，这与研究主题中提到的混合车流行为模式差异、交通流不确定性以及自动驾驶在复杂交通中的决策机制等关键问题直接相关。该研究在速度规划与能量管理的协同优化方法上，为混合车流环境下自动驾驶车辆的决策框架提供了技术参考，特别是在处理动态交通条件对车辆行为的影响方面具有借鉴价值。"
-    }
-  ],
-  "reviewContent": "**1. Modeling and Analysis of Mixed Traffic Flow Behavior**\n\n**1.1 Modeling and Uncertainty Analysis of Human Driving Behavior**\n\nThe accurate modeling of human driving behavior is foundational to understanding and predicting the dynamics of mixed traffic flows, where autonomous vehicles (AVs) and human-driven vehicles (HVs) interact. The inherent uncertainty, stochasticity, and heterogeneity of human drivers present significant challenges. Early research by Munigety and Mathew [1] highlighted the inadequacy of models developed for homogeneous traffic when applied to mixed conditions, emphasizing the need for specialized behavioral models that capture the unique characteristics of non-lane-based or loosely lane-disciplined traffic. Asaithambi et al. [2] further elaborated on the limitations of existing driver behavior models in mixed traffic, pointing to data collection and modeling complexities as major hurdles. They argued for improved models that can better represent the decision-making processes of human drivers in such chaotic environments.\n\nTo address the uncertainty in human reactions, Chen et al. [4] proposed a classification-based approach to model reactive human driving behavior. Their method treats human driving actions as probabilistic outcomes given specific scenario descriptions, such as relative vehicle states and the behaviors of surrounding agents. This data-driven approach effectively captures the multi-modal nature of human responses, moving beyond deterministic models. More recently, the concept of active inference has been introduced to model adaptive driving behavior. Engström et al. [5] presented a framework where drivers resolve uncertainty \"on the fly\" as part of a planning process aimed at minimizing expected free energy. This model provides a unifying principle for understanding how humans continuously update their beliefs about the traffic environment and adjust their actions accordingly, offering a more psychologically plausible account of adaptive and uncertain driving behavior.\n\n**1.2 Behavior Modeling and Interpretability of Autonomous Vehicles**\n\nIn contrast to the probabilistic nature of human drivers, the behavior of AVs is determined by algorithms. While these algorithms can be highly optimized, their \"black-box\" nature, particularly in end-to-end or complex deep learning models, poses a significant barrier to deployment in safety-critical mixed traffic environments. A lack of interpretability hinders trust from other road users and complicates debugging and validation. Consequently, enhancing the interpretability of AV decision-making has become a central research focus.\n\nLu et al. [6] argued for the use of human-like cognitive maps to enhance the interpretability of machine learning-empowered AVs, using lane change maneuvers as a case study. Their approach aims to align the AV's internal decision-making process with human-understandable concepts and reasoning patterns. Similarly, Mirzaie and Rosenhahn [7] proposed a method for interpretable decision-making in end-to-end autonomous driving. Their system incorporates an interpretable feature selection process that mimics attention mechanisms, allowing the model to explicitly highlight which parts of the input (e.g., specific vehicles or road features) are most influential in its final decision. This transparency is crucial for developers to verify system logic and for regulators to certify its safety, thereby facilitating the broader deployment of AVs in mixed traffic.\n\n**1.3 Human-Vehicle Interaction Patterns and Game-Theoretic Analysis**\n\nThe core challenge of mixed traffic lies in the interactions between AVs and HVs. These interactions are inherently strategic, as the actions of one agent directly influence the decisions and outcomes of others. Game theory has emerged as a powerful framework for modeling these complex, multi-agent interactions. Rahmati et al. [8] developed a game theory-based framework specifically for modeling human-vehicle interactions, treating the decision-making process between human drivers and interfering vehicles/pedestrians as a strategic game. This allows for the prediction of human agents' motion decisions in interactive scenarios.\n\nThis line of research has been extended to cooperative driving. Zhou et al. [9] proposed a game theory-based interactive control framework for human-machine cooperative driving. They addressed the limitations of models that do not consider human-vehicle interaction by formally modeling the cooperation as a game, enabling smoother and safer joint maneuvers. At a larger scale, Yan et al. [10] introduced a multi-vehicle game-theoretic framework for the decision-making and planning of AVs in mixed traffic. Their model considers the interactions among multiple AVs and HVs simultaneously, optimizing for objectives such as safety, comfort, and traffic efficiency. The cooperative aspect is further explored by Fang et al. [11], who presented a game-theoretic approach for connected autonomous vehicles (CAVs) in heterogeneous mixed traffic. Their framework integrates models to mimic the decision-making of heterogeneous HVs, allowing CAVs to anticipate HV behavior and make cooperative decisions that enhance overall traffic flow and safety.\n\n**2. Decision-Making and Planning Methods for Mixed Traffic Flow**\n\n**2.1 Interactive Decision-Making Mechanisms Based on Game Theory**\n\nBuilding upon the modeling work, game theory provides a principled methodology for designing interactive decision-making algorithms for AVs. The frameworks discussed in [8, 9, 10, 11] are not merely descriptive models but are integral to the planning and control stack of AVs. By formulating the interaction as a Nash equilibrium or Stackelberg game, the AV can compute a strategy that is optimal given the predicted strategies of the human drivers. For instance, the framework in [10] allows an AV to reason about how a human driver might react to its own actions, leading to more predictable and socially compliant behaviors. The work of Fang et al. [11] demonstrates how game theory can be leveraged for cooperation among CAVs, enabling them to collectively manage interactions with HVs, for example, by creating \"green waves\" or facilitating safe merging in dense traffic. These game-theoretic mechanisms transform the interactive planning problem from a single-agent optimization into a multi-agent equilibrium-seeking process, which is more aligned with the reality of mixed traffic.\n\n**2.2 Robust Planning Strategies Considering Long-Tail Risks**\n\nWhile game theory handles common interactions, a critical challenge remains in addressing rare but safety-critical \"long-tail\" scenarios. These are events that occur with very low probability but have severe consequences, and they are notoriously difficult to encounter and learn from during standard training and testing. Zhou et al. [13] formalized the long-tail problem in self-driving vehicle (SDV) planning as a \"driving confidence\" problem. They proposed a dynamically conservative planner that quantifies the confidence level of its planned trajectory and adopts a more cautious, risk-averse strategy when operating in low-confidence, long-tail situations.\n\nTo proactively forecast and mitigate risks in such scenarios, Liu et al. [12] developed RiskNet, an interaction-aware risk forecasting model. RiskNet is designed to predict potential risks by explicitly modeling the interactions among the ego vehicle and its surroundings. It is evaluated across diverse scenarios like highways and intersections and demonstrates robustness in high-risk and long-tail conditions. By providing a probabilistic forecast of future risk, such a model can be integrated into a planner to trigger evasive or defensive maneuvers before a critical situation fully materializes, thereby enhancing the overall safety envelope of the AV.\n\n**2.3 Multi-Scenario Adaptive Decision-Making Framework**\n\nThe dynamic nature of traffic requires AVs to adapt their decision-making strategies to a wide range of scenarios, from free-flowing highways to dense urban intersections. This necessitates frameworks that are not brittle to specific conditions but can generalize and adapt. Shavazipour and Stewart [14] proposed a novel multi-stage, multi-scenario, multi-objective optimization framework for adaptive robust decision-making under deep uncertainty. While not exclusively designed for autonomous driving, its principles are highly applicable. This framework allows an AV to evaluate the consequences of potential decisions across a wide ensemble of plausible future scenarios (e.g., different behaviors of a lead vehicle, sudden pedestrian appearances) rather than relying on a single prediction. The decision is then optimized to be robust across this set of scenarios, balancing multiple objectives like safety, progress, and comfort. This approach moves beyond single-scenario planning and equips the AV with a policy that can adapt to the evolving and uncertain traffic environment, a crucial capability for reliable operation in mixed traffic.\n\n**3. Verification, Validation and Stability Assurance of Mixed Traffic Systems**\n\n**3.1 Simulation Testing and Validation Methods for Mixed Traffic**\n\nThe verification and validation (V&V) of AVs in mixed traffic is a monumental task due to the infinite number of possible scenarios and the involvement of human drivers. Physical testing alone is insufficient, expensive, and unsafe for critical scenarios. Consequently, simulation-based testing has become a cornerstone of AV development. Zofka et al. [15] pioneered a mixed-reality testbed that combines real AVs with virtual traffic participants in a mixed-reality environment. This allows for the safe and repeatable testing of an AV's response to realistic, worst-case road user behavior in critical scenarios that are hard to stage in the real world.\n\nTo scale up testing, high-fidelity simulation frameworks are essential. Suo et al. [16] introduced MixSim, a hierarchical framework for mixed-reality traffic simulation. They specifically analyzed and addressed the sim2real domain gap—the discrepancy between simulation and real-world performance—which is a major challenge for simulation-based V&V. By creating more realistic simulations and using techniques like re-simulation to analyze real-world disengagements, MixSim provides a powerful platform for validating AV stacks against a vast number of scenarios, including those involving complex interactions with human drivers.\n\n**3.2 System Stability Analysis in Critical Scenarios**\n\nA key aspect of V&V is identifying and understanding the conditions under which the mixed traffic system, or the AV's own control, becomes unstable. This involves pinpointing \"critical scenarios\" that can push the system to its limits. Zhang et al. [18] conducted a systematic mapping study to define and categorize methods for finding critical scenarios for automated driving systems. They broadly define critical scenarios as those that may lead to harm, often containing a specific triggering condition. Neelofar and Aleti [17] further contributed to this area by developing methods to identify and explain the key features that make a scenario safety-critical. Their work helps in not only finding these scenarios but also in understanding *why* they are critical, which is vital for guiding the design of more robust systems and for focusing testing resources on the most relevant edge cases.\n\n**3.3 Cooperative Optimization Mechanisms for Safety and Efficiency**\n\nThe ultimate goal of introducing AVs into mixed traffic is to improve the overall transportation system, which requires a careful balance between safety and efficiency. Overly conservative AVs can lead to traffic congestion and reduced throughput, negating their potential benefits. Therefore, research is increasingly focused on co-optimization frameworks. Nie et al. [19] demonstrated this principle in the context of a fuel cell hybrid vehicle, co-optimizing speed planning and energy management under complex traffic conditions. Although their application is specific, the core idea—jointly optimizing a high-level behavioral decision (speed planning) with a lower-level control objective (energy management)—is generalizable.\n\nIn the broader context of mixed traffic, this translates to developing mechanisms where the decision-making and planning modules of AVs are designed to explicitly trade off and协同优化 (co-optimize) safety against traffic efficiency. The game-theoretic frameworks [10, 11] inherently perform this balancing act by including both safety constraints and efficiency-related objectives (e.g., travel time, smoothness) in their utility functions. By doing so, they enable AVs to act not just as safe isolated entities, but as proactive agents that can slightly adjust their behavior (e.g., creating a small gap to facilitate a merge) to enhance the collective safety and efficiency of the local traffic flow, thereby ensuring the stability and performance of the mixed traffic system as a whole.",
-  "review": "**1. Modeling and Analysis of Mixed Traffic Flow Behavior**\n\n**1.1 Modeling and Uncertainty Analysis of Human Driving Behavior**\n\nThe accurate modeling of human driving behavior is foundational to understanding and predicting the dynamics of mixed traffic flows, where autonomous vehicles (AVs) and human-driven vehicles (HVs) interact. The inherent uncertainty, stochasticity, and heterogeneity of human drivers present significant challenges. Early research by Munigety and Mathew [1] highlighted the inadequacy of models developed for homogeneous traffic when applied to mixed conditions, emphasizing the need for specialized behavioral models that capture the unique characteristics of non-lane-based or loosely lane-disciplined traffic. Asaithambi et al. [2] further elaborated on the limitations of existing driver behavior models in mixed traffic, pointing to data collection and modeling complexities as major hurdles. They argued for improved models that can better represent the decision-making processes of human drivers in such chaotic environments.\n\nTo address the uncertainty in human reactions, Chen et al. [4] proposed a classification-based approach to model reactive human driving behavior. Their method treats human driving actions as probabilistic outcomes given specific scenario descriptions, such as relative vehicle states and the behaviors of surrounding agents. This data-driven approach effectively captures the multi-modal nature of human responses, moving beyond deterministic models. More recently, the concept of active inference has been introduced to model adaptive driving behavior. Engström et al. [5] presented a framework where drivers resolve uncertainty \"on the fly\" as part of a planning process aimed at minimizing expected free energy. This model provides a unifying principle for understanding how humans continuously update their beliefs about the traffic environment and adjust their actions accordingly, offering a more psychologically plausible account of adaptive and uncertain driving behavior.\n\n**1.2 Behavior Modeling and Interpretability of Autonomous Vehicles**\n\nIn contrast to the probabilistic nature of human drivers, the behavior of AVs is determined by algorithms. While these algorithms can be highly optimized, their \"black-box\" nature, particularly in end-to-end or complex deep learning models, poses a significant barrier to deployment in safety-critical mixed traffic environments. A lack of interpretability hinders trust from other road users and complicates debugging and validation. Consequently, enhancing the interpretability of AV decision-making has become a central research focus.\n\nLu et al. [6] argued for the use of human-like cognitive maps to enhance the interpretability of machine learning-empowered AVs, using lane change maneuvers as a case study. Their approach aims to align the AV's internal decision-making process with human-understandable concepts and reasoning patterns. Similarly, Mirzaie and Rosenhahn [7] proposed a method for interpretable decision-making in end-to-end autonomous driving. Their system incorporates an interpretable feature selection process that mimics attention mechanisms, allowing the model to explicitly highlight which parts of the input (e.g., specific vehicles or road features) are most influential in its final decision. This transparency is crucial for developers to verify system logic and for regulators to certify its safety, thereby facilitating the broader deployment of AVs in mixed traffic.\n\n**1.3 Human-Vehicle Interaction Patterns and Game-Theoretic Analysis**\n\nThe core challenge of mixed traffic lies in the interactions between AVs and HVs. These interactions are inherently strategic, as the actions of one agent directly influence the decisions and outcomes of others. Game theory has emerged as a powerful framework for modeling these complex, multi-agent interactions. Rahmati et al. [8] developed a game theory-based framework specifically for modeling human-vehicle interactions, treating the decision-making process between human drivers and interfering vehicles/pedestrians as a strategic game. This allows for the prediction of human agents' motion decisions in interactive scenarios.\n\nThis line of research has been extended to cooperative driving. Zhou et al. [9] proposed a game theory-based interactive control framework for human-machine cooperative driving. They addressed the limitations of models that do not consider human-vehicle interaction by formally modeling the cooperation as a game, enabling smoother and safer joint maneuvers. At a larger scale, Yan et al. [10] introduced a multi-vehicle game-theoretic framework for the decision-making and planning of AVs in mixed traffic. Their model considers the interactions among multiple AVs and HVs simultaneously, optimizing for objectives such as safety, comfort, and traffic efficiency. The cooperative aspect is further explored by Fang et al. [11], who presented a game-theoretic approach for connected autonomous vehicles (CAVs) in heterogeneous mixed traffic. Their framework integrates models to mimic the decision-making of heterogeneous HVs, allowing CAVs to anticipate HV behavior and make cooperative decisions that enhance overall traffic flow and safety.\n\n**2. Decision-Making and Planning Methods for Mixed Traffic Flow**\n\n**2.1 Interactive Decision-Making Mechanisms Based on Game Theory**\n\nBuilding upon the modeling work, game theory provides a principled methodology for designing interactive decision-making algorithms for AVs. The frameworks discussed in [8, 9, 10, 11] are not merely descriptive models but are integral to the planning and control stack of AVs. By formulating the interaction as a Nash equilibrium or Stackelberg game, the AV can compute a strategy that is optimal given the predicted strategies of the human drivers. For instance, the framework in [10] allows an AV to reason about how a human driver might react to its own actions, leading to more predictable and socially compliant behaviors. The work of Fang et al. [11] demonstrates how game theory can be leveraged for cooperation among CAVs, enabling them to collectively manage interactions with HVs, for example, by creating \"green waves\" or facilitating safe merging in dense traffic. These game-theoretic mechanisms transform the interactive planning problem from a single-agent optimization into a multi-agent equilibrium-seeking process, which is more aligned with the reality of mixed traffic.\n\n**2.2 Robust Planning Strategies Considering Long-Tail Risks**\n\nWhile game theory handles common interactions, a critical challenge remains in addressing rare but safety-critical \"long-tail\" scenarios. These are events that occur with very low probability but have severe consequences, and they are notoriously difficult to encounter and learn from during standard training and testing. Zhou et al. [13] formalized the long-tail problem in self-driving vehicle (SDV) planning as a \"driving confidence\" problem. They proposed a dynamically conservative planner that quantifies the confidence level of its planned trajectory and adopts a more cautious, risk-averse strategy when operating in low-confidence, long-tail situations.\n\nTo proactively forecast and mitigate risks in such scenarios, Liu et al. [12] developed RiskNet, an interaction-aware risk forecasting model. RiskNet is designed to predict potential risks by explicitly modeling the interactions among the ego vehicle and its surroundings. It is evaluated across diverse scenarios like highways and intersections and demonstrates robustness in high-risk and long-tail conditions. By providing a probabilistic forecast of future risk, such a model can be integrated into a planner to trigger evasive or defensive maneuvers before a critical situation fully materializes, thereby enhancing the overall safety envelope of the AV.\n\n**2.3 Multi-Scenario Adaptive Decision-Making Framework**\n\nThe dynamic nature of traffic requires AVs to adapt their decision-making strategies to a wide range of scenarios, from free-flowing highways to dense urban intersections. This necessitates frameworks that are not brittle to specific conditions but can generalize and adapt. Shavazipour and Stewart [14] proposed a novel multi-stage, multi-scenario, multi-objective optimization framework for adaptive robust decision-making under deep uncertainty. While not exclusively designed for autonomous driving, its principles are highly applicable. This framework allows an AV to evaluate the consequences of potential decisions across a wide ensemble of plausible future scenarios (e.g., different behaviors of a lead vehicle, sudden pedestrian appearances) rather than relying on a single prediction. The decision is then optimized to be robust across this set of scenarios, balancing multiple objectives like safety, progress, and comfort. This approach moves beyond single-scenario planning and equips the AV with a policy that can adapt to the evolving and uncertain traffic environment, a crucial capability for reliable operation in mixed traffic.\n\n**3. Verification, Validation and Stability Assurance of Mixed Traffic Systems**\n\n**3.1 Simulation Testing and Validation Methods for Mixed Traffic**\n\nThe verification and validation (V&V) of AVs in mixed traffic is a monumental task due to the infinite number of possible scenarios and the involvement of human drivers. Physical testing alone is insufficient, expensive, and unsafe for critical scenarios. Consequently, simulation-based testing has become a cornerstone of AV development. Zofka et al. [15] pioneered a mixed-reality testbed that combines real AVs with virtual traffic participants in a mixed-reality environment. This allows for the safe and repeatable testing of an AV's response to realistic, worst-case road user behavior in critical scenarios that are hard to stage in the real world.\n\nTo scale up testing, high-fidelity simulation frameworks are essential. Suo et al. [16] introduced MixSim, a hierarchical framework for mixed-reality traffic simulation. They specifically analyzed and addressed the sim2real domain gap—the discrepancy between simulation and real-world performance—which is a major challenge for simulation-based V&V. By creating more realistic simulations and using techniques like re-simulation to analyze real-world disengagements, MixSim provides a powerful platform for validating AV stacks against a vast number of scenarios, including those involving complex interactions with human drivers.\n\n**3.2 System Stability Analysis in Critical Scenarios**\n\nA key aspect of V&V is identifying and understanding the conditions under which the mixed traffic system, or the AV's own control, becomes unstable. This involves pinpointing \"critical scenarios\" that can push the system to its limits. Zhang et al. [18] conducted a systematic mapping study to define and categorize methods for finding critical scenarios for automated driving systems. They broadly define critical scenarios as those that may lead to harm, often containing a specific triggering condition. Neelofar and Aleti [17] further contributed to this area by developing methods to identify and explain the key features that make a scenario safety-critical. Their work helps in not only finding these scenarios but also in understanding *why* they are critical, which is vital for guiding the design of more robust systems and for focusing testing resources on the most relevant edge cases.\n\n**3.3 Cooperative Optimization Mechanisms for Safety and Efficiency**\n\nThe ultimate goal of introducing AVs into mixed traffic is to improve the overall transportation system, which requires a careful balance between safety and efficiency. Overly conservative AVs can lead to traffic congestion and reduced throughput, negating their potential benefits. Therefore, research is increasingly focused on co-optimization frameworks. Nie et al. [19] demonstrated this principle in the context of a fuel cell hybrid vehicle, co-optimizing speed planning and energy management under complex traffic conditions. Although their application is specific, the core idea—jointly optimizing a high-level behavioral decision (speed planning) with a lower-level control objective (energy management)—is generalizable.\n\nIn the broader context of mixed traffic, this translates to developing mechanisms where the decision-making and planning modules of AVs are designed to explicitly trade off and协同优化 (co-optimize) safety against traffic efficiency. The game-theoretic frameworks [10, 11] inherently perform this balancing act by including both safety constraints and efficiency-related objectives (e.g., travel time, smoothness) in their utility functions. By doing so, they enable AVs to act not just as safe isolated entities, but as proactive agents that can slightly adjust their behavior (e.g., creating a small gap to facilitate a merge) to enhance the collective safety and efficiency of the local traffic flow, thereby ensuring the stability and performance of the mixed traffic system as a whole."
+    "status": "completed"
+  },
+  "node3": {
+    "allLiterature": [
+      {
+        "id": "scholar_0_1762923544683",
+        "title": "Towards behavioral modeling of drivers in mixed traffic conditions",
+        "authors": "CR Munigety, TV Mathew",
+        "year": "2016",
+        "source": "Transportation in Developing Economies, 2016  -  Springer",
+        "abstract": "… modeling driver behavior in mixed traffic conditions is presented in this paper. Often, models \ndeveloped for mixed traffic … of the model class in the context of mixed traffic flow modeling is …",
+        "cited": 79,
+        "url": "https://link.springer.com/article/10.1007/s40890-016-0012-y"
+      },
+      {
+        "id": "scholar_2_1762923544683",
+        "title": "A mixed traffic car-following behavior model",
+        "authors": "X Wang, J Zhang, H Li, Z He",
+        "year": "2023",
+        "source": "Physica A: Statistical Mechanics and its …, 2023  -  Elsevier",
+        "abstract": "… car-following model for mixed traffic flow, which considers both … mixed traffic flow composition \nschemes, communication distance, and human drivers’ characteristics on mixed traffic flow…",
+        "cited": 19,
+        "url": "https://www.sciencedirect.com/science/article/pii/S0378437123008543"
+      },
+      {
+        "id": "scholar_4_1762923544683",
+        "title": "Driving behaviors: Models and challenges for non-lane based mixed traffic",
+        "authors": "G Asaithambi, V Kanagaraj, T Toledo",
+        "year": "2016",
+        "source": "Transportation in Developing …, 2016  -  Springer",
+        "abstract": "… driving behavior models in the context of mixed traffic, discusses their limitations and the data \nand modeling … to advance driver behavior models for mixed traffic flows, through improved …",
+        "cited": 87,
+        "url": "https://link.springer.com/article/10.1007/s40890-016-0025-6"
+      },
+      {
+        "id": "scholar_0_1762923554158",
+        "title": "Modelling of uncertain reactive human driving behavior: a classification approach",
+        "authors": "Y Chen, N Sohani, H Peng",
+        "year": "2018",
+        "source": "2018 IEEE Conference on …, 2018  -  ieeexplore.ieee.org",
+        "abstract": "… Abstract—This paper discusses a novel approach to model human driver behavior. A … \nhuman driving actions given the scenario description (such as the vehicle states and the behavior …",
+        "cited": 15,
+        "url": "https://ieeexplore.ieee.org/abstract/document/8619568/"
+      },
+      {
+        "id": "scholar_2_1762923554158",
+        "title": "Resolving uncertainty on the fly: modeling adaptive driving behavior as active inference",
+        "authors": "J Engström, R Wei, AD McDonald, A Garcia…",
+        "year": "2024",
+        "source": "Frontiers in …, 2024  -  frontiersin.org",
+        "abstract": "… We explore how uncertainty can be resolved “on the fly” as an integral part of the general \nplanning objective to minimize expected free energy. Specifically, we demonstrate how a …",
+        "cited": 16,
+        "url": "https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2024.1341750/full"
+      }
+    ],
+    "status": "active"
+  },
+  "node4": {
+    "selectedLiterature": [],
+    "status": "pending"
+  },
+  "node5": {
+    "reviewContent": "## Literature Review: Autonomous Driving in Mixed Traffic Environments\n\nThe gradual transition of autonomous vehicles (AVs) towards real-world road applications has brought mixed traffic flow to the forefront as an unavoidable critical scenario. On actual roads, AVs and human-driven vehicles (HVs) will coexist for an extended period. The profound differences between AVs and HVs in terms of behavioral patterns, reaction latencies, and risk preferences lead to highly uncertain and heterogeneous traffic flows. Consequently, the advantages of traditional algorithms, often developed under a single traffic flow assumption, are difficult to fully transfer to real-world environments. As the scale of demonstration zone testing expands, issues such as interactive games, long-tail risks, abrupt behaviors, and stability problems in scenarios like merging, intersections, and congestion are becoming increasingly prominent within mixed traffic flows. These challenges directly limit the safety, efficiency, and widespread adoption capabilities of autonomous driving systems. Therefore, a systematic review of mixed traffic flow behavioral patterns, modeling methods, and decision-making mechanisms is urgently needed to establish a theoretical framework and technological system capable of supporting robust autonomous driving in complex traffic.\n\n### 1. Analysis of Mixed Traffic Flow Behavioral Characteristics and Pattern Exploration\n\nUnderstanding the intricate behavioral characteristics of mixed traffic flow is fundamental to developing robust autonomous driving systems. This section delves into the disparities between AVs and HVs, the interactive dynamics, and the identification of rare but critical events.\n\n#### 1.1. Differences in Behavioral Patterns between Autonomous Vehicles and Human-Driven Vehicles\n\nThe coexistence of AVs and HVs introduces a significant layer of complexity due to their inherent differences in driving behaviors. HVs are characterized by diverse driving styles, varying levels of aggressiveness, cognitive biases, emotional states, and unpredictable reactions, all contributing to highly uncertain behavior [1, 3]. Human drivers exhibit a wide spectrum of reaction times, which can be influenced by factors such as fatigue, distraction, and personal physiological conditions. Furthermore, their risk perception and tolerance vary considerably, leading to diverse decision-making under similar traffic conditions. For instance, some drivers might aggressively merge into traffic, while others might wait for larger gaps, reflecting different risk preferences. Chen et al. [4] specifically addressed the challenge of modeling uncertain reactive human driving behavior, proposing a classification approach to capture the variability in human actions given scenario descriptions. This highlights the difficulty in predicting human actions deterministically.\n\nIn contrast, AVs operate based on programmed algorithms, sensors, and pre-defined rules, aiming for consistent, safe, and often efficient driving. Their reaction times are typically deterministic and faster than humans, and their risk preferences are embedded within their control logic, usually prioritizing safety and rule adherence. However, this deterministic nature can sometimes lead to overly conservative behaviors that might disrupt traffic flow or be misinterpreted by human drivers. The challenge lies in enabling AVs to not only adhere to their own rules but also to anticipate and adapt to the diverse and often irrational behaviors of human drivers. Munigety and Mathew [1] emphasized the necessity of accurately modeling driver behavior in mixed traffic conditions, recognizing that traditional models fall short when confronted with the heterogeneity introduced by human drivers. Wang et al. [2] further elaborated on car-following behavior in mixed traffic, explicitly considering human drivers’ characteristics and their impact on flow composition and communication distance. They underscore that the design of AVs must account for these human characteristics rather than assuming ideal or uniform behavior. Asaithambi et al. [3] provided a comprehensive discussion on existing driving behavior models for mixed traffic, highlighting their limitations in capturing the nuances of human behavior and emphasizing the need for improved data and modeling techniques to advance this field. Engström et al. [5] explored how uncertainty in human behavior can be resolved \"on the fly\" by AVs, modeling adaptive driving behavior as active inference, which allows AVs to continuously update their understanding of the environment and other road users. This concept is crucial for AVs to bridge the gap between their deterministic nature and the stochasticity of human driving. Lu et al. [6] and Mirzaie and Rosenhahn [7] advocate for enhancing the interpretability of autonomous driving systems, particularly those empowered by machine learning. By developing human-like cognitive maps or attention mechanisms, AVs can make decisions that are not only effective but also understandable and predictable to human drivers, thereby fostering better interaction and trust. These studies collectively underscore that a profound understanding of the behavioral discrepancies between AVs and HVs is a prerequisite for the safe and efficient integration of autonomous driving into real-world traffic.\n\n#### 1.2. Interactive Games and Uncertainty Characterization in Mixed Traffic Flow\n\nThe interaction between AVs and HVs in mixed traffic is inherently complex, often characterized by strategic decision-making that can be effectively modeled using game theory. Unlike homogeneous traffic where vehicles might follow a predictable pattern, mixed traffic involves agents with different objectives, capabilities, and decision-making logics, leading to an interactive \"game.\" Human drivers make decisions based on their perception of the environment, their expectations of other drivers’ actions, and their own goals (e.g., reaching a destination, comfort, safety, efficiency). AVs, on the other hand, must not only pursue their own objectives but also predict and react to the uncertain actions of surrounding human drivers.\n\nRahmati et al. [8] proposed a game theory-based framework specifically for modeling human-vehicle interactions on the road. This framework allows for the analysis of how human agents make motion decisions when interacting with interfering vehicles and pedestrians, providing insights into the strategic nature of these interactions. Similarly, Zhou et al. [9] explored game theory for human-machine cooperative driving, emphasizing the need for shared decision-making frameworks. While previous models focused on simulating individual driver behavior, game theory extends this to cover the reciprocal influence and strategic choices made by interacting entities. Yan et al. [10] developed a multi-vehicle game-theoretic framework tailored for decision-making and planning of AVs in mixed traffic environments. This framework considers multiple AVs and HVs coexisting, optimizing for objectives such as comfort and traffic efficiency while navigating complex interactions. Their work highlights the competitive and cooperative aspects that arise when multiple agents with differing goals interact. Fang et al. [11] further extended this concept to cooperative driving of connected AVs in heterogeneous mixed traffic, employing a game-theoretic approach to model the decision-making of heterogeneous HVs. They integrated various interaction models to mimic realistic human driver behavior, demonstrating how game theory can capture the dynamic interplay and decision-making processes in such complex environments.\n\nA critical aspect of these interactive games is the inherent uncertainty. Human behavior is intrinsically stochastic, and even with advanced prediction models, perfect foresight is unattainable. This uncertainty manifests in various forms: unknown driver intentions, unpredictable sudden maneuvers, and varying levels of cooperation or aggression. Engström et al. [5] addressed the challenge of resolving uncertainty \"on the fly\" by modeling adaptive driving behavior as active inference, suggesting a mechanism for AVs to continuously refine their understanding of the environment and other agents' intentions. This continuous resolution of uncertainty is vital for robust decision-making in interactive scenarios. The effective characterization of this uncertainty is crucial for AVs to make safe and efficient decisions. This involves not only predicting the most probable actions of other vehicles but also assessing the range of possible outcomes and their associated risks. Game theory provides a robust mathematical framework to model these interactions and quantify the uncertainty by considering various strategies and their payoffs for each agent, thus enabling AVs to choose optimal or robust strategies in the face of unpredictable human behavior.\n\n#### 1.3. Identification and Analysis of Long-Tail Risks and Abrupt Behaviors\n\nIn mixed traffic environments, a significant challenge for autonomous driving systems arises from \"long-tail risks\" and \"abrupt behaviors.\" Long-tail risks refer to rare, infrequent, yet potentially catastrophic events or scenarios that are difficult to predict or model due to their low occurrence frequency. These scenarios often involve complex interactions, unusual environmental conditions, or highly anomalous human driving behaviors that fall outside the typical training data distributions for AVs. Abrupt behaviors, on the other hand, are sudden and unexpected changes in the state or trajectory of a vehicle, whether human-driven or autonomous, that can quickly escalate into hazardous situations. These could include sudden braking, aggressive lane changes without warning, or unexpected swerving.\n\nLiu et al. [12] introduced RiskNet, an interaction-aware risk forecasting system designed specifically for autonomous driving in long-tail scenarios. Their work emphasizes the importance of evaluating risk across diverse scenarios, including highways, intersections, and roundabouts, and demonstrates robustness even under high-risk and long-tail conditions. This highlights the need for specialized models that can identify and quantify risks in situations that are not frequently encountered during normal driving. Zhou et al. [13] addressed the long-tail problem in AV planning by formalizing it as a driving confidence problem. They defined a \"long-tail rate\" to quantify an AV's confidence in its driving decisions, aiming for a dynamically conservative self-driving planner that can manage these rare but critical events. This approach acknowledges that AVs need to be aware of their own limitations and adapt their behavior when facing uncertain or novel situations. Shavazipour and Stewart [14] proposed a novel multi-stage multi-scenario multi-objective optimization framework for adaptive robust decision-making under deep uncertainty. While not exclusively focused on autonomous driving, their framework is highly relevant for managing long-tail risks by evaluating the consequences of decisions across a wide range of scenarios, including those with high uncertainty.\n\nThe identification of these critical scenarios is paramount for the safety and validation of AVs. Zofka et al. [15] developed a mixed reality testbed, \"Traffic participants in the loop,\" specifically for the verification and validation of autonomous vehicles in critical, worst-case traffic scenarios involving realistic road user behavior. This allows for testing AVs in situations that are too dangerous or difficult to replicate in real-world tests. Similarly, Suo et al. [16] introduced Mixsim, a hierarchical framework for mixed reality traffic simulation, which aims to bridge the sim2real domain gap, especially for challenging urban and highway traffic scenarios. Their work involves using re-simulation to verify AV stacks against disengagements, which often occur in long-tail or abrupt behavior situations. Neelofar and Aleti [17] focused on identifying and explaining safety-critical scenarios for AVs by pinpointing key features that affect their ability to reveal safety issues. They distinguish critical scenarios from normal driving and visualize the impact of these features. Zhang et al. [18] conducted a systematic mapping study on finding critical scenarios for automated driving systems, defining critical scenarios as those that may lead to harm and outlining their components, such as triggering conditions and safety-critical events. These studies collectively underscore the necessity of moving beyond average-case performance and explicitly addressing the challenging, infrequent, and often abrupt events that define long-tail risks in mixed traffic. Developing robust AVs requires not only recognizing these risks but also having effective strategies to mitigate them.\n\n### 2. Mixed Traffic Flow Modeling and Prediction Methods\n\nAccurate modeling and prediction of mixed traffic flow are essential for developing intelligent autonomous driving systems. This section explores various approaches, from traditional macroscopic and microscopic models to advanced multi-agent and deep learning techniques, and concludes with the importance of simulation and validation.\n\n#### 2.1. Macroscopic and Microscopic Modeling of Heterogeneous Traffic Flow\n\nTraffic flow modeling can be broadly categorized into macroscopic and microscopic approaches, each offering a distinct perspective on traffic dynamics. Macroscopic models treat traffic as a continuous fluid, focusing on aggregate variables such as traffic density, flow rate, and average speed. These models are typically used for large-scale traffic network analysis and control. However, in heterogeneous mixed traffic, where AVs and HVs coexist, traditional macroscopic models often struggle to capture the nuances introduced by diverse vehicle types and driving behaviors. The different characteristics of AVs (e.g., precise control, consistent reaction times) and HVs (e.g., varying reaction times, aggressive or conservative driving styles) mean that the \"fluid\" is not homogenous, posing challenges for classical macroscopic formulations. While specific literature directly on *macroscopic* modeling for *heterogeneous mixed traffic* is not explicitly provided in the list, the foundational work on driver behavior [1, 3] underpins the need for new macroscopic models that can account for different proportions and interactions of AVs and HVs. For instance, varying proportions of AVs can alter the fundamental diagram of traffic flow, which macroscopic models aim to describe.\n\nMicroscopic models, on the other hand, focus on the behavior of individual vehicles and their interactions. These models are particularly relevant for mixed traffic because they can explicitly account for the heterogeneity at the individual vehicle level. Car-following models, lane-changing models, and gap acceptance models are typical examples of microscopic approaches. In mixed traffic, these models become significantly more complex as they need to represent not only HV-HV interactions but also AV-HV, HV-AV, and AV-AV interactions. Munigety and Mathew [1] highlighted the necessity of behavioral modeling of drivers in mixed traffic, suggesting that existing models often fall short in capturing the full spectrum of behaviors. Wang et al. [2] proposed a mixed traffic car-following behavior model that explicitly considers factors such as mixed traffic flow composition schemes, communication distance, and human drivers’ characteristics. This model attempts to bridge the gap by integrating human behavioral variability into car-following dynamics, which is a cornerstone of microscopic traffic simulation. Asaithambi et al. [3] provided a comprehensive review of driving behavior models in mixed traffic, discussing their limitations and emphasizing the need for improved data and modeling techniques. They stressed that accurately capturing human decision-making and reaction in various scenarios (e.g., acceleration, braking, lane changes) is crucial for realistic microscopic simulations. Furthermore, Chen et al. [4] focused on modeling uncertain reactive human driving behavior, using a classification approach to better represent the variability in human actions. This is vital for microscopic models to generate realistic and diverse human driving behaviors, which is a prerequisite for testing AVs. The development of advanced microscopic models that can accurately simulate the diverse interactions and behavioral patterns in heterogeneous mixed traffic is therefore a critical area of research, providing the foundation for AV design and validation.\n\n#### 2.2. Multi-Agent and Deep Learning-Based Prediction Techniques for Mixed Traffic Flow\n\nThe complexity and uncertainty inherent in mixed traffic flows necessitate advanced prediction techniques, with multi-agent systems and deep learning emerging as powerful tools. Multi-agent systems (MAS) are particularly well-suited for modeling mixed traffic, as each vehicle (AV or HV) can be considered an intelligent agent with its own objectives, perception capabilities, and decision-making logic. The interactions between these agents, often guided by game theory as discussed in Section 1.2, form the basis of MAS-based prediction. By simulating the individual behaviors and their collective emergent properties, MAS can predict traffic flow evolution and potential conflicts.\n\nDeep learning (DL) has revolutionized prediction capabilities in autonomous driving, especially in tasks like trajectory prediction and intent estimation. DL models, particularly recurrent neural networks (RNNs), convolutional neural networks (CNNs), and transformers, excel at processing sequential data (like vehicle trajectories) and learning complex, non-linear relationships. They can infer patterns from large datasets of driving behavior, enabling more accurate predictions of future vehicle states. For instance, DL models can predict the likelihood of a human driver changing lanes, accelerating, or braking based on historical data, current sensor readings, and contextual information. Lu et al. [6] highlighted the use of machine learning (ML)-empowered AVs and the need to enhance their interpretability via human-like cognitive maps. While focused on interpretability, this implicitly points to the use of DL for perception and decision-making, which includes prediction. Similarly, Mirzaie and Rosenhahn [7] discussed interpretable decision-making for end-to-end autonomous driving, suggesting that DL models can be designed to mimic human attention, thereby improving their ability to predict and react to relevant cues in the environment.\n\nA key challenge for DL-based prediction in mixed traffic is the handling of uncertainty and long-tail events. Traditional DL models often struggle with scenarios that are underrepresented in training data. However, advancements in probabilistic deep learning, uncertainty quantification, and generative models are addressing these limitations. Liu et al. [12] introduced RiskNet, an interaction-aware risk forecasting system, which likely leverages deep learning to predict risks in long-tail scenarios. By explicitly modeling interactions and focusing on risk, such systems move beyond simple trajectory prediction to anticipate hazardous situations. Engström et al. [5] proposed modeling adaptive driving behavior as active inference, a probabilistic framework that can be implemented with neural networks, allowing for continuous resolution of uncertainty. This approach is highly relevant for prediction, as it enables AVs to dynamically update their beliefs about other agents' intentions and future actions. The combination of multi-agent frameworks with deep learning offers a powerful paradigm for mixed traffic prediction. MAS can provide the structural framework for interactions, while DL models can be embedded within agents to learn complex behavioral patterns, predict intentions, and forecast trajectories with higher accuracy and adaptability to diverse, heterogeneous traffic conditions.\n\n#### 2.3. Mixed Traffic Flow Simulation and Validation Considering Driver Behavior Differences\n\nGiven the inherent complexities and safety criticalities of mixed traffic, real-world testing of autonomous vehicles is often impractical, expensive, and risky, especially for rare or dangerous scenarios. Therefore, simulation and validation play an indispensable role in the development and deployment of AVs. The effectiveness of these tools hinges on their ability to accurately replicate the diverse and often unpredictable behaviors of human drivers in mixed traffic.\n\nTraditional traffic simulators often rely on simplified or homogeneous driver models, which are insufficient for validating AVs in heterogeneous environments. The need for more realistic and nuanced human driver models, as discussed in Section 1.1, directly impacts the fidelity of simulations. The challenge is to create simulation environments that can accurately represent the full spectrum of human driving behaviors, including their variability, uncertainties, and interactions with AVs. This involves incorporating advanced microscopic models (as discussed in Section 2.1) that capture human characteristics, reaction times, risk preferences, and decision-making processes.\n\nTo address this, researchers are increasingly turning to advanced simulation techniques, including mixed reality (MR) and human-in-the-loop (HIL) simulations. These methods combine virtual environments with real-world components or human participants, offering a higher degree of realism and interactivity. Zofka et al. [15] developed a \"Traffic participants in the loop\" mixed reality testbed specifically for the verification and validation of autonomous vehicles. This testbed allows AVs to be exposed to realistic road user behavior in critical and worst-case traffic scenarios, which are difficult or impossible to test safely in the real world. By integrating human drivers (or their behavioral models) into the simulation loop, this approach can generate a rich variety of interactive scenarios.\n\nSuo et al. [16] presented Mixsim, a hierarchical framework for mixed reality traffic simulation. Mixsim aims to reduce the \"sim2real domain gap\" – the discrepancy between simulated and real-world performance – for AVs in both urban and highway traffic. They use re-simulation to verify AV stacks against disengagements, which are often triggered by unexpected or complex interactions in mixed traffic. This framework emphasizes the iterative process of simulation, testing, and refinement, where insights from mixed reality environments are used to improve AV algorithms. The validation of AVs in mixed traffic goes beyond merely testing if the AV can avoid collisions. It involves assessing its ability to maintain traffic efficiency, ensure comfort for occupants, and operate safely and predictably in the presence of diverse human behaviors. This requires a comprehensive set of metrics and scenarios that can rigorously evaluate an AV's performance across a wide range of operational design domains (ODDs) and critical events. The continuous refinement of simulation environments, incorporating increasingly sophisticated models of human behavior and leveraging mixed reality approaches, is crucial for building confidence in the safety and reliability of autonomous driving systems in complex mixed traffic.\n\n### 3. Autonomous Driving Decision-Making and Control in Complex Mixed Traffic Environments\n\nThe ultimate goal of analyzing mixed traffic behavior and developing predictive models is to enable robust decision-making and control for autonomous vehicles. This section explores how AVs can navigate complex mixed traffic, focusing on interaction perception, control strategies for critical scenarios, and the optimization of safety and efficiency.\n\n#### 3.1. Decision Mechanisms Driven by Interaction Perception and Intent Prediction\n\nEffective decision-making for autonomous vehicles in mixed traffic fundamentally relies on accurate interaction perception and sophisticated intent prediction of surrounding road users, especially human-driven vehicles. Unlike purely reactive systems, an intelligent AV must anticipate the actions of others to make proactive and safe decisions. This involves understanding not only the current state (position, velocity, acceleration) of other vehicles but also their likely future trajectories and underlying intentions (e.g., lane change, turn, yield, accelerate aggressively).\n\nAs discussed in Section 1.2, game theory provides a powerful framework for modeling these interactions. Rahmati et al. [8] developed a game theory-based framework for modeling human-vehicle interactions, demonstrating how AVs can infer human drivers' decision-making processes and predict their actions in dynamic scenarios. This allows AVs to plan their own maneuvers strategically, considering the potential responses of other agents. Zhou et al. [9] further explored game theory for human-machine cooperative driving, emphasizing the need for AV decision-making to account for shared control and cooperative behaviors with human drivers. This implies that AVs should not only predict but also potentially influence human behavior through clear signaling and predictable actions. Yan et al. [10] proposed a multi-vehicle game-theoretic framework for decision-making and planning of AVs in mixed traffic, where the AV's objectives (comfort, efficiency) are balanced against predicted human behaviors. This framework highlights how AVs can make optimal decisions by modeling the interactive game with multiple HVs. Fang et al. [11] extended this to heterogeneous mixed traffic, integrating various interaction models to mimic heterogeneous human driver decision-making within a game-theoretic cooperative driving framework.\n\nBeyond game theory, advanced perception systems, often powered by deep learning, are crucial for extracting subtle cues that indicate human driver intent. This includes analyzing visual signals (e.g., head movements, steering wheel angle, brake lights), vehicle dynamics, and contextual information (e.g., road geometry, traffic signs). Lu et al. [6] explored enhancing the interpretability of autonomous driving via human-like cognitive maps, suggesting that AVs can learn to perceive and interpret the environment in ways that align with human understanding, thereby improving intent prediction. Mirzaie and Rosenhahn [7] also focused on interpretable decision-making for end-to-end autonomous driving, where the AV's feature selection process mimics human attention. This allows the AV to focus on relevant information for predicting human actions, such as subtle shifts in a vehicle's path or changes in speed that precede a lane change. The integration of advanced sensor fusion, deep learning for pattern recognition, and game-theoretic models for strategic interaction forms a robust decision-making mechanism that enables AVs to navigate complex mixed traffic environments by proactively understanding and predicting the intentions of human drivers.\n\n#### 3.2. Robust Control Strategies for Key Scenarios (Merging, Intersections, Congestion)\n\nWhile intent prediction provides the \"what\" and \"why\" of future actions, robust control strategies dictate the \"how\" – how the AV physically executes maneuvers safely and efficiently in response to predicted interactions. Key scenarios like merging, intersections, and congestion are particularly challenging in mixed traffic due to their dynamic nature, high interaction density, and potential for rapid changes in traffic flow.\n\n**Merging Scenarios:** Merging requires precise coordination and negotiation between the merging vehicle and vehicles in the target lane. In mixed traffic, an AV must not only find a suitable gap but also anticipate if human drivers in the target lane will yield, maintain speed, or even accelerate to block the merge. Robust control strategies for merging involve real-time gap assessment, predictive control that accounts for human driver uncertainty, and cooperative negotiation (e.g., through slight speed adjustments or explicit signaling) if the AV is connected. The control system must be conservative enough to ensure safety but assertive enough to avoid unduly impeding traffic flow. Liu et al. [12]'s RiskNet, which performs risk evaluation across diverse scenarios including highways (where merging often occurs), indicates the need for risk-aware control in such situations.\n\n**Intersections:** Intersections are highly complex due to multiple conflicting traffic streams, diverse vehicle types, and varying right-of-way rules. AVs need robust control strategies for navigating both signalized and unsignalized intersections. This includes precise trajectory planning, speed control, and dynamic adaptation to unexpected human behaviors like running red lights, aggressive turns, or pedestrian jaywalking. The control system must be capable of quickly re-planning paths and adjusting speeds to avoid collisions while maintaining efficiency. The risk forecasting capabilities of RiskNet [12] are directly applicable here, enabling AVs to identify and respond to high-risk situations at intersections.\n\n**Congestion:** Driving in congested traffic presents unique challenges, including frequent stop-and-go patterns, short headways, and aggressive maneuvers by human drivers trying to gain a few inches. Robust control in congestion requires smooth acceleration and deceleration profiles to enhance passenger comfort and energy efficiency, while also being responsive to sudden braking or cut-ins by human drivers. The AV must maintain safe following distances without creating excessively large gaps that invite other vehicles to cut in, which can degrade traffic flow. Nie et al. [19] discussed the co-optimization of speed planning and energy management for intelligent fuel cell hybrid vehicles in complex traffic conditions, including dynamic changes of preceding vehicles, which is highly relevant to congestion scenarios. While their focus is on energy, the underlying speed planning and control must be robust to the stop-and-go nature of congestion and the varied behaviors of human drivers. The control strategies must balance safety (collision avoidance), efficiency (maintaining flow, energy consumption), and comfort, often requiring adaptive control algorithms that can adjust their parameters based on the perceived traffic state and human driver aggressiveness.\n\n#### 3.3. Cooperative Optimization and Risk Avoidance Considering Safety and Efficiency\n\nThe deployment of autonomous vehicles in mixed traffic demands a delicate balance between safety and efficiency. While safety is paramount, an overly conservative AV that constantly brakes or yields can significantly degrade traffic flow and negate the potential benefits of autonomous driving. Therefore, decision-making and control strategies must involve cooperative optimization that simultaneously considers both objectives while actively mitigating risks.\n\n**Cooperative Optimization:** Cooperative optimization involves designing AV behaviors that not only optimize their individual performance but also contribute to the overall efficiency and safety of the traffic system. This can be achieved through explicit cooperation (e.g., Vehicle-to-Vehicle (V2V) or Vehicle-to-Infrastructure (V2I) communication enabling platooning or coordinated merging) or implicit cooperation (e.g., an AV driving predictably and smoothly to facilitate human drivers' understanding and interaction). Yan et al. [10]'s game-theoretic framework explicitly considers objectives of comfort and traffic efficiency alongside safety in their multi-vehicle planning for mixed traffic. This demonstrates how AVs can make decisions that optimize for multiple, sometimes conflicting, goals. Fang et al. [11]'s work on cooperative driving of connected AVs in heterogeneous mixed traffic further exemplifies this, showing how AVs can interact with HVs in a way that benefits the entire system. Cooperative optimization can also extend to energy efficiency, as explored by Nie et al. [19], who examined co-optimization of speed planning and energy management in complex traffic conditions. By planning speeds optimally, AVs can reduce fuel consumption while also contributing to smoother traffic flow, indirectly enhancing efficiency.\n\n**Risk Avoidance:** Risk avoidance is an integral part of safety. In mixed traffic, AVs must be equipped with mechanisms to identify, quantify, and mitigate risks, especially those associated with long-tail events and abrupt human behaviors. Liu et al. [12]'s RiskNet is a direct response to this, providing interaction-aware risk forecasting for long-tail scenarios across various environments. By accurately predicting risks, AVs can proactively adjust their trajectories, speeds, or even decide to abort a maneuver if the risk level becomes unacceptable. Zhou et al. [13] proposed a dynamically conservative self-driving planner for long-tail cases, which uses a \"long-tail rate\" to quantify AV driving confidence. When confidence is low (indicating high risk or uncertainty), the planner adopts a more conservative strategy, prioritizing safety. Shavazipour and Stewart [14]'s framework for adaptive robust decision-making under deep uncertainty is also highly relevant, providing a systematic approach for evaluating decisions against a wide range of uncertain future scenarios, thereby enhancing risk avoidance capabilities.\n\nThe integration of these elements—interaction perception, intent prediction, robust control strategies for critical scenarios, and cooperative optimization coupled with explicit risk avoidance—forms the theoretical and technical backbone for autonomous driving in complex mixed traffic environments. The goal is to develop AVs that are not only safe and reliable but also efficient, adaptable, and predictable, enabling their seamless integration into the future transportation ecosystem.",
+    "status": "completed"
+  }
 }

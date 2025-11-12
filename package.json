@@ -5,6 +5,9 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "test:simple": "electron tests/test-simple.js",
+    "test:scholar": "electron tests/test-google-scholar.js",
+    "test:keyword": "electron tests/test-keyword-search.js",
     "build": "electron-builder",
     "build:win": "set CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --win",
     "build:mac": "electron-builder --mac",
@@ -57,6 +60,10 @@
     }
   },
   "dependencies": {
-    "@google/genai": "^1.29.0"
+    "@google/genai": "^1.29.0",
+    "pdf-parse": "^2.4.5"
+  },
+  "devDependencies": {
+    "electron": "^39.1.2"
   }
 }

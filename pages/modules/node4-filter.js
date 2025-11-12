@@ -1,7 +1,7 @@
 // 节点4：精选文献模块
 window.Node4Filter = {
     // 自动执行文献筛选
-    async execute(apiKey, allLiterature, requirement, targetCount, onProgress, apiProvider = 'deepseek') {
+    async execute(apiKey, allLiterature, requirement, targetCount, onProgress, apiProvider = 'deepseek', modelName = null) {
         // 数据验证
         if (!allLiterature || !Array.isArray(allLiterature)) {
             console.error('节点4执行失败: allLiterature不是数组或为空');
@@ -29,11 +29,23 @@ window.Node4Filter = {
         let irrelevantCount = 0;
 
         for (let i = 0; i < allLiterature.length; i++) {
+            // 检查是否应该停止
+            if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                console.log('[节点4筛选] 检测到停止信号，中断筛选');
+                break;
+            }
+            
             const lit = allLiterature[i];
             
             // 更新进度
             if (onProgress) {
                 onProgress(i + 1, total, lit.title || '未知标题', 'AI判断中...');
+            }
+            
+            // 再次检查停止标志
+            if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                console.log('[节点4筛选] 检测到停止信号，中断筛选');
+                break;
             }
             
             try {
@@ -54,7 +66,7 @@ window.Node4Filter = {
 
 如果相关，请给出推荐理由；如果不相关，请简要说明原因。`;
 
-                const answer = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.3);
+                const answer = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.3, modelName);
                 
                 // 尝试解析JSON
                 let isRelevant = false;

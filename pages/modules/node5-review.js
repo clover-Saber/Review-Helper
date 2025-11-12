@@ -1,7 +1,7 @@
 // 节点5：综述撰写模块
 window.Node5Review = {
     // 自动执行综述撰写
-    async execute(apiKey, selectedLiterature, requirementData, apiProvider = 'deepseek') {
+    async execute(apiKey, selectedLiterature, requirementData, apiProvider = 'deepseek', modelName = null) {
         const language = requirementData.language || 'zh';
         
         let literatureInfo;
@@ -70,7 +70,7 @@ ${literatureInfo}
 - 直接输出中文的综述内容，不要添加任何其他文字说明或翻译`;
         }
 
-        const reviewContent = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.7);
+        const reviewContent = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.7, modelName);
         
         return reviewContent;
     },
