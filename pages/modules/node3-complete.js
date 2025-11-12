@@ -229,60 +229,114 @@ window.Node3Complete = {
                     }
                     
                     // 补全期刊（覆盖原文献的缺失期刊）
+                    // 优先使用journal字段，如果没有则使用source字段
                     const currentJournal = lit.journal && typeof lit.journal === 'string' ? lit.journal.trim() : '';
+                    const matchJournal = bestMatch.journal && typeof bestMatch.journal === 'string' ? bestMatch.journal.trim() : '';
                     const matchSource = bestMatch.source && typeof bestMatch.source === 'string' ? bestMatch.source.trim() : '';
-                    if (matchSource && !currentJournal) {
-                        console.log(`[节点3补全] 原期刊: ${currentJournal || '(无)'}`);
-                        console.log(`[节点3补全] 搜索到的期刊: ${matchSource}`);
-                        lit.journal = matchSource;
-                        hasUpdate = true;
-                        console.log(`[节点3补全] ✓ 期刊已覆盖`);
+                    
+                    // 确定要使用的期刊信息（优先journal，其次source，但source不能是年份）
+                    let journalToUse = '';
+                    if (matchJournal) {
+                        journalToUse = matchJournal;
                     } else if (matchSource) {
+                        // 如果source不是年份（不是纯数字），则作为期刊使用
+                        if (!/^\d{4}$/.test(matchSource)) {
+                            journalToUse = matchSource;
+                        }
+                    }
+                    
+                    if (journalToUse && !currentJournal) {
+                        console.log(`[节点3补全] 原期刊: ${currentJournal || '(无)'}`);
+                        console.log(`[节点3补全] 搜索到的期刊: ${journalToUse}`);
+                        lit.journal = journalToUse;
+                        hasUpdate = true;
+                        console.log(`[节点3补全] ✓ 期刊已补全: ${lit.journal}`);
+                    } else if (journalToUse && currentJournal) {
                         console.log(`[节点3补全] 原期刊已存在: ${currentJournal}，跳过补全`);
-                        console.log(`[节点3补全] 搜索到的期刊: ${matchSource}`);
+                        console.log(`[节点3补全] 搜索到的期刊: ${journalToUse}`);
                     } else {
                         console.log(`[节点3补全] ⚠ 未搜索到期刊`);
                     }
                     
                     // 补全其他缺失信息（如果原文献缺失，用搜索结果覆盖）
-                    // 补全作者（如果原文献没有作者）
+                    // 补全作者（如果原文献没有作者或作者信息不完整）
                     const currentAuthors = lit.authors;
-                    const hasCurrentAuthors = currentAuthors && (
-                        (Array.isArray(currentAuthors) && currentAuthors.length > 0) ||
-                        (typeof currentAuthors === 'string' && currentAuthors.trim())
-                    );
-                    if (!hasCurrentAuthors) {
-                        if (bestMatch.authors) {
-                            // 处理authors可能是数组或字符串的情况
-                            if (Array.isArray(bestMatch.authors)) {
-                                lit.authors = bestMatch.authors.length > 0 ? bestMatch.authors : null;
-                            } else if (typeof bestMatch.authors === 'string' && bestMatch.authors.trim()) {
-                                lit.authors = bestMatch.authors.trim();
-                            }
-                            if (lit.authors) {
-                                hasUpdate = true;
+                    let hasCurrentAuthors = false;
+                    if (currentAuthors) {
+                        if (Array.isArray(currentAuthors) && currentAuthors.length > 0) {
+                            hasCurrentAuthors = true;
+                        } else if (typeof currentAuthors === 'string') {
+                            // 检查authors字符串是否只包含作者名（不包含年份和来源）
+                            const authorsStr = currentAuthors.trim();
+                            // 如果包含" - "，说明可能包含年份和来源，需要清理
+                            if (authorsStr.indexOf(' - ') < 0) {
+                                hasCurrentAuthors = true;
                             }
                         }
                     }
                     
-                    // 补全年份（如果原文献没有年份）
+                    if (!hasCurrentAuthors && bestMatch.authors) {
+                        // 处理authors可能是数组或字符串的情况
+                        if (Array.isArray(bestMatch.authors)) {
+                            lit.authors = bestMatch.authors.length > 0 ? bestMatch.authors.join(', ') : null;
+                        } else if (typeof bestMatch.authors === 'string' && bestMatch.authors.trim()) {
+                            // 如果authors字符串包含年份和来源，只提取作者部分
+                            const authorsStr = bestMatch.authors.trim();
+                            const dashIndex = authorsStr.indexOf(' - ');
+                            if (dashIndex > 0) {
+                                lit.authors = authorsStr.substring(0, dashIndex).trim();
+                            } else {
+                                lit.authors = authorsStr;
+                            }
+                        }
+                        if (lit.authors) {
+                            hasUpdate = true;
+                            console.log(`[节点3补全] ✓ 作者已补全: ${lit.authors}`);
+                        }
+                    }
+                    
+                    // 补全年份（如果原文献没有年份，或年份格式不正确）
                     const currentYear = lit.year;
-                    const hasCurrentYear = currentYear && (
-                        (typeof currentYear === 'number' && currentYear > 0) ||
-                        (typeof currentYear === 'string' && currentYear.trim())
-                    );
-                    if (!hasCurrentYear) {
-                        if (bestMatch.year) {
-                            // 处理year可能是数字或字符串的情况
-                            if (typeof bestMatch.year === 'number') {
-                                lit.year = bestMatch.year;
+                    let hasCurrentYear = false;
+                    if (currentYear) {
+                        if (typeof currentYear === 'number' && currentYear > 1900 && currentYear < 2100) {
+                            hasCurrentYear = true;
+                        } else if (typeof currentYear === 'string') {
+                            const yearStr = currentYear.trim();
+                            const yearNum = parseInt(yearStr, 10);
+                            if (!isNaN(yearNum) && yearNum > 1900 && yearNum < 2100) {
+                                hasCurrentYear = true;
+                            }
+                        }
+                    }
+                    
+                    // 如果原文献没有年份，尝试从bestMatch中获取
+                    if (!hasCurrentYear && bestMatch.year) {
+                        // 处理year可能是数字或字符串的情况
+                        if (typeof bestMatch.year === 'number' && bestMatch.year > 1900 && bestMatch.year < 2100) {
+                            lit.year = bestMatch.year;
+                            hasUpdate = true;
+                            console.log(`[节点3补全] ✓ 年份已补全: ${lit.year}`);
+                        } else if (typeof bestMatch.year === 'string' && bestMatch.year.trim()) {
+                            const yearStr = bestMatch.year.trim();
+                            const yearNum = parseInt(yearStr, 10);
+                            if (!isNaN(yearNum) && yearNum > 1900 && yearNum < 2100) {
+                                lit.year = yearNum;
                                 hasUpdate = true;
-                            } else if (typeof bestMatch.year === 'string' && bestMatch.year.trim()) {
-                                const yearNum = parseInt(bestMatch.year.trim(), 10);
-                                if (!isNaN(yearNum) && yearNum > 0) {
-                                    lit.year = yearNum;
-                                    hasUpdate = true;
-                                }
+                                console.log(`[节点3补全] ✓ 年份已补全: ${lit.year}`);
+                            }
+                        }
+                    }
+                    
+                    // 如果原文献没有年份，但authors字符串中包含年份，尝试提取
+                    if (!hasCurrentYear && bestMatch.authors && typeof bestMatch.authors === 'string') {
+                        const yearMatch = bestMatch.authors.match(/\s-\s(\d{4})\s-/);
+                        if (yearMatch && yearMatch[1]) {
+                            const yearNum = parseInt(yearMatch[1], 10);
+                            if (!isNaN(yearNum) && yearNum > 1900 && yearNum < 2100) {
+                                lit.year = yearNum;
+                                hasUpdate = true;
+                                console.log(`[节点3补全] ✓ 年份已从authors中提取: ${lit.year}`);
                             }
                         }
                     }
@@ -441,10 +495,54 @@ window.Node3Complete = {
         item.style.cssText = `margin-bottom: 20px; padding: 15px; background: ${bgColor}; border-radius: 8px; border: 2px solid ${borderColor}; position: relative;`;
         
         const hasAbstract = lit.abstract && lit.abstract.trim();
-        const authorsText = lit.authors ? (Array.isArray(lit.authors) ? lit.authors.join(', ') : lit.authors) : '未知作者';
-        const yearText = lit.year ? `(${lit.year})` : '';
-        const journalText = lit.journal ? ` | <strong>期刊：</strong>${lit.journal}` : '';
-        const citedText = lit.cited !== undefined ? ` | <strong>被引：</strong>${lit.cited}` : '';
+        
+        // 处理作者信息：如果authors是字符串且包含年份/来源，需要清理
+        let authorsText = '未知作者';
+        if (lit.authors) {
+            if (Array.isArray(lit.authors)) {
+                authorsText = lit.authors.join(', ');
+            } else if (typeof lit.authors === 'string') {
+                // 如果authors字符串包含年份和来源（格式如："K Grauman, B Leibe - 2011 - books.google.com"）
+                // 只提取作者部分（在第一个"-"之前的部分）
+                const authorsStr = lit.authors.trim();
+                const dashIndex = authorsStr.indexOf(' - ');
+                if (dashIndex > 0) {
+                    authorsText = authorsStr.substring(0, dashIndex).trim();
+                } else {
+                    authorsText = authorsStr;
+                }
+            }
+        }
+        
+        // 处理年份：确保显示年份（优先使用year字段，如果没有则尝试从authors中提取）
+        let yearText = '';
+        if (lit.year) {
+            // year可能是字符串或数字
+            const yearValue = typeof lit.year === 'number' ? lit.year : (typeof lit.year === 'string' ? lit.year.trim() : '');
+            if (yearValue) {
+                yearText = `(${yearValue})`;
+            }
+        } else if (lit.authors && typeof lit.authors === 'string') {
+            // 尝试从authors字符串中提取年份（格式如："... - 2011 - ..."）
+            const yearMatch = lit.authors.match(/\s-\s(\d{4})\s-/);
+            if (yearMatch && yearMatch[1]) {
+                yearText = `(${yearMatch[1]})`;
+            }
+        }
+        
+        // 处理期刊信息：优先使用journal字段，如果没有则使用source字段
+        let journalText = '';
+        if (lit.journal && typeof lit.journal === 'string' && lit.journal.trim()) {
+            journalText = ` | <strong>期刊：</strong>${lit.journal.trim()}`;
+        } else if (lit.source && typeof lit.source === 'string' && lit.source.trim()) {
+            // 如果source不是年份（不是纯数字），则作为期刊显示
+            const sourceStr = lit.source.trim();
+            if (!/^\d{4}$/.test(sourceStr)) {
+                journalText = ` | <strong>期刊：</strong>${sourceStr}`;
+            }
+        }
+        
+        const citedText = lit.cited !== undefined && lit.cited !== null ? ` | <strong>被引：</strong>${lit.cited}` : '';
         const urlText = lit.url ? `<a href="${lit.url}" target="_blank" style="color: #007bff; text-decoration: none; margin-left: 10px;">查看原文</a>` : '';
         
         // 对于补全失败的文献，添加手动补全按钮

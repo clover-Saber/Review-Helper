@@ -1,5 +1,128 @@
 // 节点4：精选文献模块
 window.Node4Filter = {
+    // 高质量期刊列表（用于提示词）
+    highQualityJournals: [
+        'Nature', 'Science', 'Cell', 'Nature Machine Intelligence', 'Nature Communications',
+        'IEEE Transactions on', 'IEEE Journal of', 'IEEE Transactions on Intelligent Transportation Systems',
+        'IEEE Transactions on Vehicular Technology', 'IEEE Transactions on Robotics',
+        'ACM Transactions on', 'Journal of Machine Learning Research', 'Neural Information Processing Systems',
+        'International Journal of Computer Vision', 'IEEE Transactions on Pattern Analysis',
+        'Transportation Research Part', 'Transportation Science', 'IEEE Intelligent Transportation Systems',
+        'Autonomous Robots', 'Robotics and Autonomous Systems', 'IEEE Robotics and Automation',
+        'Computer Vision and Pattern Recognition', 'International Conference on Robotics and Automation'
+    ],
+    
+    // 生成文献质量评估信息（用于提示词）
+    generateQualityAssessment(lit) {
+        const assessments = [];
+        
+        // 1. 评估补全完整性
+        let completenessInfo = '补全完整性：';
+        if (window.Node3Complete && window.Node3Complete.isAbstractComplete) {
+            const abstractComplete = window.Node3Complete.isAbstractComplete(lit.abstract);
+            if (abstractComplete) {
+                completenessInfo += '摘要完整（信息完整）';
+            } else if (lit.abstract && lit.abstract.trim().length >= 100) {
+                completenessInfo += '摘要部分完整（信息基本完整）';
+            } else {
+                completenessInfo += '摘要缺失或不完整（信息不完整，可能影响判断）';
+            }
+        } else {
+            if (lit.abstract && lit.abstract.trim().length >= 150) {
+                completenessInfo += '摘要存在';
+            } else {
+                completenessInfo += '摘要缺失或过短（信息不完整）';
+            }
+        }
+        
+        // 检查其他信息完整性
+        const hasJournal = lit.journal && typeof lit.journal === 'string' && lit.journal.trim();
+        const hasAuthors = lit.authors && (
+            (Array.isArray(lit.authors) && lit.authors.length > 0) ||
+            (typeof lit.authors === 'string' && lit.authors.trim())
+        );
+        const hasYear = lit.year && (
+            (typeof lit.year === 'number' && lit.year > 1900) ||
+            (typeof lit.year === 'string' && lit.year.trim())
+        );
+        
+        if (!hasJournal) completenessInfo += '；缺少期刊信息';
+        if (!hasAuthors) completenessInfo += '；缺少作者信息';
+        if (!hasYear) completenessInfo += '；缺少年份信息';
+        
+        assessments.push(completenessInfo);
+        
+        // 2. 评估期刊质量
+        let journalInfo = '期刊质量：';
+        const journal = (lit.journal || lit.source || '').trim();
+        if (!journal) {
+            journalInfo += '无期刊信息（无法评估期刊质量）';
+        } else {
+            // 检查是否是高质量期刊
+            const isHighQuality = this.highQualityJournals.some(highQuality => 
+                journal.toLowerCase().includes(highQuality.toLowerCase())
+            );
+            
+            if (isHighQuality) {
+                journalInfo += `高质量期刊（${journal}，属于顶级期刊）`;
+            } else {
+                journalInfo += `中等质量期刊（${journal}，请谨慎评估其学术价值）`;
+            }
+            
+            // 注意：onhold期刊的判断也交给AI，在提示词中说明
+        }
+        assessments.push(journalInfo);
+        
+        // 3. 评估发表时间和引用数量
+        let timeCitationInfo = '发表时间与引用：';
+        const currentYear = new Date().getFullYear();
+        const year = lit.year ? (typeof lit.year === 'number' ? lit.year : parseInt(lit.year, 10)) : null;
+        const cited = lit.cited !== undefined && lit.cited !== null ? (typeof lit.cited === 'number' ? lit.cited : parseInt(lit.cited, 10)) : 0;
+        
+        if (!year || isNaN(year) || year < 1900 || year > currentYear) {
+            timeCitationInfo += '年份信息无效，无法评估时效性';
+        } else {
+            const yearsSincePublication = currentYear - year;
+            timeCitationInfo += `${year}年发表（距今${yearsSincePublication}年）`;
+            
+            if (cited !== undefined && cited !== null) {
+                timeCitationInfo += `，被引${cited}次`;
+                
+                // 给出评估建议
+                if (yearsSincePublication > 20) {
+                    timeCitationInfo += '。注意：发表时间较久远（超过20年），请评估其时效性和当前研究价值';
+                } else if (yearsSincePublication > 10) {
+                    if (cited >= 100) {
+                        timeCitationInfo += '。这是经典文献，引用数很高，具有重要参考价值';
+                    } else if (cited >= 50) {
+                        timeCitationInfo += '。较老文献但引用数尚可';
+                    } else {
+                        timeCitationInfo += '。较老文献且引用较少，可能质量不高或影响力有限';
+                    }
+                } else {
+                    if (cited >= 50) {
+                        timeCitationInfo += '。近期高质量文献，引用数很高';
+                    } else if (cited >= 20) {
+                        timeCitationInfo += '。近期文献，引用数较高';
+                    } else if (cited >= 5) {
+                        timeCitationInfo += '。近期文献，引用数一般';
+                    } else {
+                        if (yearsSincePublication > 5) {
+                            timeCitationInfo += '。发表较久但引用很少，可能质量不高或影响力有限';
+                        } else {
+                            timeCitationInfo += '。新文献，引用数较少（可能因为发表时间较短）';
+                        }
+                    }
+                }
+            } else {
+                timeCitationInfo += '。无法获取引用数，请谨慎评估';
+            }
+        }
+        assessments.push(timeCitationInfo);
+        
+        return assessments.join('\n');
+    },
+    
     // 自动执行文献筛选
     async execute(apiKey, allLiterature, requirement, targetCount, onProgress, apiProvider = 'deepseek', modelName = null) {
         // 数据验证
@@ -49,22 +172,73 @@ window.Node4Filter = {
             }
             
             try {
-                const prompt = `请判断以下文献是否与研究主题相关，并给出推荐理由。
+                // 生成质量评估信息
+                const qualityAssessment = this.generateQualityAssessment(lit);
+                
+                // 处理作者信息（清理格式）
+                let authorsText = '未知';
+                if (lit.authors) {
+                    if (Array.isArray(lit.authors)) {
+                        authorsText = lit.authors.join(', ');
+                    } else if (typeof lit.authors === 'string') {
+                        // 如果authors字符串包含年份和来源，只提取作者部分
+                        const authorsStr = lit.authors.trim();
+                        const dashIndex = authorsStr.indexOf(' - ');
+                        if (dashIndex > 0) {
+                            authorsText = authorsStr.substring(0, dashIndex).trim();
+                        } else {
+                            authorsText = authorsStr;
+                        }
+                    }
+                }
+                
+                // 处理年份
+                let yearText = '未知';
+                if (lit.year) {
+                    yearText = typeof lit.year === 'number' ? lit.year.toString() : lit.year.toString().trim();
+                }
+                
+                // 处理期刊
+                const journalText = lit.journal || lit.source || '未知';
+                
+                // 处理引用数
+                const citedText = lit.cited !== undefined && lit.cited !== null ? lit.cited.toString() : '未知';
+                
+                const prompt = `请综合判断以下文献是否与研究主题相关，并给出推荐理由。
 
 研究主题：${requirement}
 
-文献标题：${lit.title}
-作者：${lit.authors ? (Array.isArray(lit.authors) ? lit.authors.join(', ') : lit.authors) : '未知'}
-年份：${lit.year || '未知'}
+文献信息：
+标题：${lit.title || '无标题'}
+作者：${authorsText}
+年份：${yearText}
+期刊：${journalText}
+被引次数：${citedText}
 摘要：${lit.abstract || '无摘要'}
+
+质量评估信息：
+${qualityAssessment}
+
+请综合考虑以下因素进行判断：
+1. **文献相关性**（最重要）：文献是否与研究主题相关？是否对研究有参考价值？
+2. **补全完整性**：摘要是否完整？如果摘要缺失或不完整，可能影响对文献内容的理解和判断。
+3. **期刊质量档次**：
+   - 高质量期刊（如Nature、Science、IEEE Transactions系列等）通常具有更高的学术价值和可信度
+   - 中等质量期刊需要谨慎评估其学术价值
+   - Onhold期刊（质量较低或声誉不佳的期刊）应不予考虑
+4. **发表时间和引用数量**：
+   - 发表很久但引用很少的文献，可能质量不高或影响力有限
+   - 过于久远的文献（超过20年）需要评估其时效性和当前研究价值
+   - 近期高质量文献（引用数高）通常更有参考价值
+   - 经典文献（发表较久但引用数很高）仍然具有重要参考价值
 
 请以JSON格式返回结果：
 {
   "relevant": true/false,
-  "reason": "推荐理由（如果相关）或为什么不相关（如果不相关）"
+  "reason": "综合推荐理由（如果相关）或为什么不相关（如果不相关）。请简要说明你如何综合考虑相关性、补全完整性、期刊质量、发表时间和引用数量等因素。"
 }
 
-如果相关，请给出推荐理由；如果不相关，请简要说明原因。`;
+如果相关，请给出综合推荐理由；如果不相关，请简要说明原因。`;
 
                 const answer = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.3, modelName);
                 
