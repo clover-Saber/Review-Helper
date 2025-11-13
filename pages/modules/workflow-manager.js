@@ -941,6 +941,10 @@ window.WorkflowManager = {
                     if (toggleBtn && toggleText) {
                         toggleText.textContent = '隐藏'; // 节点显示时，按钮文字为"隐藏"
                     }
+                    // 显示已完成节点的统计数据
+                    this.displayNodeStatistics(i).catch(err => {
+                        console.warn(`[showNodeContent] 显示节点${i}统计数据失败:`, err);
+                    });
                 } else {
                     // 未来节点（pending状态）：完全隐藏，不显示任何信息
                     nodeContent.style.display = 'none';
@@ -959,6 +963,170 @@ window.WorkflowManager = {
                 }
             }
         }
+        
+        // 在一键生成时，显示已完成节点的统计数据
+        if (this.state.isAutoGenerating) {
+            // 异步显示统计数据，不阻塞主流程
+            this.displayCompletedNodesStatistics().catch(err => {
+                console.warn('[showNodeContent] 显示统计数据失败:', err);
+            });
+        }
+    },
+
+    // 显示已完成节点的统计数据（一键生成时）
+    async displayCompletedNodesStatistics() {
+        for (let i = 1; i <= 5; i++) {
+            const nodeStatus = this.state.nodeStates[i];
+            if (nodeStatus === 'completed') {
+                await this.displayNodeStatistics(i);
+            }
+        }
+    },
+
+    // 显示单个节点的统计数据
+    async displayNodeStatistics(nodeNum) {
+        // 获取节点的统计数据
+        const statistics = await this.getNodeStatistics(nodeNum);
+        if (!statistics || !statistics.summary) return;
+        
+        // 根据节点类型显示统计信息
+        let progressTextId = '';
+        let progressContainerId = '';
+        
+        switch(nodeNum) {
+            case 1:
+                progressTextId = 'keywords-progress-text';
+                progressContainerId = 'keywords-auto-progress';
+                break;
+            case 2:
+                progressTextId = 'search-progress-text';
+                progressContainerId = 'search-progress';
+                break;
+            case 3:
+                progressTextId = 'complete-progress-text';
+                progressContainerId = 'complete-progress';
+                break;
+            case 4:
+                progressTextId = 'filter-progress-text';
+                progressContainerId = 'filter-progress';
+                break;
+            case 5:
+                progressTextId = 'generate-progress-text';
+                progressContainerId = 'generate-progress';
+                break;
+        }
+        
+        if (progressTextId && progressContainerId) {
+            const progressText = document.getElementById(progressTextId);
+            const progressContainer = document.getElementById(progressContainerId);
+            if (progressText && progressContainer) {
+                // 显示进度条容器
+                progressContainer.style.display = 'block';
+                // 更新统计文本
+                const nodeNames = ['', '关键词分析', '文献搜索', '文献补全', '文献筛选', '综述撰写'];
+                progressText.textContent = `${nodeNames[nodeNum]}完成：${statistics.summary}`;
+                // 设置进度条为100%
+                const progressFill = progressContainer.querySelector('.progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = '100%';
+                }
+            }
+        }
+    },
+
+    // 获取节点的统计数据（从当前状态计算或从保存的数据中读取）
+    async getNodeStatistics(nodeNum) {
+        // 尝试从保存的数据中读取
+        if (window.DataManager && this.state.currentProjectName) {
+            try {
+                const projectData = await window.DataManager.loadProjectData(this.state.currentProjectName);
+                if (projectData) {
+                    const nodeKey = `node${nodeNum}`;
+                    if (projectData[nodeKey] && projectData[nodeKey].statistics) {
+                        return projectData[nodeKey].statistics;
+                    }
+                }
+            } catch (error) {
+                console.warn(`[getNodeStatistics] 无法从保存的数据中读取节点${nodeNum}的统计数据:`, error);
+            }
+        }
+        
+        // 如果保存的数据中没有，从当前状态计算
+        switch(nodeNum) {
+            case 1:
+                if (this.state.requirementData && this.state.requirementData.keywordsPlan) {
+                    const keywordsPlan = this.state.requirementData.keywordsPlan;
+                    const keywordsCount = keywordsPlan.length;
+                    const totalPapers = keywordsPlan.reduce((sum, item) => sum + (item.count || 0), 0);
+                    return {
+                        keywordsCount: keywordsCount,
+                        totalPapers: totalPapers,
+                        summary: `共生成 ${keywordsCount} 个关键词，预计搜索 ${totalPapers} 篇文献`
+                    };
+                }
+                break;
+            case 2:
+                if (this.state.allLiterature && this.state.allLiterature.length > 0) {
+                    const foundCount = this.state.allLiterature.length;
+                    const uniqueCount = new Set(this.state.allLiterature.map(lit => lit.title?.toLowerCase().trim())).size;
+                    const withAbstract = this.state.allLiterature.filter(lit => lit.abstract && lit.abstract.trim()).length;
+                    return {
+                        foundCount: foundCount,
+                        uniqueCount: uniqueCount,
+                        withAbstract: withAbstract,
+                        summary: `共找到 ${foundCount} 篇文献（去重后 ${uniqueCount} 篇，其中 ${withAbstract} 篇有摘要）`
+                    };
+                }
+                break;
+            case 3:
+                if (this.state.allLiterature && this.state.allLiterature.length > 0) {
+                    const totalCount = this.state.allLiterature.length;
+                    const successCount = this.state.allLiterature.filter(lit => 
+                        lit.completionStatus === 'completed' || 
+                        (lit.abstract && window.Node3Complete && window.Node3Complete.isAbstractComplete && window.Node3Complete.isAbstractComplete(lit.abstract))
+                    ).length;
+                    const failCount = totalCount - successCount;
+                    const completionRate = totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0;
+                    return {
+                        totalCount: totalCount,
+                        successCount: successCount,
+                        failCount: failCount,
+                        completionRate: completionRate,
+                        summary: `总计 ${totalCount} 篇，成功 ${successCount} 篇，失败 ${failCount} 篇（完成率 ${completionRate}%）`
+                    };
+                }
+                break;
+            case 4:
+                if (this.state.allLiterature && this.state.selectedLiterature) {
+                    const selectedCount = this.state.selectedLiterature.length;
+                    const totalCount = this.state.allLiterature.length;
+                    const unselectedCount = totalCount - selectedCount;
+                    const selectionRate = totalCount > 0 ? Math.round((selectedCount / totalCount) * 100) : 0;
+                    return {
+                        totalCount: totalCount,
+                        selectedCount: selectedCount,
+                        unselectedCount: unselectedCount,
+                        selectionRate: selectionRate,
+                        summary: `共 ${totalCount} 篇文献，AI推荐 ${selectedCount} 篇，未推荐 ${unselectedCount} 篇（推荐率 ${selectionRate}%）`
+                    };
+                }
+                break;
+            case 5:
+                if (this.state.reviewContent && this.state.selectedLiterature) {
+                    const reviewLength = this.state.reviewContent.length;
+                    const selectedLitCount = this.state.selectedLiterature.length;
+                    const wordCount = reviewLength > 0 ? Math.round(reviewLength / 2) : 0;
+                    return {
+                        selectedLitCount: selectedLitCount,
+                        wordCount: wordCount,
+                        reviewLength: reviewLength,
+                        summary: `基于 ${selectedLitCount} 篇精选文献，生成约 ${wordCount} 字综述（${reviewLength} 字符）`
+                    };
+                }
+                break;
+        }
+        
+        return null;
     },
 
     // 从总览跳转到节点详情
@@ -1118,7 +1286,23 @@ window.WorkflowManager = {
     },
 
     // 加载节点数据
-    loadNodeData(nodeNum) {
+    async loadNodeData(nodeNum) {
+        // 如果数据可能不完整，先尝试重新加载项目数据
+        if (nodeNum === 1 && (!this.state.requirementData.keywordsPlan || this.state.requirementData.keywordsPlan.length === 0)) {
+            try {
+                await this.loadCurrentProject();
+            } catch (error) {
+                console.warn('[loadNodeData] 重新加载项目数据失败:', error);
+            }
+        }
+        if (nodeNum === 4 && (!this.state.selectedLiterature || this.state.selectedLiterature.length === 0)) {
+            try {
+                await this.loadCurrentProject();
+            } catch (error) {
+                console.warn('[loadNodeData] 重新加载项目数据失败:', error);
+            }
+        }
+        
         switch(nodeNum) {
             case 1:
                 // 确保节点内容展开
@@ -1233,7 +1417,12 @@ window.WorkflowManager = {
                     filterResults.style.display = 'block';
                 }
                 window.UIUtils.hideElement('filter-progress');
-                window.UIUtils.showElement('filter-statistics-container');
+                // 一键生成时，不显示统计卡片
+                if (this.state.isAutoGenerating) {
+                    window.UIUtils.hideElement('filter-statistics-container');
+                } else {
+                    window.UIUtils.showElement('filter-statistics-container');
+                }
                 window.UIUtils.showElement('filter-results');
                 
                 // 始终显示导出按钮（如果有已选文献数据）
@@ -1266,7 +1455,9 @@ window.WorkflowManager = {
                 // 如果有文献数据，显示数据
                 if (this.state.allLiterature && this.state.allLiterature.length > 0) {
                     // 用户点击节点进入时使用编辑模式（editable=true）
-                    window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
+                    // 确保selectedLiterature存在（如果为空，使用空数组）
+                    const selectedLit = this.state.selectedLiterature || [];
+                    window.Node4Filter.display(this.state.allLiterature, selectedLit, true);
                 } else {
                     // 如果没有文献，显示提示信息
                     const filterResultsList = document.getElementById('filter-results-list');
@@ -3300,6 +3491,12 @@ window.WorkflowManager = {
                     this.state.currentAutoNode = 0;
                     // 更新按钮显示状态
                     this.updateGenerateButtonState();
+                    // 重新加载项目数据，确保state中的数据是最新的
+                    try {
+                        await this.loadCurrentProject();
+                    } catch (error) {
+                        console.warn('[executeNextNode] 重新加载项目数据失败:', error);
+                    }
                     // 恢复所有节点的显示（完成后显示所有节点）
                     for (let i = 1; i <= 5; i++) {
                         const node = document.getElementById(`node-${i}`);
@@ -3312,6 +3509,8 @@ window.WorkflowManager = {
                             nodeContent.style.display = 'block';
                         }
                     }
+                    // 更新总览
+                    this.updateOverview();
                     break;
                 default:
                     this.state.isAutoGenerating = false;
@@ -3447,14 +3646,28 @@ window.WorkflowManager = {
                 keywordsPlan: this.state.requirementData.keywordsPlan
             });
 
-            // 完成时更新进度条，不显示结果
-            window.UIUtils.updateProgress('keywords-auto-progress', 'keywords-progress-fill', 'keywords-progress-text', 100, '关键词分析完成！');
+            // 完成时更新进度条，显示统计信息
+            const keywordsCount = keywordsPlan.length;
+            const totalPapers = keywordsPlan.reduce((sum, item) => sum + (item.count || 0), 0);
+            const statistics = {
+                keywordsCount: keywordsCount,
+                totalPapers: totalPapers,
+                summary: `共生成 ${keywordsCount} 个关键词，预计搜索 ${totalPapers} 篇文献`
+            };
+            window.UIUtils.updateProgress(
+                'keywords-auto-progress', 
+                'keywords-progress-fill', 
+                'keywords-progress-text', 
+                100, 
+                `关键词分析完成！${statistics.summary}`
+            );
             
             console.log('[Node 1] Saving project data...');
             // 节点1保存自己的数据（keywordsPlan保存在node1中）
             await this.saveNodeData(1, {
                 keywords: this.state.keywords,
-                keywordsPlan: this.state.requirementData.keywordsPlan || []
+                keywordsPlan: this.state.requirementData.keywordsPlan || [],
+                statistics: statistics
             });
             console.log('[Node 1] Project data saved successfully');
             
@@ -3564,6 +3777,9 @@ window.WorkflowManager = {
                     status: 'active' // 明确保存为active状态
                 });
                 
+                // 保存是否为自动生成状态（在停止之前）
+                const wasAutoGenerating = this.state.isAutoGenerating;
+                
                 // 停止自动生成流程
                 this.state.isAutoGenerating = false;
                 this.state.currentAutoNode = 0;
@@ -3575,31 +3791,47 @@ window.WorkflowManager = {
                 if (startBtn) startBtn.style.display = 'block';
                 if (stopBtn) stopBtn.style.display = 'none';
                 
-                // 显示搜索结果区域，让用户可以看到失败信息
-                window.UIUtils.showElement('search-results');
-                const searchResultsList = document.getElementById('search-results-list');
-                if (searchResultsList) {
-                    searchResultsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">未找到任何文献，请检查关键词或网络连接后点击"重新搜索文献"按钮重试</p>';
+                // 一键生成时，只显示进度条，不显示详细结果
+                if (wasAutoGenerating) {
+                    // 保持进度条显示，不显示搜索结果区域
+                    window.UIUtils.hideElement('search-results');
+                } else {
+                    // 手动执行时，显示搜索结果区域，让用户可以看到失败信息
+                    window.UIUtils.showElement('search-results');
+                    const searchResultsList = document.getElementById('search-results-list');
+                    if (searchResultsList) {
+                        searchResultsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">未找到任何文献，请检查关键词或网络连接后点击"重新搜索文献"按钮重试</p>';
+                    }
                 }
                 
                 window.UIUtils.showToast('节点2未搜索到文献，已停止后续流程。请检查关键词或网络连接后重试。', 'error');
                 throw new Error('节点2未搜索到文献，停止执行');
             }
 
-            // 完成时更新进度条，不显示结果
+            // 完成时更新进度条，显示统计信息
+            const foundCount = result.allLiterature.length;
+            const uniqueCount = new Set(result.allLiterature.map(lit => lit.title?.toLowerCase().trim())).size;
+            const withAbstract = result.allLiterature.filter(lit => lit.abstract && lit.abstract.trim()).length;
+            const statistics = {
+                foundCount: foundCount,
+                uniqueCount: uniqueCount,
+                withAbstract: withAbstract,
+                summary: `共找到 ${foundCount} 篇文献（去重后 ${uniqueCount} 篇，其中 ${withAbstract} 篇有摘要）`
+            };
             window.UIUtils.updateProgress(
                 'search-progress',
                 'search-progress-fill',
                 'search-progress-text',
                 100,
-                `搜索完成！共找到 ${result.allLiterature.length} 篇文献`
+                `搜索完成！${statistics.summary}`
             );
 
             // 成功完成并保存数据后，才设置为completed
             this.updateNodeState(2, 'completed');
             // 节点2只保存自己的数据（searchResults），不保存 allLiterature（那是节点3的数据）
             await this.saveNodeData(2, {
-                searchResults: this.state.searchResults
+                searchResults: this.state.searchResults,
+                statistics: statistics
             });
         } catch (error) {
             // 如果错误不是"未搜索到文献"或"用户停止了执行"，说明是其他错误
@@ -3681,32 +3913,50 @@ window.WorkflowManager = {
                 throw new Error('用户停止了执行');
             }
 
-            // 完成时更新进度条
+            // 完成时更新进度条，显示统计信息
+            const totalCount = this.state.allLiterature.length;
+            const completionRate = totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0;
+            const statistics = {
+                totalCount: totalCount,
+                successCount: successCount,
+                failCount: failCount,
+                completionRate: completionRate,
+                summary: `总计 ${totalCount} 篇，成功 ${successCount} 篇，失败 ${failCount} 篇（完成率 ${completionRate}%）`
+            };
             window.UIUtils.updateProgress(
                 'complete-progress',
                 'complete-progress-fill',
                 'complete-progress-text',
                 100,
-                `补全完成！成功: ${successCount}篇, 失败: ${failCount}篇`
+                `补全完成！${statistics.summary}`
             );
 
             // 成功完成并保存数据后，才设置为completed
             this.updateNodeState(3, 'completed');
             // 节点3只保存自己的数据（补全后的文献）
             await this.saveNodeData(3, {
-                allLiterature: this.state.allLiterature
+                allLiterature: this.state.allLiterature,
+                statistics: statistics
             });
             
-            // 完成后显示补全结果
-            window.UIUtils.hideElement('complete-progress');
-            window.UIUtils.showElement('complete-results');
-            const saveBtn = document.getElementById('save-completion-btn');
-            const regenerateBtn = document.getElementById('regenerate-completion-btn');
-            if (saveBtn) saveBtn.style.display = 'inline-block';
-            if (regenerateBtn) regenerateBtn.style.display = 'block';
-            
-            // 显示补全结果
-            window.Node3Complete.display(this.state.allLiterature);
+            // 完成后只显示进度条和统计信息（一键生成时）
+            if (this.state.isAutoGenerating) {
+                // 一键生成时，只显示进度条，不显示详细结果
+                // 进度条已经在上面更新了，保持显示即可
+                // 不显示结果区域和编辑按钮
+                window.UIUtils.hideElement('complete-results');
+            } else {
+                // 手动执行时，显示完整结果
+                window.UIUtils.hideElement('complete-progress');
+                window.UIUtils.showElement('complete-results');
+                const saveBtn = document.getElementById('save-completion-btn');
+                const regenerateBtn = document.getElementById('regenerate-completion-btn');
+                if (saveBtn) saveBtn.style.display = 'inline-block';
+                if (regenerateBtn) regenerateBtn.style.display = 'block';
+                
+                // 显示补全结果
+                window.Node3Complete.display(this.state.allLiterature);
+            }
             
             // 更新总览
             this.updateOverview();
@@ -3800,53 +4050,79 @@ window.WorkflowManager = {
 
             this.state.selectedLiterature = result.selectedLiterature || [];
 
-            // 完成时更新进度条，显示筛选结果数量
+            // 完成时更新进度条，显示筛选结果统计
             const selectedCount = this.state.selectedLiterature.length;
             const totalCount = this.state.allLiterature.length;
+            const unselectedCount = totalCount - selectedCount;
+            const selectionRate = totalCount > 0 ? Math.round((selectedCount / totalCount) * 100) : 0;
+            const statistics = {
+                totalCount: totalCount,
+                selectedCount: selectedCount,
+                unselectedCount: unselectedCount,
+                selectionRate: selectionRate,
+                summary: `共 ${totalCount} 篇文献，AI推荐 ${selectedCount} 篇，未推荐 ${unselectedCount} 篇（推荐率 ${selectionRate}%）`
+            };
             window.UIUtils.updateProgress(
                 'filter-progress',
                 'filter-progress-fill',
                 'filter-progress-text',
                 100,
-                `筛选完成：已选 ${selectedCount} 篇，共 ${totalCount} 篇`
+                `筛选完成！${statistics.summary}`
             );
 
             this.updateNodeState(4, 'completed');
             // 节点4只保存自己的数据
             await this.saveNodeData(4, {
-                selectedLiterature: this.state.selectedLiterature
+                selectedLiterature: this.state.selectedLiterature,
+                statistics: statistics
             });
             
-            // 完成后显示筛选结果
-            window.UIUtils.hideElement('filter-progress');
-            // 确保结果容器和列表都显示
-            const filterResults = document.getElementById('filter-results');
-            if (filterResults) {
-                filterResults.style.display = 'block';
-            }
-            const filterResultsList = document.getElementById('filter-results-list');
-            if (filterResultsList) {
-                filterResultsList.style.display = 'block';
-            }
-            window.UIUtils.showElement('filter-results');
-            window.UIUtils.showElement('filter-results-list');
-            window.UIUtils.showElement('filter-statistics-container');
-            const exportBtn = document.getElementById('export-excel-btn');
-            if (exportBtn) {
-                exportBtn.style.display = 'inline-block';
-            }
-            const saveBtn = document.getElementById('save-filter-btn');
-            const regenerateBtn = document.getElementById('regenerate-filter-btn');
-            if (saveBtn) saveBtn.style.display = 'inline-block';
-            if (regenerateBtn) regenerateBtn.style.display = 'block';
-            
-            // 显示筛选结果（编辑模式，因为用户可能想要查看和编辑）
-            if (this.state.allLiterature && this.state.allLiterature.length > 0) {
-                window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
+            // 完成后只显示进度条和统计信息（一键生成时）
+            if (this.state.isAutoGenerating) {
+                // 一键生成时，只显示进度条，不显示统计卡片和详细结果列表
+                // 进度条已经在上面更新了，保持显示即可
+                window.UIUtils.hideElement('filter-results-list');
+                // 隐藏统计卡片（一键生成时不显示）
+                window.UIUtils.hideElement('filter-statistics-container');
+                // 不显示编辑按钮
+                const exportBtn = document.getElementById('export-excel-btn');
+                const saveBtn = document.getElementById('save-filter-btn');
+                const regenerateBtn = document.getElementById('regenerate-filter-btn');
+                if (exportBtn) exportBtn.style.display = 'none';
+                if (saveBtn) saveBtn.style.display = 'none';
+                if (regenerateBtn) regenerateBtn.style.display = 'none';
             } else {
-                // 如果没有文献，显示提示信息
+                // 手动执行时，显示完整结果
+                window.UIUtils.hideElement('filter-progress');
+                // 确保结果容器和列表都显示
+                const filterResults = document.getElementById('filter-results');
+                if (filterResults) {
+                    filterResults.style.display = 'block';
+                }
+                const filterResultsList = document.getElementById('filter-results-list');
                 if (filterResultsList) {
-                    filterResultsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">暂无文献数据</p>';
+                    filterResultsList.style.display = 'block';
+                }
+                window.UIUtils.showElement('filter-results');
+                window.UIUtils.showElement('filter-results-list');
+                window.UIUtils.showElement('filter-statistics-container');
+                const exportBtn = document.getElementById('export-excel-btn');
+                if (exportBtn) {
+                    exportBtn.style.display = 'inline-block';
+                }
+                const saveBtn = document.getElementById('save-filter-btn');
+                const regenerateBtn = document.getElementById('regenerate-filter-btn');
+                if (saveBtn) saveBtn.style.display = 'inline-block';
+                if (regenerateBtn) regenerateBtn.style.display = 'block';
+                
+                // 显示筛选结果（编辑模式）
+                if (this.state.allLiterature && this.state.allLiterature.length > 0) {
+                    window.Node4Filter.display(this.state.allLiterature, this.state.selectedLiterature, true);
+                } else {
+                    // 如果没有文献，显示提示信息
+                    if (filterResultsList) {
+                        filterResultsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">暂无文献数据</p>';
+                    }
                 }
             }
             
@@ -4709,26 +4985,52 @@ window.WorkflowManager = {
                 throw new Error('用户停止了执行');
             }
 
-            // 完成时更新进度条，不显示结果
+            // 完成时更新进度条，显示统计信息
+            const reviewLength = this.state.reviewContent ? this.state.reviewContent.length : 0;
+            const selectedLitCount = this.state.selectedLiterature ? this.state.selectedLiterature.length : 0;
+            const wordCount = reviewLength > 0 ? Math.round(reviewLength / 2) : 0; // 粗略估算字数（中文字符数/2）
+            const statistics = {
+                selectedLitCount: selectedLitCount,
+                wordCount: wordCount,
+                reviewLength: reviewLength,
+                summary: `基于 ${selectedLitCount} 篇精选文献，生成约 ${wordCount} 字综述（${reviewLength} 字符）`
+            };
             window.UIUtils.updateProgress(
                 'generate-progress',
                 'generate-progress-fill',
                 'generate-progress-text',
                 100,
-                '综述生成完成'
+                `综述生成完成！${statistics.summary}`
             );
 
             // 节点5只保存自己的数据
             await this.saveNodeData(5, {
-                reviewContent: this.state.reviewContent
+                reviewContent: this.state.reviewContent,
+                statistics: statistics
             });
             
             // 成功完成并保存数据后，才设置为completed
             this.updateNodeState(5, 'completed');
             
-            // 完成后显示已选文献列表（即使是在自动执行模式下）
-            if (this.state.selectedLiterature && this.state.selectedLiterature.length > 0) {
-                window.Node5Review.displaySelectedLiterature(this.state.selectedLiterature);
+            // 完成后只显示进度条和统计信息（一键生成时）
+            if (this.state.isAutoGenerating) {
+                // 一键生成时，只显示进度条，不显示详细结果
+                // 进度条已经在上面更新了，保持显示即可
+                // 不显示已选文献列表和综述内容
+                window.UIUtils.hideElement('selected-literature-summary');
+                window.UIUtils.hideElement('review-result');
+            } else {
+                // 手动执行时，显示完整结果
+                // 显示已选文献列表
+                if (this.state.selectedLiterature && this.state.selectedLiterature.length > 0) {
+                    window.UIUtils.showElement('selected-literature-summary');
+                    window.Node5Review.displaySelectedLiterature(this.state.selectedLiterature);
+                }
+                // 显示综述内容
+                if (this.state.reviewContent) {
+                    window.UIUtils.showElement('review-result');
+                    window.Node5Review.display(this.state.reviewContent, this.state.selectedLiterature);
+                }
             }
         } catch (error) {
             console.error('节点5执行失败:', error);
