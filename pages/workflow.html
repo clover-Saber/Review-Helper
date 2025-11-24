@@ -851,6 +851,8 @@
                                 onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'">
                             <option value="deepseek">DeepSeek</option>
                             <option value="gemini">Google Gemini</option>
+                            <option value="siliconflow">硅基流动</option>
+                            <option value="poe">Poe</option>
                         </select>
                         <div id="main-api-docs-container" style="margin-top: 8px;">
                             <a id="main-api-docs-link" href="https://api-docs.deepseek.com/zh-cn/api/deepseek-api/" target="_blank" 
@@ -876,6 +878,114 @@
                         </select>
                         <small style="display: block; margin-top: 5px; color: #666;">
                             <span id="gemini-model-desc">快速响应，适合大多数任务</span>
+                        </small>
+                    </div>
+
+                    <!-- 硅基流动模型选择（仅在选择硅基流动时显示） -->
+                    <div class="form-group" id="siliconflow-model-select-group" style="display: none;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">硅基流动模型:</label>
+                        <select id="siliconflow-model-select" class="api-provider-select" 
+                                style="width: 100%; max-height: 200px; overflow-y: auto;"
+                                onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onmouseout="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'"
+                                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'">
+                            <option value="deepseek-ai/DeepSeek-V3.2-Exp">deepseek-ai/DeepSeek-V3.2-Exp</option>
+                            <option value="Pro/deepseek-ai/DeepSeek-V3.2-Exp">Pro/deepseek-ai/DeepSeek-V3.2-Exp</option>
+                            <option value="inclusionAI/Ling-1T">inclusionAI/Ling-1T</option>
+                            <option value="zai-org/GLM-4.6">zai-org/GLM-4.6</option>
+                            <option value="moonshotai/Kimi-K2-Instruct-0905">moonshotai/Kimi-K2-Instruct-0905</option>
+                            <option value="Pro/deepseek-ai/DeepSeek-V3.1-Terminus">Pro/deepseek-ai/DeepSeek-V3.1-Terminus</option>
+                            <option value="deepseek-ai/DeepSeek-V3.1-Terminus">deepseek-ai/DeepSeek-V3.1-Terminus</option>
+                            <option value="Qwen/Qwen3-Next-80B-A3B-Instruct">Qwen/Qwen3-Next-80B-A3B-Instruct</option>
+                            <option value="Qwen/Qwen3-Next-80B-A3B-Thinking">Qwen/Qwen3-Next-80B-A3B-Thinking</option>
+                            <option value="inclusionAI/Ring-flash-2.0">inclusionAI/Ring-flash-2.0</option>
+                            <option value="inclusionAI/Ling-flash-2.0">inclusionAI/Ling-flash-2.0</option>
+                            <option value="inclusionAI/Ling-mini-2.0">inclusionAI/Ling-mini-2.0</option>
+                            <option value="ByteDance-Seed/Seed-OSS-36B-Instruct">ByteDance-Seed/Seed-OSS-36B-Instruct</option>
+                            <option value="stepfun-ai/step3">stepfun-ai/step3</option>
+                            <option value="Qwen/Qwen3-Coder-30B-A3B-Instruct">Qwen/Qwen3-Coder-30B-A3B-Instruct</option>
+                            <option value="Qwen/Qwen3-Coder-480B-A35B-Instruct">Qwen/Qwen3-Coder-480B-A35B-Instruct</option>
+                            <option value="Qwen/Qwen3-30B-A3B-Thinking-2507">Qwen/Qwen3-30B-A3B-Thinking-2507</option>
+                            <option value="Qwen/Qwen3-30B-A3B-Instruct-2507">Qwen/Qwen3-30B-A3B-Instruct-2507</option>
+                            <option value="Qwen/Qwen3-235B-A22B-Thinking-2507">Qwen/Qwen3-235B-A22B-Thinking-2507</option>
+                            <option value="Qwen/Qwen3-235B-A22B-Instruct-2507">Qwen/Qwen3-235B-A22B-Instruct-2507</option>
+                            <option value="zai-org/GLM-4.5-Air">zai-org/GLM-4.5-Air</option>
+                            <option value="zai-org/GLM-4.5">zai-org/GLM-4.5</option>
+                            <option value="baidu/ERNIE-4.5-300B-A47B">baidu/ERNIE-4.5-300B-A47B</option>
+                            <option value="ascend-tribe/pangu-pro-moe">ascend-tribe/pangu-pro-moe</option>
+                            <option value="tencent/Hunyuan-A13B-Instruct">tencent/Hunyuan-A13B-Instruct</option>
+                            <option value="MiniMaxAI/MiniMax-M1-80k">MiniMaxAI/MiniMax-M1-80k</option>
+                            <option value="Tongyi-Zhiwen/QwenLong-L1-32B">Tongyi-Zhiwen/QwenLong-L1-32B</option>
+                            <option value="Qwen/Qwen3-30B-A3B">Qwen/Qwen3-30B-A3B</option>
+                            <option value="Qwen/Qwen3-32B">Qwen/Qwen3-32B</option>
+                            <option value="Qwen/Qwen3-14B">Qwen/Qwen3-14B</option>
+                            <option value="Qwen/Qwen3-8B">Qwen/Qwen3-8B</option>
+                            <option value="Qwen/Qwen3-235B-A22B">Qwen/Qwen3-235B-A22B</option>
+                            <option value="THUDM/GLM-Z1-32B-0414">THUDM/GLM-Z1-32B-0414</option>
+                            <option value="THUDM/GLM-4-32B-0414">THUDM/GLM-4-32B-0414</option>
+                            <option value="THUDM/GLM-Z1-Rumination-32B-0414">THUDM/GLM-Z1-Rumination-32B-0414</option>
+                            <option value="THUDM/GLM-4-9B-0414">THUDM/GLM-4-9B-0414</option>
+                            <option value="Qwen/QwQ-32B" selected>Qwen/QwQ-32B（默认）</option>
+                            <option value="Pro/deepseek-ai/DeepSeek-R1">Pro/deepseek-ai/DeepSeek-R1</option>
+                            <option value="Pro/deepseek-ai/DeepSeek-V3">Pro/deepseek-ai/DeepSeek-V3</option>
+                            <option value="deepseek-ai/DeepSeek-R1">deepseek-ai/DeepSeek-R1</option>
+                            <option value="deepseek-ai/DeepSeek-V3">deepseek-ai/DeepSeek-V3</option>
+                            <option value="deepseek-ai/DeepSeek-R1-0528-Qwen3-8B">deepseek-ai/DeepSeek-R1-0528-Qwen3-8B</option>
+                            <option value="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B">deepseek-ai/DeepSeek-R1-Distill-Qwen-32B</option>
+                            <option value="deepseek-ai/DeepSeek-R1-Distill-Qwen-14B">deepseek-ai/DeepSeek-R1-Distill-Qwen-14B</option>
+                            <option value="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B">deepseek-ai/DeepSeek-R1-Distill-Qwen-7B</option>
+                            <option value="Pro/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B">Pro/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B</option>
+                            <option value="deepseek-ai/DeepSeek-V2.5">deepseek-ai/DeepSeek-V2.5</option>
+                            <option value="Qwen/Qwen2.5-72B-Instruct-128K">Qwen/Qwen2.5-72B-Instruct-128K</option>
+                            <option value="Qwen/Qwen2.5-72B-Instruct">Qwen/Qwen2.5-72B-Instruct</option>
+                            <option value="Qwen/Qwen2.5-32B-Instruct">Qwen/Qwen2.5-32B-Instruct</option>
+                            <option value="Qwen/Qwen2.5-14B-Instruct">Qwen/Qwen2.5-14B-Instruct</option>
+                            <option value="Qwen/Qwen2.5-7B-Instruct">Qwen/Qwen2.5-7B-Instruct</option>
+                            <option value="Qwen/Qwen2.5-Coder-32B-Instruct">Qwen/Qwen2.5-Coder-32B-Instruct</option>
+                            <option value="Qwen/Qwen2.5-Coder-7B-Instruct">Qwen/Qwen2.5-Coder-7B-Instruct</option>
+                            <option value="Qwen/Qwen2-7B-Instruct">Qwen/Qwen2-7B-Instruct</option>
+                            <option value="THUDM/glm-4-9b-chat">THUDM/glm-4-9b-chat</option>
+                            <option value="internlm/internlm2_5-7b-chat">internlm/internlm2_5-7b-chat</option>
+                            <option value="Pro/Qwen/Qwen2.5-7B-Instruct">Pro/Qwen/Qwen2.5-7B-Instruct</option>
+                            <option value="Pro/Qwen/Qwen2-7B-Instruct">Pro/Qwen/Qwen2-7B-Instruct</option>
+                            <option value="Pro/THUDM/glm-4-9b-chat">Pro/THUDM/glm-4-9b-chat</option>
+                        </select>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            请从列表中选择要使用的模型
+                        </small>
+                    </div>
+
+                    <!-- Poe 模型选择（仅在选择 Poe 时显示） -->
+                    <div class="form-group" id="poe-model-select-group" style="display: none;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Poe 模型:</label>
+                        <select id="poe-model-select" class="api-provider-select" 
+                                style="width: 100%; max-height: 200px; overflow-y: auto;"
+                                onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onmouseout="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'"
+                                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'">
+                            <option value="Claude-Sonnet-4" selected>Claude-Sonnet-4（默认）</option>
+                            <option value="Claude-3.5-Sonnet">Claude-3.5-Sonnet</option>
+                            <option value="Claude-3-Opus">Claude-3-Opus</option>
+                            <option value="Claude-3-Sonnet">Claude-3-Sonnet</option>
+                            <option value="Claude-3-Haiku">Claude-3-Haiku</option>
+                            <option value="GPT-4">GPT-4</option>
+                            <option value="GPT-4-Turbo">GPT-4-Turbo</option>
+                            <option value="GPT-4o">GPT-4o</option>
+                            <option value="GPT-4o-mini">GPT-4o-mini</option>
+                            <option value="GPT-3.5-Turbo">GPT-3.5-Turbo</option>
+                            <option value="Llama-3.1-405B-Instruct">Llama-3.1-405B-Instruct</option>
+                            <option value="Llama-3.1-70B-Instruct">Llama-3.1-70B-Instruct</option>
+                            <option value="Llama-3-70B-Instruct">Llama-3-70B-Instruct</option>
+                            <option value="Llama-3-8B-Instruct">Llama-3-8B-Instruct</option>
+                            <option value="Mixtral-8x7B-Instruct">Mixtral-8x7B-Instruct</option>
+                            <option value="PaLM-2">PaLM-2</option>
+                            <option value="Sage">Sage</option>
+                            <option value="Dragonfly">Dragonfly</option>
+                        </select>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            请从列表中选择要使用的模型
                         </small>
                     </div>
                     
@@ -1282,6 +1392,9 @@
     <script src="modules/node3-complete.js"></script>
     <script src="modules/node4-filter.js"></script>
     <script src="modules/node5-review.js"></script>
+    <!-- 工作流模块（按依赖顺序加载） -->
+    <script src="modules/workflow-state-manager.js"></script>
+    <script src="modules/workflow-data-loader.js"></script>
     <script src="modules/workflow-manager.js"></script>
     <script src="workflow.js"></script>
 </body>

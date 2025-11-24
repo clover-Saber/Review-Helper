@@ -23,6 +23,22 @@ window.API = {
                 }
             },
             docsUrl: 'https://ai.google.dev/'
+        },
+        'siliconflow': {
+            name: '硅基流动',
+            baseUrl: 'https://api.siliconflow.cn/v1/chat/completions',
+            defaultModel: 'Qwen/QwQ-32B',
+            docsUrl: 'https://siliconflow.cn/',
+            // 硅基流动支持用户自定义模型，模型列表在UI中提供
+            supportsCustomModel: true
+        },
+        'poe': {
+            name: 'Poe',
+            baseUrl: 'https://api.poe.com/v1/chat/completions',
+            defaultModel: 'Claude-Sonnet-4',
+            docsUrl: 'https://poe.com/api_key',
+            // Poe 支持用户自定义模型，模型列表在UI中提供
+            supportsCustomModel: true
         }
     },
 
@@ -40,6 +56,14 @@ window.API = {
             // 如果指定了 modelName，使用指定的模型，否则使用默认模型
             const geminiModel = modelName || providerConfig.defaultModel;
             return await this.callGemini(apiKey, messages, temperature, providerConfig, geminiModel);
+        } else if (provider === 'siliconflow') {
+            // 硅基流动使用OpenAI兼容格式，但支持自定义模型
+            const model = modelName || providerConfig.defaultModel;
+            return await this.callSiliconFlow(apiKey, messages, temperature, providerConfig, model);
+        } else if (provider === 'poe') {
+            // Poe 使用OpenAI兼容格式，但支持自定义模型
+            const model = modelName || providerConfig.defaultModel;
+            return await this.callPoe(apiKey, messages, temperature, providerConfig, model);
         } else {
             // OpenAI兼容格式（DeepSeek等）
             return await this.callOpenAIFormat(apiKey, messages, temperature, providerConfig);
@@ -56,6 +80,60 @@ window.API = {
             },
             body: JSON.stringify({
                 model: providerConfig.defaultModel,
+                messages: messages,
+                temperature: temperature
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error?.message || `API调用失败: ${response.status}`);
+        }
+
+        if (data.choices && data.choices[0]) {
+            return data.choices[0].message.content.trim();
+        }
+        throw new Error('API返回格式错误');
+    },
+
+    // 硅基流动API调用（OpenAI兼容格式，支持自定义模型）
+    async callSiliconFlow(apiKey, messages, temperature, providerConfig, modelName) {
+        const model = modelName || providerConfig.defaultModel;
+        const response = await fetch(providerConfig.baseUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: messages,
+                temperature: temperature
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error?.message || `API调用失败: ${response.status}`);
+        }
+
+        if (data.choices && data.choices[0]) {
+            return data.choices[0].message.content.trim();
+        }
+        throw new Error('API返回格式错误');
+    },
+
+    // Poe API调用（OpenAI兼容格式，支持自定义模型）
+    async callPoe(apiKey, messages, temperature, providerConfig, modelName) {
+        const model = modelName || providerConfig.defaultModel;
+        const response = await fetch(providerConfig.baseUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: model,
                 messages: messages,
                 temperature: temperature
             })
