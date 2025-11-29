@@ -18,7 +18,7 @@
                 <h2>项目管理</h2>
                 <div class="project-controls">
                     <div class="input-group">
-                        <button id="new-project-btn" onclick="handleNewProjectClick(event)">新建项目</button>
+                        <button id="new-project-btn">新建项目</button>
                     </div>
                     <div class="current-project" id="current-project" style="display: none;">
                         <p>当前项目: <span id="current-project-name"></span></p>
@@ -45,19 +45,6 @@
             </div>
         </div>
         
-        <!-- 输入对话框模态框 -->
-        <div id="input-dialog-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <h3 id="input-dialog-title">输入</h3>
-                <label id="input-dialog-label" for="input-dialog-input">请输入:</label>
-                <input type="text" id="input-dialog-input" placeholder="请输入..." autofocus>
-                <div class="modal-actions">
-                    <button id="input-dialog-cancel">取消</button>
-                    <button id="input-dialog-ok">确定</button>
-                </div>
-            </div>
-        </div>
-        
         <!-- 统一模块加载 -->
         <script src="modules/electron-api.js"></script>
         <script src="modules/ui-utils.js"></script>
@@ -65,112 +52,26 @@
         <script src="modules/subproject-manager.js"></script>
         
         <script>
-            console.log('脚本开始执行');
-            
-            // 立即检查按钮是否存在（不等待DOMContentLoaded）
-            console.log('立即检查按钮:', document.getElementById('new-project-btn'));
-            
-            // 全局函数：处理新建项目点击（用于onclick属性）
-            window.handleNewProjectClick = async function(e) {
-                if (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                
-                console.log('handleNewProjectClick 被调用（onclick）');
-                console.log('window.electronAPI 存在:', !!window.electronAPI);
-                console.log('window.electronAPI:', window.electronAPI);
-                console.log('window.electronAPI.createProject 存在:', !!(window.electronAPI && window.electronAPI.createProject));
-                
-                if (!window.electronAPI) {
-                    console.error('electronAPI 未定义');
-                    alert('系统初始化失败：electronAPI 未定义，请刷新页面重试');
-                    return;
-                }
-                
-                if (!window.electronAPI.createProject) {
-                    console.error('createProject 方法不存在');
-                    console.log('electronAPI 的所有方法:', Object.keys(window.electronAPI));
-                    alert('创建项目功能不可用：createProject 方法不存在');
-                    return;
-                }
-                
-                console.log('准备调用 showInputDialog 获取项目名称');
-                const projectName = await window.electronAPI.showInputDialog({
-                    title: '新建项目',
-                    message: '请输入项目名称:',
-                    defaultValue: ''
-                });
-                console.log('showInputDialog 返回:', projectName);
-                if (!projectName || !projectName.trim()) {
-                    console.log('用户取消输入项目名称');
-                    return;
-                }
-                const trimmedName = projectName.trim();
-                console.log('项目名称（trim后）:', trimmedName);
-                
-                console.log('准备创建项目:', trimmedName);
-                
-                try {
-                    // 检查项目是否已存在
-                    console.log('检查项目是否存在...');
-                    const result = await window.electronAPI.loadProjectData(trimmedName);
-                    console.log('检查项目是否存在结果:', result);
-                    if (result && result.success && result.data) {
-                        const confirmed = confirm(`项目"${trimmedName}"已存在，是否要打开它？`);
-                        if (confirmed) {
-                            await window.electronAPI.setCurrentProject(trimmedName);
-                            if (window.electronAPI.switchToProjectDetail) {
-                                await window.electronAPI.switchToProjectDetail();
-                            }
-                        }
-                        return;
-                    }
-                    
-                    // 创建新项目
-                    console.log('调用 createProject API...');
-                    const createResult = await window.electronAPI.createProject(trimmedName);
-                    console.log('createProject 返回结果:', createResult);
-                    
-                    if (createResult && createResult.success) {
-                        // 创建成功后直接打开项目，不显示确认框
-                        await window.electronAPI.setCurrentProject(trimmedName);
-                        if (window.electronAPI.switchToProjectDetail) {
-                            await window.electronAPI.switchToProjectDetail();
-                        }
-                    } else {
-                        const errorMsg = createResult?.error || '未知错误';
-                        console.error('创建项目失败:', errorMsg);
-                        alert('创建项目失败: ' + errorMsg);
-                    }
-                } catch (error) {
-                    console.error('创建项目异常:', error);
-                    console.error('错误堆栈:', error.stack);
-                    alert('创建项目失败: ' + (error.message || '未知错误'));
-                }
-            };
-            
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('DOMContentLoaded 事件触发');
                 
                 // DOM元素
                 const newProjectBtn = document.getElementById('new-project-btn');
-                console.log('按钮元素:', newProjectBtn);
-                console.log('按钮类型:', typeof newProjectBtn);
+                const currentProject = document.getElementById('current-project');
+                const currentProjectName = document.getElementById('current-project-name');
                 
                 // 检查按钮是否存在
                 if (!newProjectBtn) {
                     console.error('新建项目按钮未找到！');
                     console.log('当前页面HTML:', document.body.innerHTML.substring(0, 500));
-                    // 尝试用 querySelector
-                    const btnByQuery = document.querySelector('#new-project-btn');
-                    console.log('通过 querySelector 查找:', btnByQuery);
                     return;
                 }
                 
-                console.log('按钮已找到，准备绑定事件');
-                console.log('按钮样式:', window.getComputedStyle(newProjectBtn));
-                console.log('按钮是否可见:', newProjectBtn.offsetWidth > 0 && newProjectBtn.offsetHeight > 0);
+                console.log('新建项目按钮已找到:', newProjectBtn);
+                console.log('electronAPI 是否存在:', !!window.electronAPI);
+                console.log('electronAPI.createProject 是否存在:', !!(window.electronAPI && window.electronAPI.createProject));
+                
+                // 当前项目数据
+                let currentProjectData = null;
                 
                 // 页面加载时自动恢复当前项目和加载项目列表
                 // 注意：initCurrentProject 可能会自动切换页面，所以先加载项目列表
@@ -183,6 +84,7 @@
                 
                 async function initCurrentProject() {
                     if (!window.electronAPI) {
+                        console.warn('electronAPI 未初始化，跳过自动切换');
                         return;
                     }
                     try {
@@ -192,78 +94,56 @@
                             const currentSubprojectId = sessionStorage.getItem('currentSubprojectId');
                             if (currentSubprojectId) {
                                 // 有当前项目和子项目，自动切换到工作流界面
+                                console.log('检测到当前项目和子项目，准备切换到工作流界面');
                                 if (window.electronAPI.switchToWorkflow) {
                                     await window.electronAPI.switchToWorkflow();
                                 }
                             } else {
                                 // 如果没有子项目ID，但有当前项目，切换到项目详情页面
+                                console.log('检测到当前项目但无子项目，准备切换到项目详情页面');
                                 if (window.electronAPI.switchToProjectDetail) {
                                     await window.electronAPI.switchToProjectDetail();
                                 }
                             }
+                        } else {
+                            console.log('没有当前项目，停留在项目列表页面');
                         }
                     } catch (e) {
                         console.error('初始化当前项目失败:', e);
                     }
                 }
+                
 
                 async function askNewProjectName() {
-                    const name = await window.electronAPI.showInputDialog({
-                        title: '新建项目',
-                        message: '请输入项目名称:',
-                        defaultValue: ''
-                    });
+                    const name = prompt('请输入项目名称:');
                     if (!name || !name.trim()) {
                         return null;
                     }
                     return name.trim();
                 }
                 
-                // 新建项目 - 实际处理函数（暴露到全局）
-                window.handleNewProjectClickInternal = async function() {
-                    console.log('handleNewProjectClickInternal 被调用');
-                    console.log('window.electronAPI 存在:', !!window.electronAPI);
-                    console.log('window.electronAPI:', window.electronAPI);
-                    console.log('window.electronAPI.createProject 存在:', !!(window.electronAPI && window.electronAPI.createProject));
-                    console.log('window.require 存在:', !!window.require);
+                // 新建项目
+                newProjectBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     
-                    if (!window.electronAPI) {
-                        console.error('electronAPI 未定义');
-                        alert('系统初始化失败：electronAPI 未定义，请刷新页面重试');
+                    if (!window.electronAPI || !window.electronAPI.createProject) {
+                        showToast('系统初始化失败，请刷新页面重试', 'error');
                         return;
                     }
                     
-                    if (!window.electronAPI.createProject) {
-                        console.error('createProject 方法不存在');
-                        console.log('electronAPI 的所有方法:', Object.keys(window.electronAPI));
-                        alert('创建项目功能不可用：createProject 方法不存在');
+                    const projectName = await askNewProjectName();
+                    if (!projectName) {
                         return;
                     }
-                    
-                    console.log('准备调用 askNewProjectName');
-                    const projectName = await window.electronAPI.showInputDialog({
-                        title: '新建项目',
-                        message: '请输入项目名称:',
-                        defaultValue: ''
-                    });
-                    console.log('showInputDialog 返回:', projectName);
-                    if (!projectName || !projectName.trim()) {
-                        console.log('用户取消输入项目名称');
-                        return;
-                    }
-                    const trimmedName = projectName.trim();
-                    console.log('项目名称（trim后）:', trimmedName);
-                    
-                    console.log('准备创建项目:', trimmedName);
                     
                     try {
                         // 检查项目是否已存在
-                        const result = await window.electronAPI.loadProjectData(trimmedName);
-                        console.log('检查项目是否存在结果:', result);
-                        if (result && result.success && result.data) {
-                            const confirmed = confirm(`项目"${trimmedName}"已存在，是否要打开它？`);
+                        const result = await window.electronAPI.loadProjectData(projectName);
+                        if (result.success && result.data) {
+                            const confirmed = confirm(`项目"${projectName}"已存在，是否要打开它？`);
                             if (confirmed) {
-                                await window.electronAPI.setCurrentProject(trimmedName);
+                                await window.electronAPI.setCurrentProject(projectName);
                                 if (window.electronAPI.switchToProjectDetail) {
                                     await window.electronAPI.switchToProjectDetail();
                                 }
@@ -272,49 +152,36 @@
                         }
                         
                         // 创建新项目
-                        console.log('调用 createProject API...');
-                        const createResult = await window.electronAPI.createProject(trimmedName);
-                        console.log('createProject 返回结果:', createResult);
+                        const createResult = await window.electronAPI.createProject(projectName);
                         
                         if (createResult && createResult.success) {
-                            // 创建成功后直接打开项目，不显示确认框
-                            await window.electronAPI.setCurrentProject(trimmedName);
-                            if (window.electronAPI.switchToProjectDetail) {
-                                await window.electronAPI.switchToProjectDetail();
+                            showToast(`项目"${projectName}"创建成功`);
+                            await loadProjectsList();
+                            
+                            // 询问是否要打开项目
+                            const shouldOpen = confirm(`项目"${projectName}"已创建，是否要打开它？`);
+                            if (shouldOpen) {
+                                await window.electronAPI.setCurrentProject(projectName);
+                                if (window.electronAPI.switchToProjectDetail) {
+                                    await window.electronAPI.switchToProjectDetail();
+                                }
                             }
                         } else {
                             const errorMsg = createResult?.error || '未知错误';
-                            console.error('创建项目失败:', errorMsg);
-                            alert('创建项目失败: ' + errorMsg);
+                            showToast('创建项目失败: ' + errorMsg, 'error');
                         }
                     } catch (error) {
                         console.error('创建项目异常:', error);
-                        console.error('错误堆栈:', error.stack);
-                        alert('创建项目失败: ' + (error.message || '未知错误'));
+                        showToast('创建项目失败: ' + (error.message || '未知错误'), 'error');
                     }
-                };
-                
-                // 新建项目 - 同时绑定 addEventListener（作为备用）
-                console.log('绑定新建项目按钮事件监听器');
-                newProjectBtn.addEventListener('click', async function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('addEventListener click 事件触发');
-                    await window.handleNewProjectClickInternal();
                 });
                 
                 // 加载项目列表
                 async function loadProjectsList() {
-                    if (!window.electronAPI) {
-                        console.error('electronAPI 未定义');
-                        return;
-                    }
+                    if (!window.electronAPI) return;
                     try {
-                        console.log('开始加载项目列表...');
                         const result = await window.electronAPI.listProjects();
-                        console.log('listProjects 返回结果:', result);
-                        if (result && result.success && result.projects) {
-                            // result.projects 是字符串数组（项目名称列表）
+                        if (result.success && result.projects) {
                             displayProjectsList(result.projects);
                         } else {
                             document.getElementById('projects-grid').innerHTML = '<div class="no-projects">暂无项目</div>';
@@ -326,20 +193,22 @@
                 }
                 
                 // 显示项目列表
-                function displayProjectsList(projectNames) {
-                    // projectNames 是字符串数组（项目名称列表）
-                    if (!projectNames || projectNames.length === 0) {
+                function displayProjectsList(projects) {
+                    if (!projects || projects.length === 0) {
                         document.getElementById('projects-grid').innerHTML = '<div class="no-projects">暂无项目，点击"新建项目"创建第一个项目</div>';
                         return;
                     }
                     
                     const projectsGrid = document.getElementById('projects-grid');
-                    projectsGrid.innerHTML = '<div class="loading-projects">正在加载项目详情...</div>';
+                    projectsGrid.innerHTML = projects.map(project => {
+                        // 加载项目数据以获取状态
+                        return loadProjectDataForDisplay(project.name);
+                    }).join('');
                     
                     // 等待所有项目数据加载完成
-                    Promise.all(projectNames.map(async (projectName) => {
-                        const data = await window.electronAPI.loadProjectData(projectName);
-                        return { name: projectName, data: data && data.success ? data.data : null };
+                    Promise.all(projects.map(async project => {
+                        const data = await window.electronAPI.loadProjectData(project.name);
+                        return { name: project.name, data: data.success ? data.data : null };
                     })).then(projectsWithData => {
                         projectsGrid.innerHTML = projectsWithData.map(({ name, data }) => {
                             return createProjectCard(name, data);
@@ -358,7 +227,7 @@
                             });
                         });
                         
-                        // 绑定删除按钮事件
+                        // 绑定删除项目事件
                         document.querySelectorAll('.project-delete-btn').forEach(btn => {
                             btn.addEventListener('click', async function(e) {
                                 e.stopPropagation();
@@ -366,39 +235,46 @@
                                 await deleteProject(projectName);
                             });
                         });
-                    }).catch(error => {
-                        console.error('加载项目详情失败:', error);
-                        projectsGrid.innerHTML = '<div class="error-projects">加载项目详情失败</div>';
                     });
                 }
                 
-                // 辅助函数：加载项目数据并创建卡片（用于显示列表）
+                // 加载项目数据用于显示
                 async function loadProjectDataForDisplay(projectName) {
-                    const result = await window.electronAPI.loadProjectData(projectName);
-                    return createProjectCard(projectName, result.success ? result.data : null);
+                    return '<div class="loading-project">加载中...</div>';
                 }
                 
-                // 创建项目卡片HTML
+                // 创建项目卡片
                 function createProjectCard(projectName, data) {
                     if (!data) {
                         return `
-                            <div class="project-card error-card" data-project-name="${projectName}">
-                                <h3>${escapeHtml(projectName)}</h3>
-                                <p class="status-error">加载失败</p>
-                                <button class="project-delete-btn" data-project-name="${projectName}">删除</button>
+                            <div class="project-card" data-project-name="${projectName}">
+                                <div class="project-card-header">
+                                    <h4 class="project-name">${escapeHtml(projectName)}</h4>
+                                </div>
+                                <div class="project-card-body">
+                                    <p class="project-topic">项目数据加载失败</p>
+                                </div>
+                                <div class="project-card-footer">
+                                    <button class="project-delete-btn" data-project-name="${projectName}" title="删除项目">×</button>
+                                </div>
                             </div>
                         `;
                     }
                     
                     const status = data.status || 'initial';
                     const statusText = {
-                        'initial': '待开始',
-                        'active': '进行中',
+                        'initial': '未开始',
+                        'module1': '进行中',
+                        'module2': '进行中',
+                        'module3': '进行中',
                         'completed': '已完成'
                     }[status] || '未知';
+                    
                     const statusClass = {
                         'initial': 'status-pending',
-                        'active': 'status-progress',
+                        'module1': 'status-progress',
+                        'module2': 'status-progress',
+                        'module3': 'status-progress',
                         'completed': 'status-completed'
                     }[status] || 'status-pending';
                     
@@ -500,3 +376,4 @@
     </div>
 </body>
 </html>
+

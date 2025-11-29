@@ -5,6 +5,10 @@ window.WorkflowStateManager = {
         currentProject: null,
         projectData: {},
         currentNode: null,
+        // 当前子项目相关状态
+        currentSubprojectId: null,  // 当前子项目ID
+        currentSubproject: null,    // 当前子项目对象
+        currentSubprojectType: null, // 当前子项目类型：literatureSearch | reviewWriting
         nodeStates: {
             1: 'pending',
             2: 'pending',
@@ -78,6 +82,10 @@ window.WorkflowStateManager = {
             5: 'pending'
         };
         this.state.projectData = {};
+        // 重置子项目状态
+        this.state.currentSubprojectId = null;
+        this.state.currentSubproject = null;
+        this.state.currentSubprojectType = null;
     }
 };
 

@@ -257,6 +257,57 @@ window.API = {
             }
         }
         return [];
+    },
+    
+    // 烂番薯学术搜索
+    // showWindowOnCaptcha: 如果为false，检测到验证码时不显示窗口，直接返回错误（用于测速等后台操作）
+    async searchLanfanshu(keyword, limit, minYear, showWindowOnCaptcha = true) {
+        const response = await window.electronAPI.searchLanfanshu(keyword, limit, minYear, showWindowOnCaptcha);
+        
+        // 打印原始响应（用于调试）
+        console.log('[API.searchLanfanshu] 原始响应:', response);
+        console.log('[API.searchLanfanshu] 响应类型:', typeof response);
+        console.log('[API.searchLanfanshu] 是否为数组:', Array.isArray(response));
+        if (response && typeof response === 'object') {
+            console.log('[API.searchLanfanshu] 响应键:', Object.keys(response));
+            if (response.results) {
+                console.log('[API.searchLanfanshu] response.results:', response.results);
+                console.log('[API.searchLanfanshu] response.results类型:', typeof response.results);
+                console.log('[API.searchLanfanshu] response.results是否为数组:', Array.isArray(response.results));
+                if (Array.isArray(response.results)) {
+                    console.log('[API.searchLanfanshu] response.results长度:', response.results.length);
+                    if (response.results.length > 0) {
+                        console.log('[API.searchLanfanshu] 第一个结果:', response.results[0]);
+                    }
+                }
+            }
+        }
+        
+        // 处理返回格式
+        if (response && typeof response === 'object') {
+            if (Array.isArray(response)) {
+                console.log('[API.searchLanfanshu] 返回数组格式，长度:', response.length);
+                return response;
+            } else if (response.results && Array.isArray(response.results)) {
+                console.log('[API.searchLanfanshu] 返回response.results，长度:', response.results.length);
+                return response.results;
+            } else if (response.success && response.results) {
+                console.log('[API.searchLanfanshu] 返回response.results (success格式)，长度:', Array.isArray(response.results) ? response.results.length : '不是数组');
+                return response.results;
+            }
+        }
+        console.warn('[API.searchLanfanshu] 无法解析响应格式，返回空数组');
+        return [];
+    },
+    
+    // 通用文献搜索（根据来源选择）
+    async searchLiterature(keyword, limit, minYear, source = 'google-scholar') {
+        if (source === 'lanfanshu') {
+            return await this.searchLanfanshu(keyword, limit, minYear);
+        } else {
+            // 默认使用Google Scholar
+            return await this.searchGoogleScholar(keyword, limit, minYear);
+        }
     }
 };
 

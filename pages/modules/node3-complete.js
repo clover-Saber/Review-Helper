@@ -16,6 +16,52 @@ window.Node3Complete = {
         return !endsWithTruncation && (endsWithSentence || hasSentence) && endsProperly;
     },
 
+    // 检查文献信息是否完整的辅助函数
+    isLiteratureComplete(lit) {
+        // 检查作者
+        let hasAuthors = false;
+        if (lit.authors) {
+            if (Array.isArray(lit.authors) && lit.authors.length > 0) {
+                hasAuthors = true;
+            } else if (typeof lit.authors === 'string') {
+                const authorsStr = lit.authors.trim();
+                // 如果包含" - "，说明可能包含年份和来源，需要清理后检查
+                const dashIndex = authorsStr.indexOf(' - ');
+                if (dashIndex > 0) {
+                    hasAuthors = authorsStr.substring(0, dashIndex).trim().length > 0;
+                } else {
+                    hasAuthors = authorsStr.length > 0;
+                }
+            }
+        }
+        
+        // 检查年份
+        let hasYear = false;
+        if (lit.year) {
+            if (typeof lit.year === 'number' && lit.year > 1900 && lit.year < 2100) {
+                hasYear = true;
+            } else if (typeof lit.year === 'string') {
+                const yearStr = lit.year.trim();
+                const yearNum = parseInt(yearStr, 10);
+                if (!isNaN(yearNum) && yearNum > 1900 && yearNum < 2100) {
+                    hasYear = true;
+                }
+            }
+        }
+        
+        // 检查期刊
+        const hasJournal = lit.journal && typeof lit.journal === 'string' && lit.journal.trim().length > 0;
+        
+        // 检查引用（cited字段，可选）
+        // 引用信息不是必需的，所以不检查
+        
+        // 检查摘要
+        const hasAbstract = this.isAbstractComplete(lit.abstract);
+        
+        // 所有必需字段都完整才算完整
+        return hasAuthors && hasYear && hasJournal && hasAbstract;
+    },
+
     // 计算标题相似度的辅助函数
     calculateTitleSimilarity(title1, title2) {
         if (!title1 || !title2) {
@@ -54,8 +100,8 @@ window.Node3Complete = {
         return 0;
     },
 
-    // 自动执行文献补全（使用谷歌学术逐个搜索）
-    async execute(apiKey, allLiterature, onProgress) {
+    // 自动执行文献补全（使用谷歌学术或烂番薯学术逐个搜索）
+    async execute(apiKey, allLiterature, onProgress, literatureSource = 'google-scholar') {
         const total = allLiterature.length;
         let completed = 0;
         let successCount = 0;
@@ -84,16 +130,9 @@ window.Node3Complete = {
             // 标记为处理中
             lit.completionStatus = 'processing';
             
-            // 检查是否需要补全（使用更严格的标准）
-            // 摘要必须>=150字符且完整（不以省略号结尾，包含句子等）
-            const hasAbstract = lit.abstract && typeof lit.abstract === 'string' && lit.abstract.trim();
-            const hasJournal = lit.journal && typeof lit.journal === 'string' && lit.journal.trim();
-            
-            // 检查摘要是否完整（使用辅助函数）
-            const abstractComplete = this.isAbstractComplete(lit.abstract);
-            
-            // 如果摘要完整且期刊已完整，标记为已完成并跳过
-            if (abstractComplete && hasJournal) {
+            // 第一步：检查信息完整性（作者、年份、期刊、引用、摘要）
+            const isComplete = this.isLiteratureComplete(lit);
+            if (isComplete) {
                 lit.completionStatus = 'completed';
                 completed++;
                 successCount++;
@@ -102,6 +141,20 @@ window.Node3Complete = {
                 }
                 continue;
             }
+            
+            // 记录需要补全的字段
+            const needsAuthors = !lit.authors || (typeof lit.authors === 'string' && lit.authors.trim().length === 0) || 
+                                 (Array.isArray(lit.authors) && lit.authors.length === 0);
+            const needsYear = !lit.year || (typeof lit.year === 'string' && parseInt(lit.year.trim(), 10) < 1900);
+            const needsJournal = !lit.journal || typeof lit.journal !== 'string' || lit.journal.trim().length === 0;
+            const needsAbstract = !this.isAbstractComplete(lit.abstract);
+            
+            console.log(`[节点3补全] 文献 "${lit.title}" 需要补全的字段:`, {
+                authors: needsAuthors,
+                year: needsYear,
+                journal: needsJournal,
+                abstract: needsAbstract
+            });
 
             try {
                 // 使用文献标题在谷歌学术中搜索
@@ -121,11 +174,30 @@ window.Node3Complete = {
                     onProgress(i + 1, total, lit.title, '正在搜索谷歌学术...');
                 }
 
+                // 再次检查停止标志（在API调用前）
+                if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                    console.log('[节点3补全] 检测到停止信号，中断补全');
+                    break;
+                }
+                
                 // 使用标题进行单篇精准搜索（限制返回1个结果，精确匹配）
                 // 使用引号包裹标题，进行精确匹配搜索
                 const exactSearchTitle = `"${searchTitle}"`;
                 console.log(`[节点3补全] 正在单篇精准搜索文献: "${exactSearchTitle}"`);
-                const searchResults = await window.API.searchGoogleScholar(exactSearchTitle, 1, null);
+                // 根据文献来源选择搜索API（直接调用对应的独立函数）
+                let searchResults = [];
+                if (literatureSource === 'lanfanshu') {
+                    searchResults = await window.API.searchLanfanshu(exactSearchTitle, 1, null);
+                } else {
+                    // 默认使用Google Scholar
+                    searchResults = await window.API.searchGoogleScholar(exactSearchTitle, 1, null);
+                }
+                
+                // API调用后再次检查停止标志
+                if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                    console.log('[节点3补全] 检测到停止信号，中断补全');
+                    break;
+                }
                 
                 if (!searchResults || searchResults.length === 0) {
                     // 没有找到结果
@@ -179,35 +251,6 @@ window.Node3Complete = {
                     const matchAbstractComplete = this.isAbstractComplete(matchAbstract);
                     
                     console.log(`[节点3补全] 搜索结果中的摘要: ${matchAbstract || '(无)'} (长度: ${matchAbstract.length}, 完整: ${matchAbstractComplete ? 'YES' : 'NO'})`);
-                    
-                    // 如果搜索结果中没有完整摘要，尝试访问详情页获取完整摘要
-                    if ((!matchAbstract || !matchAbstractComplete) && bestMatch.url) {
-                        try {
-                            if (onProgress) {
-                                onProgress(i + 1, total, lit.title, '正在访问详情页获取完整摘要...');
-                            }
-                            
-                            console.log(`[节点3补全] 摘要太短，尝试从详情页获取: ${bestMatch.url}`);
-                            
-                            // 调用主进程的摘要提取功能
-                            if (window.electronAPI && window.electronAPI.extractAbstractFromUrl) {
-                                const abstractResult = await window.electronAPI.extractAbstractFromUrl(bestMatch.url);
-                                if (abstractResult && abstractResult.success && abstractResult.abstract) {
-                                    const fullAbstract = abstractResult.abstract.trim();
-                                    console.log(`[节点3补全] 从详情页获取到完整摘要，长度: ${fullAbstract.length}`);
-                                    console.log(`[节点3补全] 完整摘要内容: ${fullAbstract}`);
-                                    if (fullAbstract.length > matchAbstract.length) {
-                                        matchAbstract = fullAbstract;
-                                    }
-                                } else {
-                                    console.log(`[节点3补全] ⚠ 从详情页获取摘要失败:`, abstractResult);
-                                }
-                            }
-                        } catch (abstractError) {
-                            console.warn(`[节点3补全] 访问详情页获取摘要失败: ${abstractError.message}`);
-                            // 继续使用搜索结果中的摘要（如果有）
-                        }
-                    }
                     
                     // 补全摘要（覆盖原文献的缺失或不完整的摘要）
                     // 如果当前摘要不完整，或者搜索到的摘要更完整，则使用搜索结果的摘要
@@ -350,40 +393,35 @@ window.Node3Complete = {
                         }
                     }
                     
-                    // 判断是否成功补全（必须要有完整摘要才算成功）
-                    if (hasUpdate) {
-                        // 检查最终状态：必须要有完整摘要才算成功（使用辅助函数）
-                        const finalAbstractComplete = this.isAbstractComplete(lit.abstract);
-                        const finalAbstract = lit.abstract ? lit.abstract.trim() : '';
-                        
-                        if (finalAbstractComplete) {
-                            // 只有补全了完整摘要才算成功
-                            lit.completionStatus = 'completed';
-                            successCount++;
-                            completed++;
-                            const updatedFields = [];
-                            if (finalAbstractComplete && !currentAbstractComplete) updatedFields.push('摘要');
-                            if (lit.journal && !currentJournal) updatedFields.push('期刊');
-                            const fieldsText = updatedFields.length > 0 ? `（已补全: ${updatedFields.join('、')}）` : '';
-                            if (onProgress) {
-                                onProgress(i + 1, total, lit.title, `补全成功${fieldsText}（匹配度: ${Math.round(bestScore)}%）`);
-                            }
-                        } else {
-                            // 补全了摘要但不完整，标记为失败
-                            lit.completionStatus = 'failed';
-                            failCount++;
-                            completed++;
-                            if (onProgress) {
-                                onProgress(i + 1, total, lit.title, `补全失败：摘要不完整（长度: ${finalAbstract.length}, 匹配度: ${Math.round(bestScore)}%）`);
-                            }
+                    // 判断是否成功补全（所有必需字段都完整才算成功）
+                    const finalComplete = this.isLiteratureComplete(lit);
+                    if (finalComplete) {
+                        lit.completionStatus = 'completed';
+                        successCount++;
+                        completed++;
+                        const updatedFields = [];
+                        if (hasUpdate) {
+                            if (lit.authors && needsAuthors) updatedFields.push('作者');
+                            if (lit.year && needsYear) updatedFields.push('年份');
+                            if (lit.journal && needsJournal) updatedFields.push('期刊');
+                            if (this.isAbstractComplete(lit.abstract) && needsAbstract) updatedFields.push('摘要');
+                        }
+                        const fieldsText = updatedFields.length > 0 ? `（已补全: ${updatedFields.join('、')}）` : '';
+                        if (onProgress) {
+                            onProgress(i + 1, total, lit.title, `补全成功${fieldsText}`);
                         }
                     } else {
-                        // 没有更新任何信息
+                        // 未完全补全
                         lit.completionStatus = 'failed';
                         failCount++;
                         completed++;
+                        const missingFields = [];
+                        if (!lit.authors || (typeof lit.authors === 'string' && lit.authors.trim().length === 0)) missingFields.push('作者');
+                        if (!lit.year) missingFields.push('年份');
+                        if (!lit.journal || typeof lit.journal !== 'string' || lit.journal.trim().length === 0) missingFields.push('期刊');
+                        if (!this.isAbstractComplete(lit.abstract)) missingFields.push('摘要');
                         if (onProgress) {
-                            onProgress(i + 1, total, lit.title, '未找到可补全的信息');
+                            onProgress(i + 1, total, lit.title, `补全失败：缺少 ${missingFields.join('、')}`);
                         }
                     }
                 } else {

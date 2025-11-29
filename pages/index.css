@@ -2,6 +2,295 @@
 
 @import url('common.css');
 
+/* 项目详情页面样式 */
+.project-detail-section {
+    padding: var(--spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 项目配置信息样式 */
+.project-config-section {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.config-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.config-header h3 {
+    font-size: var(--font-size-xl);
+    color: var(--text-color);
+    margin: 0;
+}
+
+.btn-edit, .btn-save, .btn-cancel {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+}
+
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    margin-right: var(--spacing-sm);
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-cancel {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.btn-cancel:hover {
+    background: #dee2e6;
+}
+
+.config-item {
+    display: flex;
+    margin-bottom: var(--spacing-md);
+    align-items: flex-start;
+}
+
+.config-item label {
+    font-weight: 600;
+    color: var(--text-color);
+    min-width: 120px;
+    margin-right: var(--spacing-md);
+}
+
+.config-value {
+    flex: 1;
+    color: var(--text-muted);
+    word-break: break-word;
+}
+
+.config-value.outline-value {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    padding: var(--spacing-md);
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+}
+
+.config-input {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    resize: vertical;
+}
+
+.config-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border: 1px solid var(--border-color);
+}
+
+.project-detail-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.btn-back {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background: var(--secondary-dark);
+    transform: translateX(-2px);
+}
+
+.project-detail-header h2 {
+    font-size: var(--font-size-2xl);
+    color: var(--text-color);
+    margin: 0;
+}
+
+.subprojects-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+}
+
+.subprojects-type-section {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.subprojects-type-title {
+    font-size: var(--font-size-xl);
+    color: var(--text-color);
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.subprojects-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.subproject-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.subproject-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.subproject-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    flex: 1;
+}
+
+.subproject-main-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.subproject-name {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.subproject-details {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+}
+
+.subproject-detail-item {
+    padding: 2px 8px;
+    background: var(--bg-light);
+    border-radius: 4px;
+    color: var(--text-muted);
+}
+
+.subproject-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.subproject-open-btn,
+.subproject-delete-btn {
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    transition: all 0.2s ease;
+}
+
+.subproject-open-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.subproject-open-btn:hover {
+    background: var(--primary-dark);
+}
+
+.subproject-delete-btn {
+    background: #ef4444;
+    color: white;
+    display: inline-block;
+    visibility: visible;
+    opacity: 1;
+}
+
+.subproject-delete-btn:hover {
+    background: #dc2626;
+}
+
+.subproject-create-btn {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    margin-top: var(--spacing-md);
+}
+
+.subproject-create-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.empty-subprojects {
+    padding: var(--spacing-xl);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--font-size-base);
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+    border: 2px dashed var(--border-color);
+}
+
 header {
     text-align: center;
     margin-bottom: var(--spacing-2xl);
@@ -801,7 +1090,7 @@ header p {
 /* Toast通知样式 */
 .toast {
     position: fixed;
-    top: 20px;
+    bottom: 20px;
     right: 20px;
     background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
     color: white;
@@ -811,8 +1100,16 @@ header p {
     z-index: 10000;
     min-width: 250px;
     max-width: 400px;
-    animation: toastSlideIn 0.3s ease-out, toastSlideOut 0.3s ease-in 2.7s forwards;
     opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
 }
 
 .toast-content {
@@ -825,6 +1122,141 @@ header p {
     font-size: var(--font-size-base);
     font-weight: 500;
     line-height: 1.5;
+}
+
+/* 项目配置新增样式 */
+.config-section-divider {
+    margin: var(--spacing-xl) 0;
+    border-top: 2px solid var(--border-color);
+}
+
+.config-subsection {
+    margin-top: var(--spacing-lg);
+}
+
+.config-subsection h4 {
+    font-size: var(--font-size-lg);
+    color: var(--text-color);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.status-verified {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.status-unverified {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.btn-verify {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-verify:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.api-keys-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.api-key-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.api-key-label-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.api-key-item label {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: var(--font-size-base);
+    margin: 0;
+}
+
+.api-docs-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.api-docs-link:hover {
+    color: #2563eb;
+    transform: translateX(2px);
+}
+
+.api-key-input-wrapper {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.api-key-input {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-base);
+    font-family: 'Courier New', monospace;
+}
+
+.api-key-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-save-key {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-save-key:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 @keyframes toastSlideIn {

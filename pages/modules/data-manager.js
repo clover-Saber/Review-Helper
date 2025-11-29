@@ -61,6 +61,11 @@ window.DataManager = {
             delete merged.keywords;
         }
         
+        // 移除 subprojects 字段（子项目数据现在保存在独立文件中）
+        if (merged.subprojects !== undefined) {
+            delete merged.subprojects;
+        }
+        
         return await window.electronAPI.saveProjectData(projectName, merged);
     },
 

@@ -240,7 +240,19 @@ ${qualityAssessment}
 
 如果相关，请给出综合推荐理由；如果不相关，请简要说明原因。`;
 
+                // 在API调用前再次检查停止标志
+                if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                    console.log('[节点4筛选] 检测到停止信号，中断筛选');
+                    break;
+                }
+                
                 const answer = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.3, modelName);
+                
+                // API调用后再次检查停止标志
+                if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                    console.log('[节点4筛选] 检测到停止信号，中断筛选');
+                    break;
+                }
                 
                 // 尝试解析JSON
                 let isRelevant = false;

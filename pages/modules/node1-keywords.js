@@ -1,7 +1,7 @@
 // 节点1：关键词分析模块
 window.Node1Keywords = {
     // 自动执行关键词分析
-    async execute(apiKey, requirementData, apiProvider = 'deepseek', modelName = null) {
+    async execute(apiKey, requirementData, apiProvider = 'deepseek', modelName = null, config = {}) {
         console.log('[Node1Keywords.execute] ========== STARTING EXECUTE ==========');
         console.log('[Node1Keywords.execute] Parameters:', {
             hasApiKey: !!apiKey,
@@ -9,36 +9,71 @@ window.Node1Keywords = {
             hasRequirementData: !!requirementData,
             requirement: requirementData ? requirementData.requirement : 'N/A',
             targetCount: requirementData ? requirementData.targetCount : 'N/A',
-            outline: requirementData ? requirementData.outline : 'N/A'
+            language: requirementData ? requirementData.language : 'N/A',
+            config: config
         });
         
-        const targetCount = requirementData.targetCount;
-        console.log('[Node1Keywords.execute] Target count:', targetCount);
+        const targetCount = requirementData.targetCount || 50;
+        const language = requirementData.language || 'zh';
+        const yearLimit = config.yearLimit || { recentYears: 5, percentage: 60 };
+        const literatureSource = config.literatureSource || 'google-scholar';
         
-        const prompt = `根据以下文献综述大纲和文献数量要求，提取用于搜索文献的关键词，并为每个关键词分配文献查询数量。
+        console.log('[Node1Keywords.execute] Config:', {
+            targetCount,
+            language,
+            yearLimit,
+            literatureSource
+        });
+        
+        // 根据语言确定关键词语言
+        const keywordLanguage = language === 'en' ? '英文' : '中文';
+        const keywordLanguageInstruction = language === 'en' 
+            ? '所有关键词必须是英文的专业术语或短语，适合在Google Scholar中搜索'
+            : '所有关键词必须是中文的专业术语或短语，适合在Google Scholar中搜索中文文献';
+        
+        // 构建年份限制说明
+        const yearLimitText = yearLimit.recentYears && yearLimit.percentage 
+            ? `\n年份限制：搜索结果中${yearLimit.percentage}%的文献应该是最近${yearLimit.recentYears}年发表的`
+            : '';
+        
+        const prompt = `你是一个专业的文献检索助手。请根据用户的文献查找需求，生成用于搜索文献的关键词列表。
 
-大纲：
-${requirementData.outline}
+用户需求描述：
+${requirementData.requirement || '未提供'}
 
-目标文献数量：${targetCount}篇
+查找配置：
+- 目标文献数量：${targetCount}篇
+- 文献语言：${language === 'en' ? '英文' : '中文'}
+- 文献来源库：${literatureSource === 'google-scholar' ? 'Google Scholar（谷歌学术）' : literatureSource}${yearLimitText}
 
 要求：
-1. 根据大纲中的章节和主题，提取关键词。每个关键词必须是英文的专业术语或短语，适合在Google Scholar中搜索
+1. 根据用户需求描述，提取关键词。${keywordLanguageInstruction}
 2. 为每个关键词分配文献查询数量，所有关键词的查询数量总和必须等于${targetCount}篇
 3. 根据关键词的重要性和覆盖面合理分配数量
-4. 关键词应该覆盖大纲中的各个主要研究方向
-5. 所有关键词必须是英文，不要使用中文
+4. 关键词应该覆盖需求描述中的各个主要研究方向
+5. 每个关键词都应该一个比较具体的专业短语，而不是多个短语
+6. 如果配置了年份限制，需要考虑时间因素，为每个关键词设置合适的时间限制（minYear字段）
 
 请以JSON格式返回结果：
 {
   "keywords": [
-    {"keyword": "关键词1", "count": 10},
-    {"keyword": "关键词2", "count": 15}
+    {
+      "keyword": "关键词1",
+      "count": 10,
+      "minYear": 2020
+    },
+    {
+      "keyword": "关键词2",
+      "count": 15,
+      "minYear": 2019
+    }
   ]
 }
 
 注意：
 - 所有count的总和必须等于${targetCount}
+- 如果配置了年份限制（近${yearLimit.recentYears}年占${yearLimit.percentage}%），则大部分关键词的minYear应该设置为最近${yearLimit.recentYears}年内的年份
+- minYear字段表示该关键词搜索时的最小年份限制（可选，如果不设置则使用全局年份限制）
 - 只返回JSON，不要添加任何其他文字说明`;
 
         console.log('[Node1Keywords.execute] Calling API.callAPI...');
@@ -66,8 +101,21 @@ ${requirementData.outline}
         // 验证和调整数量
         console.log('[Node1Keywords.execute] Validating and adjusting counts...');
         if (result.keywords && Array.isArray(result.keywords)) {
+            // 确保每个关键词都有必要的字段
+            result.keywords = result.keywords.map(item => {
+                if (!item.keyword || item.keyword.trim().length === 0) {
+                    return null; // 过滤掉无效的关键词
+                }
+                return {
+                    keyword: item.keyword.trim(),
+                    count: item.count || 0,
+                    minYear: item.minYear || null // 时间限制（可选）
+                };
+            }).filter(item => item !== null);
+            
+            // 调整数量以确保总和等于目标数量
             const totalCount = result.keywords.reduce((sum, item) => sum + (item.count || 0), 0);
-            if (Math.abs(totalCount - targetCount) > 2) {
+            if (totalCount > 0 && Math.abs(totalCount - targetCount) > 2) {
                 const ratio = targetCount / totalCount;
                 result.keywords.forEach(item => {
                     item.count = Math.round(item.count * ratio);
@@ -78,6 +126,24 @@ ${requirementData.outline}
                     result.keywords[0].count += diff;
                 }
             }
+            
+            // 如果没有设置minYear，根据年份限制配置设置默认值
+            if (yearLimit && yearLimit.recentYears && yearLimit.percentage) {
+                const currentYear = new Date().getFullYear();
+                const recentYearThreshold = currentYear - yearLimit.recentYears;
+                const recentCount = Math.ceil(result.keywords.length * yearLimit.percentage / 100);
+                
+                result.keywords.forEach((item, index) => {
+                    if (!item.minYear) {
+                        // 前recentCount个关键词设置为最近N年，其他的不设置时间限制
+                        if (index < recentCount) {
+                            item.minYear = recentYearThreshold;
+                        }
+                    }
+                });
+            }
+            
+            console.log('[Node1Keywords.execute] Final keywords:', result.keywords);
             return result.keywords;
         }
         
@@ -146,28 +212,40 @@ ${requirementData.outline}
             return;
         }
         
-        console.log('[Node1Keywords.displayReadOnly] Building HTML table...');
-        // 直接显示完整表格，不设置展开/隐藏
-        let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
-        html += '<thead><tr style="background: #f0f0f0;">';
-        html += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd;">关键词</th>';
-        html += '<th style="padding: 10px; text-align: center; border: 1px solid #ddd;">查询数量</th>';
-        html += '</tr></thead>';
-        html += '<tbody>';
+        console.log('[Node1Keywords.displayReadOnly] Building HTML...');
+        // 使用卡片式布局，每个关键词独占一行
+        let html = '<div style="margin-top: 10px;">';
         
-        keywordsPlan.forEach((item) => {
-            html += `<tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 10px; border: 1px solid #ddd;">${this.escapeHtml(item.keyword || '')}</td>
-                <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">${item.count || 0}篇</td>
-            </tr>`;
+        keywordsPlan.forEach((item, index) => {
+            const minYearText = item.minYear ? `${item.minYear}年及以后` : '无限制';
+            html += `<div style="margin-bottom: 16px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="margin-bottom: 12px;">
+                    <div style="font-size: 16px; font-weight: 600; color: #1f2937; line-height: 1.6; word-break: break-word;">
+                        <span style="display: inline-block; padding: 6px 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px; margin-right: 8px;">${index + 1}</span>
+                        <span style="color: #1f2937;">${this.escapeHtml(item.keyword || '')}</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 24px; align-items: center; font-size: 14px; color: #6b7280;">
+                    <div>
+                        <span style="color: #9ca3af; margin-right: 6px;">查询数量:</span>
+                        <span style="color: #1f2937; font-weight: 500;">${item.count || 0}篇</span>
+                    </div>
+                    <div>
+                        <span style="color: #9ca3af; margin-right: 6px;">时间限制:</span>
+                        <span style="color: #1f2937; font-weight: 500;">${minYearText}</span>
+                    </div>
+                </div>
+            </div>`;
         });
         
         const totalCount = keywordsPlan.reduce((sum, item) => sum + (item.count || 0), 0);
-        html += `<tr style="background: #f8f9fa; font-weight: bold;">
-            <td style="padding: 10px; border: 1px solid #ddd;">总计</td>
-            <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">${totalCount}篇</td>
-        </tr>`;
-        html += '</tbody></table>';
+        html += `<div style="margin-top: 16px; padding: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e5e7eb;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 15px;">
+                <span style="font-weight: 600; color: #1f2937;">总计</span>
+                <span style="font-weight: 600; color: #1f2937;">${totalCount}篇</span>
+            </div>
+        </div>`;
+        html += '</div>';
         
         // 摘要信息
         html += '<div id="keywords-summary" style="padding: 10px; background: #f8f9fa; border-radius: 4px; margin-top: 10px;">';
@@ -209,49 +287,78 @@ ${requirementData.outline}
         html += '<button id="save-keywords-btn" class="btn btn-success" style="margin-right: 10px;">保存修改</button>';
         html += '</div>';
         
-        html += '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
-        html += '<thead><tr style="background: #f0f0f0;">';
-        html += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd;">关键词</th>';
-        html += '<th style="padding: 10px; text-align: center; border: 1px solid #ddd; width: 150px;">查询数量</th>';
-        html += '<th style="padding: 10px; text-align: center; border: 1px solid #ddd; width: 80px;">操作</th>';
-        html += '</tr></thead>';
-        html += '<tbody id="keywords-table-body">';
+        // 使用卡片式布局，每个关键词独占一行
+        html += '<div style="margin-top: 10px;">';
+        html += '<div id="keywords-table-body">';
         
         keywordsPlan.forEach((item, index) => {
-            html += `<tr data-index="${index}" style="border-bottom: 1px solid #eee;">
-                <td style="padding: 10px; border: 1px solid #ddd;">
+            const currentYear = new Date().getFullYear();
+            html += `<div data-index="${index}" style="margin-bottom: 16px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <div style="margin-bottom: 12px;">
                     <input type="text" class="keyword-input" value="${this.escapeHtml(item.keyword || '')}" 
-                           style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;" 
-                           data-index="${index}">
-                </td>
-                <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">
-                    <input type="number" class="count-input" value="${item.count || 0}" min="1" 
-                           style="width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center;" 
-                           data-index="${index}">
-                    <span>篇</span>
-                </td>
-                <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">
-                    <button class="delete-keyword-btn" data-index="${index}" 
-                            style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">删除</button>
-                </td>
-            </tr>`;
+                           style="width: 100%; padding: 10px 14px; border: 2px solid #3b82f6; border-radius: 6px; font-size: 16px; font-weight: 500; color: #1f2937; background: #ffffff; transition: all 0.2s; box-sizing: border-box;" 
+                           data-index="${index}"
+                           placeholder="请输入关键词">
+                </div>
+                <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">查询数量:</label>
+                        <input type="number" class="count-input" value="${item.count || 0}" min="1" 
+                               style="width: 80px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 4px; text-align: center; font-size: 14px;" 
+                               data-index="${index}">
+                        <span style="font-size: 14px; color: #4b5563;">篇</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">时间限制:</label>
+                        <input type="number" class="minyear-input" value="${item.minYear || ''}" min="1900" max="${currentYear}" 
+                               placeholder="可选" 
+                               style="width: 100px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 4px; text-align: center; font-size: 14px;" 
+                               data-index="${index}">
+                        <span style="font-size: 13px; color: #6b7280;">年及以后</span>
+                    </div>
+                    <div style="margin-left: auto;">
+                        <button class="delete-keyword-btn" data-index="${index}" 
+                                style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: background 0.2s;"
+                                onmouseover="this.style.background='#dc2626'"
+                                onmouseout="this.style.background='#ef4444'">删除</button>
+                    </div>
+                </div>
+            </div>`;
         });
         
-        html += '</tbody>';
+        html += '</div>';
         
         // 总计行
         const totalCount = keywordsPlan.reduce((sum, item) => sum + (item.count || 0), 0);
-        html += `<tfoot><tr style="background: #f8f9fa; font-weight: bold;">
-            <td style="padding: 10px; border: 1px solid #ddd;">总计</td>
-            <td style="padding: 10px; text-align: center; border: 1px solid #ddd;" id="keywords-total">${totalCount}篇</td>
-            <td style="padding: 10px; border: 1px solid #ddd;"></td>
-        </tfoot>`;
-        html += '</table>';
+        html += `<div style="margin-top: 16px; padding: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e5e7eb;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 15px;">
+                <span style="font-weight: 600; color: #1f2937;">总计</span>
+                <span style="font-weight: 600; color: #1f2937;" id="keywords-total">${totalCount}篇</span>
+            </div>
+        </div>`;
+        html += '</div>';
         
         container.innerHTML = html;
         
         // 绑定事件
         this.bindEditEvents(keywordsPlan);
+        
+        // 添加输入框聚焦样式
+        setTimeout(() => {
+            const keywordInputs = document.querySelectorAll('.keyword-input');
+            keywordInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = '#2563eb';
+                    this.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                    this.style.background = '#f8fafc';
+                });
+                input.addEventListener('blur', function() {
+                    this.style.borderColor = '#3b82f6';
+                    this.style.boxShadow = 'none';
+                    this.style.background = '#ffffff';
+                });
+            });
+        }, 100);
     },
 
     // 绑定编辑事件
@@ -260,45 +367,75 @@ ${requirementData.outline}
         const addBtn = document.getElementById('add-keyword-btn');
         if (addBtn) {
             addBtn.addEventListener('click', () => {
-                const tbody = document.getElementById('keywords-table-body');
-                if (!tbody) return;
+                const container = document.getElementById('keywords-table-body');
+                if (!container) return;
                 
-                const newIndex = tbody.children.length;
-                const newRow = document.createElement('tr');
-                newRow.setAttribute('data-index', newIndex);
-                newRow.style.borderBottom = '1px solid #eee';
-                newRow.innerHTML = `
-                    <td style="padding: 10px; border: 1px solid #ddd;">
+                const newIndex = container.children.length;
+                const newCard = document.createElement('div');
+                newCard.setAttribute('data-index', newIndex);
+                const currentYear = new Date().getFullYear();
+                newCard.style.cssText = 'margin-bottom: 16px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
+                newCard.innerHTML = `
+                    <div style="margin-bottom: 12px;">
                         <input type="text" class="keyword-input" value="" 
-                               style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;" 
-                               data-index="${newIndex}">
-                    </td>
-                    <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">
-                        <input type="number" class="count-input" value="5" min="1" 
-                               style="width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center;" 
-                               data-index="${newIndex}">
-                        <span>篇</span>
-                    </td>
-                    <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">
-                        <button class="delete-keyword-btn" data-index="${newIndex}" 
-                                style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">删除</button>
-                    </td>
+                               style="width: 100%; padding: 10px 14px; border: 2px solid #3b82f6; border-radius: 6px; font-size: 16px; font-weight: 500; color: #1f2937; background: #ffffff; transition: all 0.2s; box-sizing: border-box;" 
+                               data-index="${newIndex}"
+                               placeholder="请输入关键词">
+                    </div>
+                    <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">查询数量:</label>
+                            <input type="number" class="count-input" value="5" min="1" 
+                                   style="width: 80px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 4px; text-align: center; font-size: 14px;" 
+                                   data-index="${newIndex}">
+                            <span style="font-size: 14px; color: #4b5563;">篇</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">时间限制:</label>
+                            <input type="number" class="minyear-input" value="" min="1900" max="${currentYear}" 
+                                   placeholder="可选" 
+                                   style="width: 100px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 4px; text-align: center; font-size: 14px;" 
+                                   data-index="${newIndex}">
+                            <span style="font-size: 13px; color: #6b7280;">年及以后</span>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <button class="delete-keyword-btn" data-index="${newIndex}" 
+                                    style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: background 0.2s;"
+                                    onmouseover="this.style.background='#dc2626'"
+                                    onmouseout="this.style.background='#ef4444'">删除</button>
+                        </div>
+                    </div>
                 `;
-                tbody.appendChild(newRow);
+                container.appendChild(newCard);
                 
                 // 重新绑定删除按钮事件
-                const deleteBtn = newRow.querySelector('.delete-keyword-btn');
+                const deleteBtn = newCard.querySelector('.delete-keyword-btn');
                 if (deleteBtn) {
                     deleteBtn.addEventListener('click', () => {
-                        newRow.remove();
+                        newCard.remove();
                         this.updateTotal();
                     });
                 }
                 
                 // 重新绑定输入框事件
-                const countInput = newRow.querySelector('.count-input');
+                const countInput = newCard.querySelector('.count-input');
                 if (countInput) {
                     countInput.addEventListener('input', () => this.updateTotal());
+                }
+                
+                // 绑定关键词输入框聚焦样式
+                const keywordInput = newCard.querySelector('.keyword-input');
+                if (keywordInput) {
+                    keywordInput.addEventListener('focus', function() {
+                        this.style.borderColor = '#2563eb';
+                        this.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                        this.style.background = '#f8fafc';
+                    });
+                    keywordInput.addEventListener('blur', function() {
+                        this.style.borderColor = '#3b82f6';
+                        this.style.boxShadow = 'none';
+                        this.style.background = '#ffffff';
+                    });
                 }
             });
         }
@@ -307,9 +444,9 @@ ${requirementData.outline}
         document.querySelectorAll('.delete-keyword-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const index = e.target.getAttribute('data-index');
-                const row = document.querySelector(`tr[data-index="${index}"]`);
-                if (row) {
-                    row.remove();
+                const card = document.querySelector(`div[data-index="${index}"]`);
+                if (card) {
+                    card.remove();
                     this.updateTotal();
                 }
             });
@@ -347,18 +484,24 @@ ${requirementData.outline}
     // 保存关键词
     saveKeywords() {
         const keywordsPlan = [];
-        const rows = document.querySelectorAll('#keywords-table-body tr');
+        const cards = document.querySelectorAll('#keywords-table-body > div[data-index]');
         
-        rows.forEach(row => {
-            const keywordInput = row.querySelector('.keyword-input');
-            const countInput = row.querySelector('.count-input');
+        cards.forEach(card => {
+            const keywordInput = card.querySelector('.keyword-input');
+            const countInput = card.querySelector('.count-input');
+            const minYearInput = card.querySelector('.minyear-input');
             
             if (keywordInput && countInput) {
                 const keyword = keywordInput.value.trim();
                 const count = parseInt(countInput.value) || 0;
+                const minYear = minYearInput ? (minYearInput.value.trim() ? parseInt(minYearInput.value) : null) : null;
                 
                 if (keyword && count > 0) {
-                    keywordsPlan.push({ keyword, count });
+                    keywordsPlan.push({ 
+                        keyword, 
+                        count,
+                        minYear: minYear || null
+                    });
                 }
             }
         });

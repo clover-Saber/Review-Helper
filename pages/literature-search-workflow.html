@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Review Helper - 文献综述工作流</title>
+    <title>Review Helper - 文献查找工作流</title>
     <link rel="stylesheet" href="common.css">
     <style>
         * {
@@ -816,8 +816,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>Review Helper - 文献综述智能助手</h1>
-            <p>一键式完成文献综述撰写</p>
+            <h1>Review Helper - 文献查找智能助手</h1>
+            <p>智能搜索和筛选文献</p>
         </header>
 
         <div class="project-header">
@@ -827,10 +827,9 @@
                 <span class="project-status status-active" id="project-status">就绪</span>
             </div>
             <div style="display: flex; gap: 10px; align-items: center;">
-                <button class="btn btn-success" id="start-auto-generate-btn" style="display: none;">一键生成</button>
-                <button class="btn btn-danger" id="stop-auto-generate-btn" style="display: none;">停止生成</button>
+                <button class="btn btn-success" id="start-literature-search-btn" style="display: none;">一键查找</button>
                 <button class="btn btn-primary" id="overview-btn">总览</button>
-                <button class="btn btn-secondary" id="back-to-index-btn">关闭项目</button>
+                <button class="btn btn-secondary" id="back-to-index-btn">返回</button>
             </div>
         </div>
 
@@ -840,8 +839,8 @@
             <div class="main-left">
                 <!-- 需求设置区域 -->
                 <div class="requirement-section" id="requirement-section">
-                    <h2>项目配置</h2>
-                    <p style="color: #666; margin-bottom: 20px;">请填写以下信息，系统将自动分析需求并生成文献综述</p>
+                    <h2>文献查找配置</h2>
+                    <p style="color: #666; margin-bottom: 20px;">请填写以下信息，系统将根据您的需求搜索和筛选文献</p>
                     
                     <div class="form-group">
                         <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">API供应商:</label>
@@ -855,15 +854,6 @@
                             <option value="siliconflow">硅基流动</option>
                             <option value="poe">Poe</option>
                         </select>
-                        <div id="main-api-docs-container" style="margin-top: 8px;">
-                            <a id="main-api-docs-link" href="https://api-docs.deepseek.com/zh-cn/api/deepseek-api/" target="_blank" 
-                               style="color: #3b82f6; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; transition: all 0.2s ease; padding: 4px 0;"
-                               onmouseover="this.style.color='#2563eb'; this.style.transform='translateX(2px)'"
-                               onmouseout="this.style.color='#3b82f6'; this.style.transform='translateX(0)'">
-                                <span>🔗</span>
-                                <span id="main-api-docs-text">API 申请地址</span>
-                            </a>
-                        </div>
                     </div>
                     
                     <!-- Gemini 模型选择（仅在选择 Gemini 时显示） -->
@@ -990,75 +980,93 @@
                         </small>
                     </div>
                     
-                    <div class="form-group" id="api-key-group">
-                        <label id="main-api-key-label" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">API Key:</label>
-                        <input type="password" id="main-api-key-input" placeholder="请输入您的API Key" 
-                               style="width: 100%; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 15px; transition: all 0.3s ease;"
-                               onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
-                               onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'">
-                    </div>
-                    
-                    <div class="form-group" id="google-scholar-verify-group">
-                        <label>Google Scholar 验证:</label>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <button type="button" id="verify-google-scholar-btn" class="btn" 
-                                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s;">
-                                🔐 进行Google Scholar验证
-                            </button>
-                            <span id="google-scholar-verify-status" style="color: #666; font-size: 14px; display: none;">
-                                <span style="color: #10b981; font-weight: 600;">✓ 已验证</span>
-                            </span>
-                        </div>
+                    <!-- 1. 查询的文献综述需求 -->
+                    <div class="form-group" id="requirement-input-group">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">查询的文献综述需求:</label>
+                        <textarea id="main-requirement-input" rows="5" placeholder="请详细描述您的文献查找需求，包括研究主题、研究范围、关注的重点等。例如：&#10;我需要查找关于'共享自动驾驶汽车以及mass系统'的文献，重点关注技术实现、系统架构、安全性和用户体验等方面。"></textarea>
                         <small style="display: block; margin-top: 5px; color: #666;">
-                            请先完成Google Scholar的人机验证，以确保后续文献搜索功能正常使用
+                            此需求将用于AI提取搜索关键词和筛选文献
                         </small>
                     </div>
                     
-                    <div class="form-group" id="requirement-input-group">
-                        <label>需求描述:</label>
-                        <textarea id="main-requirement-input" rows="5" placeholder="请详细描述您的文献综述需求，包括研究主题、研究范围、关注的重点等。例如：&#10;我需要撰写一篇关于'共享自动驾驶汽车以及mass系统'的文献综述，重点关注技术实现、系统架构、安全性和用户体验等方面。"></textarea>
+                    <!-- 2. 文献来源库 -->
+                    <div class="form-group" id="literature-source-group">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">文献来源库:</label>
+                        <select id="literature-source-select" class="api-provider-select" 
+                                onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onmouseout="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'"
+                                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'">
+                            <option value="google-scholar">Google Scholar（谷歌学术）</option>
+                            <option value="lanfanshu">烂番薯学术（Google Scholar镜像站）</option>
+                        </select>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            选择文献搜索的来源数据库（后续将支持更多数据库）
+                        </small>
                     </div>
                     
+                    <!-- 3. 文献数量 -->
                     <div class="form-group" id="target-count-group">
-                        <label>目标文献数量:</label>
-                        <input type="number" id="main-target-count" value="50" min="10" max="500" placeholder="最终需要的文献数量">
-                        <small id="main-target-hint" style="color: #666; display: block; margin-top: 5px;">提示：将搜索此数量的文献</small>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">文献数量:</label>
+                        <input type="number" id="main-target-count" value="50" min="10" max="500" placeholder="需要搜索的文献数量" 
+                               style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;"
+                               onfocus="this.style.borderColor='#667eea'; this.style.outline='none'"
+                               onblur="this.style.borderColor='#e9ecef'">
+                        <small style="display: block; margin-top: 5px; color: #666;">提示：将搜索此数量的文献，实际文献存在重复，可能会少于该数量</small>
                     </div>
                     
+                    <!-- 4. 年份限制 -->
+                    <div class="form-group" id="year-limit-group">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">年份限制:</label>
+                        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #666;">近N年:</label>
+                                <input type="number" id="recent-years-input" value="5" min="1" max="20" placeholder="5" 
+                                       style="width: 100%; padding: 10px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px;"
+                                       onfocus="this.style.borderColor='#667eea'; this.style.outline='none'"
+                                       onblur="this.style.borderColor='#e9ecef'">
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #666;">占比（%）:</label>
+                                <input type="number" id="recent-years-percentage" value="60" min="0" max="100" placeholder="60" 
+                                       style="width: 100%; padding: 10px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px;"
+                                       onfocus="this.style.borderColor='#667eea'; this.style.outline='none'"
+                                       onblur="this.style.borderColor='#e9ecef'">
+                            </div>
+                        </div>
+                        <small style="display: block; margin-top: 5px; color: #666;">
+                            例如：近5年占60%，表示搜索结果中60%的文献应该是最近5年发表的
+                        </small>
+                    </div>
+                    
+                    <!-- 5. 中文或英文 -->
                     <div class="form-group" id="language-select-group">
-                        <label>输出语言:</label>
-                        <select id="main-language-select" style="width: 100%; padding: 10px; border: 1px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">文献语言:</label>
+                        <select id="main-language-select" class="api-provider-select" 
+                                onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onmouseout="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'"
+                                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
+                                onblur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'">
                             <option value="zh">中文</option>
                             <option value="en">English</option>
                         </select>
                         <small style="display: block; margin-top: 5px; color: #666;">
-                            选择综述的输出语言，将影响AI提示词和最终生成的综述内容
+                            选择文献搜索和AI处理的语言，将影响关键词提取和文献筛选
                         </small>
                     </div>
                     
-                    <button class="btn btn-primary" id="analyze-main-requirement-btn" style="display: none;">生成大纲</button>
-                    
-                    <div id="main-requirement-progress" style="margin-top: 20px; display: none;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="main-progress-fill"></div>
-                        </div>
-                        <p id="main-progress-text" style="text-align: center; margin-top: 10px;">正在分析需求...</p>
-                    </div>
-                    
-                    <div id="main-outline-result" style="margin-top: 20px; display: none;">
-                        <h3>综述大纲（可编辑）:</h3>
-                        <textarea id="main-outline-editor" rows="12" style="width: 100%; padding: 15px; border: 1px solid #e9ecef; border-radius: 6px; font-family: inherit; line-height: 1.6;"></textarea>
-                        <div style="margin-top: 15px; display: flex; gap: 10px;">
-                            <button class="btn btn-primary" id="save-requirement-btn">保存</button>
-                        </div>
+                    <!-- 保存配置和生成关键词按钮 -->
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button class="btn btn-primary" id="save-config-btn">保存配置</button>
+                        <button class="btn btn-success" id="generate-keywords-btn" style="display: none;">生成关键词</button>
                     </div>
                 </div>
 
                 <!-- 工作流区域 -->
                 <div class="workflow-section">
                     <div class="workflow-title">
-                        <h2>文献综述工作流程</h2>
-                        <p>点击节点查看详情，完成所有步骤即可生成文献综述</p>
+                        <h2>文献查找工作流程</h2>
+                        <p>点击节点查看详情，完成所有步骤即可完成文献查找和筛选</p>
                     </div>
 
             <!-- 节点流程可视化 -->
@@ -1099,13 +1107,6 @@
                     <div class="node-status-badge">待开始</div>
                 </div>
 
-                <!-- 节点5: 综述撰写 -->
-                <div class="node" data-node="5" data-status="pending" id="node-5">
-                    <div class="node-icon">5</div>
-                    <div class="node-title">综述撰写</div>
-                    <div class="node-desc">生成文献综述</div>
-                    <div class="node-status-badge">待开始</div>
-                </div>
                 </div>
                 </div>
             </div>
@@ -1163,17 +1164,6 @@
                             <span class="overview-node-status" id="overview-status-4">未开始</span>
                         </div>
                         <div class="overview-node-content" id="overview-content-4">
-                            <p style="color: #999;">尚未开始</p>
-                        </div>
-                    </div>
-                    
-                    <!-- 节点5总览 -->
-                    <div class="overview-node-card" data-node="5">
-                        <div class="overview-node-header">
-                            <h3>节点5：综述撰写</h3>
-                            <span class="overview-node-status" id="overview-status-5">未开始</span>
-                        </div>
-                        <div class="overview-node-content" id="overview-content-5">
                             <p style="color: #999;">尚未开始</p>
                         </div>
                     </div>
@@ -1313,34 +1303,6 @@
                     </div>
                     </div>
                 </div>
-
-                <!-- 节点5内容: 综述撰写 -->
-                <div class="node-content" id="content-node-5">
-                    <div class="node-content-header">
-                        <h3>综述撰写</h3>
-                    </div>
-                    <div class="node-content-body" id="node-body-5" style="display: block;">
-                    <div id="selected-literature-summary" style="margin-bottom: 20px; padding: 15px; background: #f0f4ff; border-radius: 8px;">
-                        <h4>已选文献 (<span id="selected-count">0</span> 篇)</h4>
-                        <div id="selected-list" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
-                    </div>
-                    <button class="btn btn-primary" id="generate-review-btn">生成综述</button>
-                    <div id="generate-progress" style="margin-top: 20px; display: none;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="generate-progress-fill"></div>
-                        </div>
-                        <p id="generate-progress-text" style="text-align: center; margin-top: 10px;"></p>
-                    </div>
-                    <div id="review-result" style="margin-top: 20px; display: none;">
-                        <h4>生成的综述:</h4>
-                        <textarea id="review-content" rows="20" style="width: 100%; padding: 15px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; line-height: 1.6;"></textarea>
-                        <div style="margin-top: 15px;">
-                            <button class="btn btn-success" id="copy-review-btn">复制综述内容</button>
-                            <button class="btn btn-secondary" id="export-word-btn" style="margin-left: 10px;">导出Word</button>
-                        </div>
-                    </div>
-                    </div>
-                </div>
                 </div>
             </div>
         </div>
@@ -1373,12 +1335,10 @@
     <script src="modules/api.js"></script>
     <script src="modules/data-manager.js"></script>
     <script src="modules/ui-utils.js"></script>
-    <script src="modules/requirement-manager.js"></script>
     <script src="modules/node1-keywords.js"></script>
     <script src="modules/node2-search.js"></script>
     <script src="modules/node3-complete.js"></script>
     <script src="modules/node4-filter.js"></script>
-    <script src="modules/node5-review.js"></script>
     <!-- 工作流模块（按依赖顺序加载） -->
     <script src="modules/subproject-manager.js"></script>
     <script src="modules/workflow-state-manager.js"></script>
@@ -1387,6 +1347,61 @@
     <script src="modules/review-writing-workflow.js"></script>
     <script src="modules/workflow-manager.js"></script>
     <script src="workflow.js"></script>
+
+    <!-- 进度对话框 -->
+    <div id="literature-search-progress-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 10000;">
+        <div style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; font-size: 20px; color: #1f2937;">文献查找进度</h2>
+                <button id="close-progress-modal-btn" style="background: none; border: none; font-size: 24px; color: #6b7280; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: background 0.2s;"
+                        onmouseover="this.style.background='#f3f4f6'"
+                        onmouseout="this.style.background='none'">×</button>
+            </div>
+            
+            <!-- 节点2：文献搜索 -->
+            <div id="progress-node-2" style="margin-bottom: 20px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0; font-size: 16px; color: #1f2937;">节点2：文献搜索</h3>
+                    <span id="progress-node-2-status" style="font-size: 14px; color: #6b7280;">等待中</span>
+                </div>
+                <div class="progress-bar" style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                    <div id="progress-node-2-fill" class="progress-fill" style="height: 100%; background: linear-gradient(90deg, #3b82f6, #2563eb); width: 0%; transition: width 0.3s;"></div>
+                </div>
+                <p id="progress-node-2-text" style="margin: 8px 0 0 0; font-size: 14px; color: #6b7280; text-align: center;">准备开始...</p>
+            </div>
+            
+            <!-- 节点3：文献补全 -->
+            <div id="progress-node-3" style="margin-bottom: 20px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0; font-size: 16px; color: #1f2937;">节点3：文献补全</h3>
+                    <span id="progress-node-3-status" style="font-size: 14px; color: #6b7280;">等待中</span>
+                </div>
+                <div class="progress-bar" style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                    <div id="progress-node-3-fill" class="progress-fill" style="height: 100%; background: linear-gradient(90deg, #3b82f6, #2563eb); width: 0%; transition: width 0.3s;"></div>
+                </div>
+                <p id="progress-node-3-text" style="margin: 8px 0 0 0; font-size: 14px; color: #6b7280; text-align: center;">等待节点2完成...</p>
+            </div>
+            
+            <!-- 节点4：精选文献 -->
+            <div id="progress-node-4" style="margin-bottom: 20px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0; font-size: 16px; color: #1f2937;">节点4：精选文献</h3>
+                    <span id="progress-node-4-status" style="font-size: 14px; color: #6b7280;">等待中</span>
+                </div>
+                <div class="progress-bar" style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                    <div id="progress-node-4-fill" class="progress-fill" style="height: 100%; background: linear-gradient(90deg, #3b82f6, #2563eb); width: 0%; transition: width 0.3s;"></div>
+                </div>
+                <p id="progress-node-4-text" style="margin: 8px 0 0 0; font-size: 14px; color: #6b7280; text-align: center;">等待节点3完成...</p>
+            </div>
+            
+            <!-- 停止按钮 -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="stop-progress-btn" style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.2s;"
+                        onmouseover="this.style.background='#dc2626'"
+                        onmouseout="this.style.background='#ef4444'">停止查找</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 

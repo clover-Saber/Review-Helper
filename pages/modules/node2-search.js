@@ -1,7 +1,7 @@
 // 节点2：文献搜索模块
 window.Node2Search = {
     // 自动执行文献搜索
-    async execute(keywords, keywordsPlan, targetCount, onProgress) {
+    async execute(keywords, keywordsPlan, targetCount, onProgress, literatureSource = 'google-scholar') {
         const searchParams = {};
         if (keywordsPlan && keywordsPlan.length > 0) {
             keywordsPlan.forEach(plan => {
@@ -42,10 +42,20 @@ window.Node2Search = {
             const keyword = validKeywords[i];
             const maxPerKeyword = searchParams[keyword] || 10;
             
+            // 从keywordsPlan中获取该关键词的时间限制
+            let minYear = null;
+            if (keywordsPlan && keywordsPlan.length > 0) {
+                const planItem = keywordsPlan.find(p => p.keyword === keyword);
+                if (planItem && planItem.minYear) {
+                    minYear = planItem.minYear;
+                }
+            }
+            
             try {
                 // 更新进度：开始搜索当前关键词
                 if (onProgress) {
-                    onProgress(i + 1, totalKeywords, keyword, '搜索中...');
+                    const yearText = minYear ? `（${minYear}年及以后）` : '';
+                    onProgress(i + 1, totalKeywords, keyword, `搜索中${yearText}...`);
                 }
                 
                 // 再次检查停止标志
@@ -54,7 +64,31 @@ window.Node2Search = {
                     break;
                 }
                 
-                const results = await window.API.searchGoogleScholar(keyword, maxPerKeyword, null);
+                // 随机等待2-5秒，避免请求过于频繁（统一搜索间隔）
+                const randomDelay = Math.random() * 3000 + 2000; // 2000-5000毫秒
+                await new Promise(resolve => setTimeout(resolve, randomDelay));
+                
+                // 等待后再次检查停止标志
+                if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                    console.log('[节点2搜索] 检测到停止信号，中断搜索');
+                    break;
+                }
+                
+                // 根据文献来源选择搜索API（直接调用对应的独立函数）
+                let results = [];
+                if (literatureSource === 'lanfanshu') {
+                    results = await window.API.searchLanfanshu(keyword, maxPerKeyword, minYear);
+                } else {
+                    // 默认使用Google Scholar
+                    results = await window.API.searchGoogleScholar(keyword, maxPerKeyword, minYear);
+                }
+                
+                // API调用后再次检查停止标志
+                if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                    console.log('[节点2搜索] 检测到停止信号，中断搜索');
+                    break;
+                }
+                
                 searchResults[keyword] = results;
                 
                 // 合并结果并去重（使用原始逻辑）

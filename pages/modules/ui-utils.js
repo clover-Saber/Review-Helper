@@ -5,21 +5,38 @@ window.UIUtils = {
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toast-message');
         
-        if (!toast || !toastMessage) return;
+        if (!toast || !toastMessage) {
+            console.warn('Toast元素未找到');
+            return;
+        }
         
+        // 设置消息内容
         toastMessage.textContent = message;
         
+        // 根据类型设置背景色
         if (type === 'success') {
             toast.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
         } else if (type === 'error') {
             toast.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+        } else if (type === 'info') {
+            toast.style.background = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
         } else {
             toast.style.background = '#333';
         }
         
+        // 确保toast可见
+        toast.style.display = 'block';
+        
+        // 添加show类以触发动画
         toast.classList.add('show');
+        
+        // 3秒后隐藏
         setTimeout(() => {
             toast.classList.remove('show');
+            // 动画结束后隐藏元素
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 300);
         }, 3000);
     },
 
