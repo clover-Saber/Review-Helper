@@ -50,6 +50,24 @@
             </div>
         </div>
         
+        <!-- 选择文献查找子项目对话框 -->
+        <div id="select-literature-subprojects-modal" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 600px;">
+                <h3>选择文献查找子项目</h3>
+                <p style="color: #666; margin-bottom: 15px;">请选择至少一个文献查找子项目作为基础文献资料（可多选）：</p>
+                <div id="literature-subprojects-list" style="max-height: 400px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e0e0e0; border-radius: 4px; padding: 10px;">
+                    <!-- 文献查找子项目列表将在这里动态生成 -->
+                </div>
+                <div id="select-subprojects-error" style="color: #ef4444; margin-bottom: 10px; display: none; font-size: 14px;">
+                    请至少选择一个文献查找子项目
+                </div>
+                <div class="modal-actions">
+                    <button id="select-subprojects-cancel">取消</button>
+                    <button id="select-subprojects-ok">确定</button>
+                </div>
+            </div>
+        </div>
+        
         <!-- 统一模块加载 -->
         <script src="modules/electron-api.js"></script>
         <script src="modules/api.js"></script>
@@ -749,8 +767,15 @@
                             } else {
                                 alert('无法切换到文献查找工作流界面');
                             }
+                        } else if (subproject && subproject.type === 'reviewWriting') {
+                            // 综述撰写子项目，切换到专门的文献撰写工作流页面
+                            if (window.electronAPI.switchToReviewWritingWorkflow) {
+                                await window.electronAPI.switchToReviewWritingWorkflow();
+                            } else {
+                                alert('无法切换到文献撰写工作流界面');
+                            }
                         } else {
-                            // 综述撰写子项目或其他，使用原来的工作流页面
+                            // 其他类型，使用原来的工作流页面
                             if (window.electronAPI.switchToWorkflow) {
                                 await window.electronAPI.switchToWorkflow();
                             } else {
@@ -768,6 +793,25 @@
                     if (!window.electronAPI) return;
                     try {
                         const typeName = type === 'literatureSearch' ? '文献查找' : '综述撰写';
+                        
+                        // 如果是综述撰写子项目，先选择文献查找子项目
+                        let selectedSourceSubprojectIds = [];
+                        if (type === 'reviewWriting') {
+                            // 获取所有文献查找子项目
+                            const literatureSubprojects = await window.SubprojectManager.getSubprojectsByType(projectName, 'literatureSearch');
+                            
+                            if (literatureSubprojects.length === 0) {
+                                alert('当前项目中没有文献查找子项目，请先创建文献查找子项目！');
+                                return;
+                            }
+                            
+                            // 显示选择对话框
+                            const selectedIds = await showSelectLiteratureSubprojectsDialog(literatureSubprojects);
+                            if (!selectedIds || selectedIds.length === 0) {
+                                return; // 用户取消或未选择
+                            }
+                            selectedSourceSubprojectIds = selectedIds;
+                        }
                         
                         // 使用模态对话框获取子项目名称
                         const name = await window.electronAPI.showInputDialog({
@@ -812,7 +856,56 @@
                                 description
                             );
                             
-                            showToast(`${typeName}子项目"${trimmedName}"创建成功`);
+                            // 如果是综述撰写子项目，整理并保存文献
+                            if (type === 'reviewWriting' && selectedSourceSubprojectIds.length > 0) {
+                                // 从关联的文献查找子项目中获取并整理文献
+                                const allSelectedLiterature = [];
+                                
+                                for (const sourceSubprojectId of selectedSourceSubprojectIds) {
+                                    const sourceSubproject = await window.SubprojectManager.getSubprojectData(
+                                        projectName,
+                                        sourceSubprojectId
+                                    );
+                                    
+                                    if (sourceSubproject && sourceSubproject.type === 'literatureSearch') {
+                                        const selectedLit = sourceSubproject.node4?.selectedLiterature || [];
+                                        if (selectedLit.length > 0) {
+                                            allSelectedLiterature.push(...selectedLit);
+                                        }
+                                    }
+                                }
+                                
+                                // 去重（基于文献ID或标题+URL），并添加初始编号
+                                const uniqueLiterature = [];
+                                const seen = new Set();
+                                for (const lit of allSelectedLiterature) {
+                                    const key = lit.id || `${lit.title}_${lit.url || ''}`;
+                                    if (!seen.has(key)) {
+                                        seen.add(key);
+                                        // 添加初始编号（创建时的顺序）
+                                        const literatureWithIndex = {
+                                            ...lit,
+                                            initialIndex: uniqueLiterature.length + 1,
+                                            actualIndex: null // 真正编号在生成综述后设置
+                                        };
+                                        uniqueLiterature.push(literatureWithIndex);
+                                    }
+                                }
+                                
+                                // 保存选中的文献查找子项目ID和整理后的文献
+                                await window.SubprojectManager.updateSubproject(projectName, subproject.id, {
+                                    sourceSubprojectIds: selectedSourceSubprojectIds,
+                                    literature: uniqueLiterature  // 保存整理后的文献列表
+                                });
+                                
+                                if (uniqueLiterature.length > 0) {
+                                    showToast(`${typeName}子项目"${trimmedName}"创建成功，已导入 ${uniqueLiterature.length} 篇文献`);
+                                } else {
+                                    showToast(`${typeName}子项目"${trimmedName}"创建成功（关联的文献查找子项目暂无已选文献）`);
+                                }
+                            } else {
+                                showToast(`${typeName}子项目"${trimmedName}"创建成功`);
+                            }
                             
                             // 刷新项目详情
                             await showProjectDetail(projectName);
@@ -823,6 +916,122 @@
                         console.error('创建子项目失败:', e);
                         alert('创建子项目失败: ' + e.message);
                     }
+                }
+                
+                // 显示选择文献查找子项目的对话框
+                function showSelectLiteratureSubprojectsDialog(literatureSubprojects) {
+                    return new Promise((resolve) => {
+                        const modal = document.getElementById('select-literature-subprojects-modal');
+                        const listContainer = document.getElementById('literature-subprojects-list');
+                        const errorMsg = document.getElementById('select-subprojects-error');
+                        const okBtn = document.getElementById('select-subprojects-ok');
+                        const cancelBtn = document.getElementById('select-subprojects-cancel');
+                        
+                        // 清空列表
+                        listContainer.innerHTML = '';
+                        
+                        // 存储选中的ID
+                        const selectedIds = new Set();
+                        
+                        // 生成子项目列表
+                        literatureSubprojects.forEach(subproject => {
+                            const item = document.createElement('div');
+                            item.style.cssText = 'padding: 10px; margin-bottom: 8px; border: 1px solid #e0e0e0; border-radius: 4px; cursor: pointer; transition: all 0.2s;';
+                            
+                            // 获取子项目状态信息
+                            const status = subproject.status || 'pending';
+                            const statusText = {
+                                'pending': '待开始',
+                                'active': '进行中',
+                                'completed': '已完成'
+                            }[status] || '未知';
+                            
+                            // 获取文献数量
+                            let literatureCount = '未完成';
+                            if (subproject.node4 && subproject.node4.status === 'completed' && subproject.node4.selectedLiterature && Array.isArray(subproject.node4.selectedLiterature)) {
+                                literatureCount = `${subproject.node4.selectedLiterature.length} 篇`;
+                            } else if (subproject.node3 && subproject.node3.status === 'completed' && subproject.node3.allLiterature && Array.isArray(subproject.node3.allLiterature)) {
+                                literatureCount = `补全中 (${subproject.node3.allLiterature.length} 篇)`;
+                            } else if (subproject.node2 && subproject.node2.status === 'completed' && subproject.node2.searchResults) {
+                                const totalCount = Object.values(subproject.node2.searchResults).reduce((sum, results) => sum + (Array.isArray(results) ? results.length : 0), 0);
+                                if (totalCount > 0) {
+                                    literatureCount = `搜索中 (${totalCount} 篇)`;
+                                }
+                            }
+                            
+                            item.innerHTML = `
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="subproject-${subproject.id}" value="${subproject.id}" style="width: 18px; height: 18px; cursor: pointer;">
+                                    <label for="subproject-${subproject.id}" style="flex: 1; cursor: pointer; margin: 0;">
+                                        <div style="font-weight: 600; color: #333; margin-bottom: 4px;">${escapeHtml(subproject.name || '未命名')}</div>
+                                        <div style="font-size: 12px; color: #666;">
+                                            <span>状态: ${statusText}</span>
+                                            <span style="margin-left: 15px;">文献数: ${literatureCount}</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            `;
+                            
+                            // 点击整个项目区域也可以切换选中状态
+                            item.addEventListener('click', (e) => {
+                                if (e.target.type !== 'checkbox') {
+                                    const checkbox = item.querySelector('input[type="checkbox"]');
+                                    checkbox.checked = !checkbox.checked;
+                                    checkbox.dispatchEvent(new Event('change'));
+                                }
+                            });
+                            
+                            // 复选框变化事件
+                            const checkbox = item.querySelector('input[type="checkbox"]');
+                            checkbox.addEventListener('change', (e) => {
+                                if (e.target.checked) {
+                                    selectedIds.add(subproject.id);
+                                    item.style.background = '#f0f9ff';
+                                    item.style.borderColor = '#3b82f6';
+                                } else {
+                                    selectedIds.delete(subproject.id);
+                                    item.style.background = '';
+                                    item.style.borderColor = '#e0e0e0';
+                                }
+                                
+                                // 更新错误提示
+                                errorMsg.style.display = 'none';
+                            });
+                            
+                            listContainer.appendChild(item);
+                        });
+                        
+                        // 显示模态框
+                        modal.style.display = 'flex';
+                        
+                        // 确定按钮
+                        const handleOk = () => {
+                            if (selectedIds.size === 0) {
+                                errorMsg.style.display = 'block';
+                                return;
+                            }
+                            
+                            modal.style.display = 'none';
+                            resolve(Array.from(selectedIds));
+                            
+                            // 清理事件监听
+                            okBtn.removeEventListener('click', handleOk);
+                            cancelBtn.removeEventListener('click', handleCancel);
+                        };
+                        
+                        // 取消按钮
+                        const handleCancel = () => {
+                            modal.style.display = 'none';
+                            resolve(null);
+                            
+                            // 清理事件监听
+                            okBtn.removeEventListener('click', handleOk);
+                            cancelBtn.removeEventListener('click', handleCancel);
+                        };
+                        
+                        okBtn.addEventListener('click', handleOk);
+                        cancelBtn.addEventListener('click', handleCancel);
+                    });
                 }
                 
                 // 删除子项目

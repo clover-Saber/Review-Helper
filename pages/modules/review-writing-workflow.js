@@ -37,7 +37,13 @@ window.ReviewWritingWorkflow = {
             const key = lit.id || `${lit.title}_${lit.url || ''}`;
             if (!seen.has(key)) {
                 seen.add(key);
-                uniqueLiterature.push(lit);
+                // 添加初始编号（创建时的顺序）
+                const literatureWithIndex = {
+                    ...lit,
+                    initialIndex: uniqueLiterature.length + 1,
+                    actualIndex: null // 真正编号在生成综述后设置
+                };
+                uniqueLiterature.push(literatureWithIndex);
             }
         }
 

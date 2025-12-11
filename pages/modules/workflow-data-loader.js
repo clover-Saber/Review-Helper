@@ -226,10 +226,11 @@ window.WorkflowDataLoader = {
                     }
                 }
                 
-                    // 加载需求数据（排除 keywordsPlan，因为它应该从 node1 中加载）
+                    // 加载需求数据（排除 keywordsPlan、outline、chapterCount、literatureMapping）
+                    // outline、chapterCount、literatureMapping 应该只从子项目的 node5 中读取
                     if (data.requirementData) {
-                        const { keywordsPlan, ...requirementDataWithoutKeywordsPlan } = data.requirementData;
-                        state.requirementData = { ...state.requirementData, ...requirementDataWithoutKeywordsPlan };
+                        const { keywordsPlan, outline, chapterCount, literatureMapping, ...requirementDataWithoutExcluded } = data.requirementData;
+                        state.requirementData = { ...state.requirementData, ...requirementDataWithoutExcluded };
                     }
                     
                     // 加载节点数据（旧格式：直接从根级别加载）
@@ -240,10 +241,11 @@ window.WorkflowDataLoader = {
                     this.loadNodeData(5, data);
                 }
                 
-                // 加载需求数据（排除 keywordsPlan，因为它应该从 node1 中加载）
+                // 加载需求数据（排除 keywordsPlan、outline、chapterCount、literatureMapping）
+                // outline、chapterCount、literatureMapping 应该只从子项目的 node5 中读取
                 if (data.requirementData) {
-                    const { keywordsPlan, ...requirementDataWithoutKeywordsPlan } = data.requirementData;
-                    state.requirementData = { ...state.requirementData, ...requirementDataWithoutKeywordsPlan };
+                    const { keywordsPlan, outline, chapterCount, literatureMapping, ...requirementDataWithoutExcluded } = data.requirementData;
+                    state.requirementData = { ...state.requirementData, ...requirementDataWithoutExcluded };
                 }
                 
                 // 如果节点2有 searchResults 但没有 allLiterature，从 searchResults 重新生成
@@ -462,9 +464,33 @@ window.WorkflowDataLoader = {
             case 5:
                 if (nodeData.reviewContent) {
                     state.reviewContent = nodeData.reviewContent;
+                } else {
+                    state.reviewContent = '';
                 }
                 if (nodeData.status) {
                     state.nodeStates[5] = nodeData.status;
+                }
+                // 加载大纲相关信息（从子项目的 node5 中读取）
+                // 如果字段不存在，应该清空，避免显示其他子项目的数据
+                if (nodeData.outlineRequirement !== undefined) {
+                    state.requirementData.requirement = nodeData.outlineRequirement;
+                } else {
+                    state.requirementData.requirement = '';
+                }
+                if (nodeData.chapterCount !== undefined) {
+                    state.requirementData.chapterCount = nodeData.chapterCount;
+                } else {
+                    state.requirementData.chapterCount = undefined;
+                }
+                if (nodeData.outline) {
+                    state.requirementData.outline = nodeData.outline;
+                } else {
+                    state.requirementData.outline = ''; // 清空大纲，避免显示其他子项目的大纲
+                }
+                if (nodeData.literatureMapping && Array.isArray(nodeData.literatureMapping)) {
+                    state.requirementData.literatureMapping = nodeData.literatureMapping;
+                } else {
+                    state.requirementData.literatureMapping = []; // 清空映射，避免显示其他子项目的映射
                 }
                 break;
         }
@@ -682,7 +708,10 @@ window.WorkflowDataLoader = {
             if (targetCount) {
                 state.requirementData.targetCount = targetCount;
             }
-            if (outline) {
+            // outline、chapterCount、literatureMapping 只保存在子项目的 node5 中，不保存到 project.json
+            // 对于撰写子项目，不更新 state.requirementData.outline，避免覆盖从子项目 node5 中加载的大纲
+            // 对于文献查找子项目，outline 可以保存在 requirementData 中
+            if (state.currentSubprojectType !== 'reviewWriting' && outline) {
                 state.requirementData.outline = outline;
             }
 

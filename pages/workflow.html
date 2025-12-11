@@ -830,7 +830,7 @@
                 <button class="btn btn-success" id="start-auto-generate-btn" style="display: none;">一键生成</button>
                 <button class="btn btn-danger" id="stop-auto-generate-btn" style="display: none;">停止生成</button>
                 <button class="btn btn-primary" id="overview-btn">总览</button>
-                <button class="btn btn-secondary" id="back-to-index-btn">关闭项目</button>
+                <button class="btn btn-secondary" id="back-to-index-btn">返回</button>
             </div>
         </div>
 
@@ -1015,8 +1015,14 @@
                     </div>
                     
                     <div class="form-group" id="requirement-input-group">
-                        <label>需求描述:</label>
-                        <textarea id="main-requirement-input" rows="5" placeholder="请详细描述您的文献综述需求，包括研究主题、研究范围、关注的重点等。例如：&#10;我需要撰写一篇关于'共享自动驾驶汽车以及mass系统'的文献综述，重点关注技术实现、系统架构、安全性和用户体验等方面。"></textarea>
+                        <label>大纲要求（可选）:</label>
+                        <textarea id="main-requirement-input" rows="5" placeholder="请描述您对文献综述大纲的要求，包括研究主题、研究范围、关注的重点等（可选，可不填写）。例如：&#10;重点关注技术实现、系统架构、安全性和用户体验等方面。"></textarea>
+                    </div>
+                    
+                    <div class="form-group" id="chapter-count-group">
+                        <label>章节数:</label>
+                        <input type="number" id="main-chapter-count" value="3" min="1" max="10" placeholder="文献综述的章节数量">
+                        <small style="color: #666; display: block; margin-top: 5px;">提示：设置文献综述的章节数量</small>
                     </div>
                     
                     <div class="form-group" id="target-count-group">
@@ -1114,6 +1120,15 @@
             <div class="main-right" id="node-content-panel">
                 <div class="main-right empty" id="node-content-empty">
                     点击左侧节点查看详情，或点击"总览"查看所有节点信息
+                </div>
+                
+                <!-- 文献列表视图（用于撰写子项目） -->
+                <div id="literature-list-container" style="display: none;">
+                    <div class="overview-header">
+                        <h2>文献列表</h2>
+                        <p>来自关联的文献查找子项目</p>
+                    </div>
+                    <div class="literature-list" id="review-literature-list" style="max-height: 1000px; overflow-y: auto; padding-right: 10px;"></div>
                 </div>
                 
                 <!-- 总览视图 -->

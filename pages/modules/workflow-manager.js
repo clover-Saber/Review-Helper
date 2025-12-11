@@ -79,10 +79,38 @@ window.WorkflowManager = {
             // 初始化按钮显示状态
             this.updateGenerateButtonState();
             
-            // 如果有项目，自动显示总览
+            // 如果有项目，根据子项目类型显示总览或文献列表
             if (this.state.currentProject) {
-                this.updateOverview();
-                this.showOverview();
+                if (this.state.currentSubprojectType === 'reviewWriting') {
+                    // 撰写子项目：显示文献列表
+                    const emptyPanel = document.getElementById('node-content-empty');
+                    const nodeContentContainer = document.getElementById('node-content-container');
+                    const overviewContainer = document.getElementById('overview-container');
+                    const literatureListContainer = document.getElementById('literature-list-container');
+                    
+                    // 隐藏空面板和节点内容容器
+                    if (emptyPanel) {
+                        emptyPanel.style.display = 'none';
+                    }
+                    if (nodeContentContainer) {
+                        nodeContentContainer.style.display = 'none';
+                    }
+                    
+                    // 隐藏总览容器，显示文献列表容器
+                    if (overviewContainer) {
+                        overviewContainer.style.display = 'none';
+                    }
+                    if (literatureListContainer) {
+                        literatureListContainer.style.display = 'block';
+                    }
+                    
+                    // 加载文献列表
+                    this.loadReviewLiteratureList();
+                } else {
+                    // 其他情况：显示总览
+                    this.updateOverview();
+                    this.showOverview();
+                }
             }
         } catch (error) {
             console.error('初始化失败:', error);
@@ -96,7 +124,7 @@ window.WorkflowManager = {
     },
 
     // 根据子项目类型初始化UI
-    initSubprojectUI() {
+    async initSubprojectUI() {
         const state = this.state;
         const subprojectType = state.currentSubprojectType;
         
@@ -105,18 +133,50 @@ window.WorkflowManager = {
             const subprojectId = sessionStorage.getItem('currentSubprojectId');
             if (subprojectId && state.currentProject && window.SubprojectManager) {
                 // 异步加载子项目信息
-                window.SubprojectManager.getSubprojectData(state.currentProject, subprojectId)
-                    .then(subproject => {
-                        if (subproject) {
-                            state.currentSubprojectId = subprojectId;
-                            state.currentSubproject = subproject;
-                            state.currentSubprojectType = subproject.type;
-                            this.updateUIForSubprojectType(subproject.type);
+                try {
+                    const subproject = await window.SubprojectManager.getSubprojectData(state.currentProject, subprojectId);
+                    if (subproject) {
+                        state.currentSubprojectId = subprojectId;
+                        state.currentSubproject = subproject;
+                        state.currentSubprojectType = subproject.type;
+                        // 加载节点数据
+                        if (subproject.type === 'reviewWriting') {
+                            // 从子项目的 node5 中加载数据
+                            const node5Data = subproject.node5 || {};
+                            window.WorkflowDataLoader.loadNodeData(5, { node5: node5Data });
+                            // 加载综述内容后，会在 updateUIForSubprojectType 之后通过 loadNodeData(5) 显示
                         }
-                    })
-                    .catch(err => console.error('加载子项目信息失败:', err));
+                        this.updateUIForSubprojectType(subproject.type);
+                    }
+                } catch (err) {
+                    console.error('加载子项目信息失败:', err);
+                }
             }
             return;
+        }
+        
+        // 确保子项目数据是最新的（重新从文件加载）
+        if (state.currentSubprojectId && state.currentProject && window.SubprojectManager) {
+            try {
+                const latestSubproject = await window.SubprojectManager.getSubprojectData(state.currentProject, state.currentSubprojectId);
+                if (latestSubproject) {
+                    state.currentSubproject = latestSubproject;
+                    // 重新加载节点数据，确保数据是最新的
+                    if (latestSubproject.type === 'reviewWriting') {
+                        // 从子项目的 node5 中加载数据
+                        const node5Data = latestSubproject.node5 || {};
+                        window.WorkflowDataLoader.loadNodeData(5, { node5: node5Data });
+                        // 加载综述内容后，需要显示综述
+                        if (this.state.reviewContent && this.state.reviewContent.trim()) {
+                            // 使用子项目的文献列表来显示综述
+                            const literatureToUse = latestSubproject.literature || state.selectedLiterature || [];
+                            this.loadNodeData(5); // 这会显示综述内容
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('重新加载子项目数据失败:', err);
+            }
         }
         
         this.updateUIForSubprojectType(subprojectType);
@@ -187,9 +247,13 @@ window.WorkflowManager = {
             if (node5) {
                 node5.style.display = 'block';
             }
-            const node5Content = document.getElementById('content-node-5');
+            let node5Content = document.getElementById('content-node-5');
             if (node5Content) {
-                node5Content.style.display = 'none'; // 初始隐藏，点击节点后显示
+                node5Content.style.display = 'block'; // 撰写子项目中始终显示节点5内容
+            }
+            let nodeBody5 = document.getElementById('node-body-5');
+            if (nodeBody5) {
+                nodeBody5.style.display = 'block'; // 确保节点5内容体显示
             }
             const overviewCard5 = document.querySelector('.overview-node-card[data-node="5"]');
             if (overviewCard5) {
@@ -203,20 +267,346 @@ window.WorkflowManager = {
                 subprojectNameEl.style.display = 'block';
             }
             
-            // 综述撰写子项目显示这些功能
+            // 综述撰写子项目：隐藏总览按钮，显示文献列表
+            const overviewBtn = document.getElementById('overview-btn');
+            if (overviewBtn) {
+                overviewBtn.style.display = 'none';
+            }
+            
+            // 隐藏空面板和节点内容容器
+            const emptyPanel = document.getElementById('node-content-empty');
+            const nodeContentContainer = document.getElementById('node-content-container');
+            if (emptyPanel) {
+                emptyPanel.style.display = 'none';
+            }
+            if (nodeContentContainer) {
+                nodeContentContainer.style.display = 'none';
+            }
+            
+            // 隐藏总览容器，显示文献列表容器（在总览位置）
+            const overviewContainer = document.getElementById('overview-container');
+            const literatureListContainer = document.getElementById('literature-list-container');
+            if (overviewContainer) {
+                overviewContainer.style.display = 'none';
+            }
+            if (literatureListContainer) {
+                literatureListContainer.style.display = 'block';
+            }
+            
+            // 加载并显示关联的文献查找子项目的文献列表
+            this.loadReviewLiteratureList();
+            
+            // 综述撰写子项目：隐藏API Key、Google验证和目标文献数量
             const apiKeyGroup = document.getElementById('api-key-group');
             if (apiKeyGroup) {
-                apiKeyGroup.style.display = 'block';
+                apiKeyGroup.style.display = 'none';
             }
             const googleScholarGroup = document.getElementById('google-scholar-verify-group');
             if (googleScholarGroup) {
-                googleScholarGroup.style.display = 'block';
+                googleScholarGroup.style.display = 'none';
             }
+            const targetCountGroup = document.getElementById('target-count-group');
+            if (targetCountGroup) {
+                targetCountGroup.style.display = 'none';
+            }
+            
+            // 隐藏API申请地址链接
+            const apiDocsContainer = document.getElementById('main-api-docs-container');
+            if (apiDocsContainer) {
+                apiDocsContainer.style.display = 'none';
+            }
+            
+            // 显示章节数输入框（仅撰写子项目）
+            const chapterCountGroup = document.getElementById('chapter-count-group');
+            if (chapterCountGroup) {
+                chapterCountGroup.style.display = 'block';
+            }
+            
+            // 综述撰写子项目显示这些功能
             const analyzeBtn = document.getElementById('analyze-main-requirement-btn');
             if (analyzeBtn) {
                 analyzeBtn.style.display = 'block';
             }
+            
+            // 显示生成综述按钮
+            const generateBtn = document.getElementById('generate-review-btn');
+            if (generateBtn) {
+                generateBtn.style.display = 'block';
+            }
+            
+            // 如果有综述内容，加载并显示
+            if (this.state.reviewContent && this.state.reviewContent.trim()) {
+                // 延迟一下，确保UI已经更新完成
+                setTimeout(() => {
+                    this.loadNodeData(5);
+                }, 100);
+            }
+            
+            // 隐藏已选文献区域（撰写子项目中所有文献都会自动使用）
+            const selectedLiteratureSummary = document.getElementById('selected-literature-summary');
+            if (selectedLiteratureSummary) {
+                selectedLiteratureSummary.style.display = 'none';
+            }
         }
+    },
+
+    // 加载并显示关联的文献查找子项目的文献列表（用于撰写子项目）
+    async loadReviewLiteratureList() {
+        console.log('[loadReviewLiteratureList] 开始加载文献列表');
+        const state = this.state;
+        const container = document.getElementById('review-literature-list');
+        const literatureListContainer = document.getElementById('literature-list-container');
+        
+        if (!container) {
+            console.warn('[loadReviewLiteratureList] 文献列表容器未找到');
+            return;
+        }
+        
+        // 确保文献列表容器是可见的
+        if (literatureListContainer) {
+            literatureListContainer.style.display = 'block';
+            console.log('[loadReviewLiteratureList] 文献列表容器已显示');
+        }
+        
+        // 检查是否为撰写子项目
+        if (state.currentSubprojectType !== 'reviewWriting' || !state.currentSubproject) {
+            console.warn('[loadReviewLiteratureList] 当前不是撰写子项目', {
+                subprojectType: state.currentSubprojectType,
+                hasSubproject: !!state.currentSubproject
+            });
+            container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">当前不是撰写子项目</p>';
+            return;
+        }
+        
+        console.log('[loadReviewLiteratureList] 当前子项目:', {
+            id: state.currentSubprojectId,
+            name: state.currentSubproject.name,
+            sourceSubprojectIds: state.currentSubproject.sourceSubprojectIds,
+            hasLiterature: !!(state.currentSubproject.literature && state.currentSubproject.literature.length > 0)
+        });
+        
+        try {
+            let literatureList = [];
+            
+            // 优先使用已保存的文献列表（在创建子项目时已整理）
+            if (state.currentSubproject.literature && Array.isArray(state.currentSubproject.literature) && state.currentSubproject.literature.length > 0) {
+                literatureList = state.currentSubproject.literature;
+                console.log('[loadReviewLiteratureList] 使用已保存的文献列表，共', literatureList.length, '篇');
+            } else {
+                // 如果没有保存的文献，从关联的文献查找子项目中动态加载
+                const sourceSubprojectIds = state.currentSubproject.sourceSubprojectIds || [];
+                
+                if (sourceSubprojectIds.length === 0) {
+                    container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">未关联任何文献查找子项目</p>';
+                    return;
+                }
+                
+                // 从每个源子项目中导入文献
+                const allSelectedLiterature = [];
+                
+                for (const sourceSubprojectId of sourceSubprojectIds) {
+                    const sourceSubproject = await window.SubprojectManager.getSubprojectData(
+                        state.currentProject,
+                        sourceSubprojectId
+                    );
+                    
+                    if (sourceSubproject && sourceSubproject.type === 'literatureSearch') {
+                        const selectedLit = sourceSubproject.node4?.selectedLiterature || [];
+                        if (selectedLit.length > 0) {
+                            allSelectedLiterature.push(...selectedLit);
+                        }
+                    }
+                }
+                
+                // 去重（基于文献ID或标题+URL）
+                const seen = new Set();
+                for (const lit of allSelectedLiterature) {
+                    const key = lit.id || `${lit.title}_${lit.url || ''}`;
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        literatureList.push(lit);
+                    }
+                }
+                
+                // 如果动态加载到了文献，更新保存到子项目中
+                if (literatureList.length > 0) {
+                    await window.SubprojectManager.updateSubproject(
+                        state.currentProject,
+                        state.currentSubprojectId,
+                        { literature: literatureList }
+                    );
+                    // 更新state中的子项目对象
+                    state.currentSubproject.literature = literatureList;
+                }
+            }
+            
+            // 显示文献列表
+            this.displayReviewLiteratureList(literatureList);
+            
+        } catch (error) {
+            console.error('[loadReviewLiteratureList] 加载文献列表失败:', error);
+            container.innerHTML = `<p style="color: #ef4444; text-align: center; padding: 20px;">加载文献列表失败: ${error.message}</p>`;
+        }
+    },
+
+    // 根据大纲的文献映射重新排序文献（按章节、段落、年份）
+    reorderLiteratureByOutline(literatureList, literatureMapping) {
+        if (!literatureMapping || literatureMapping.length === 0) {
+            // 如果没有映射，保持原顺序
+            return literatureList.map((lit, index) => ({
+                ...lit,
+                chapter: null,
+                paragraph: null,
+                sortKey: index
+            }));
+        }
+
+        // 创建映射：文献初始索引 -> 章节和段落信息
+        const mappingMap = new Map();
+        literatureMapping.forEach(mapping => {
+            mappingMap.set(mapping.literatureIndex, {
+                chapter: mapping.chapter || 999,
+                paragraph: mapping.paragraph || 999
+            });
+        });
+
+        // 为每篇文献添加章节、段落信息和排序键
+        // 使用 initialIndex 来查找映射（如果没有 initialIndex，使用数组索引+1）
+        const literatureWithMapping = literatureList.map((lit) => {
+            const litIndex = lit.initialIndex !== null && lit.initialIndex !== undefined 
+                ? lit.initialIndex 
+                : (lit.actualIndex || 0);
+            const mapping = mappingMap.get(litIndex);
+            const chapter = mapping ? mapping.chapter : 999;
+            const paragraph = mapping ? mapping.paragraph : 999;
+            const year = parseInt(lit.year) || 0;
+            
+            return {
+                ...lit,
+                chapter: mapping ? mapping.chapter : null,
+                paragraph: mapping ? mapping.paragraph : null,
+                // 排序键：章节 * 10000 + 段落 * 1000 - 年份（年份越大越靠前）
+                sortKey: chapter * 10000 + paragraph * 1000 - year
+            };
+        });
+
+        // 按排序键排序
+        literatureWithMapping.sort((a, b) => a.sortKey - b.sortKey);
+
+        // 重新分配 actualIndex（基于新顺序），并确保 chapter 和 paragraph 字段正确
+        return literatureWithMapping.map((lit, index) => {
+            const newLit = { ...lit };
+            newLit.actualIndex = index + 1;
+            // 确保 chapter 和 paragraph 字段与 literatureMapping 一致
+            const litIndex = lit.initialIndex !== null && lit.initialIndex !== undefined 
+                ? lit.initialIndex 
+                : (lit.actualIndex || 0);
+            const mapping = mappingMap.get(litIndex);
+            if (mapping) {
+                newLit.chapter = mapping.chapter;
+                newLit.paragraph = mapping.paragraph;
+            }
+            delete newLit.sortKey; // 删除临时排序键
+            return newLit;
+        });
+    },
+
+    // 显示文献列表
+    displayReviewLiteratureList(literatureList) {
+        const container = document.getElementById('review-literature-list');
+        
+        if (!container) {
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        if (!literatureList || literatureList.length === 0) {
+            container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">暂无文献</p>';
+            return;
+        }
+        
+        // 按照编号排序：
+        // - 如果 actualIndex 不为 null，按 actualIndex 排序
+        // - 如果 actualIndex 为 null，按 initialIndex 排序
+        const sortedList = [...literatureList].sort((a, b) => {
+            // 获取 a 的排序索引
+            const aIndex = a.actualIndex !== null && a.actualIndex !== undefined 
+                ? a.actualIndex 
+                : (a.initialIndex || 0);
+            
+            // 获取 b 的排序索引
+            const bIndex = b.actualIndex !== null && b.actualIndex !== undefined 
+                ? b.actualIndex 
+                : (b.initialIndex || 0);
+            
+            return aIndex - bIndex;
+        });
+        
+        sortedList.forEach((lit, index) => {
+            const item = document.createElement('div');
+            item.className = 'literature-item';
+            item.style.cssText = `
+                margin-bottom: 20px; 
+                padding: 15px; 
+                background: white; 
+                border-radius: 12px; 
+                border: 1px solid #e5e7eb;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+                transition: all 0.3s ease;
+            `;
+            
+            // 鼠标悬停效果
+            item.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+                this.style.transform = 'translateY(-2px)';
+            });
+            item.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+                this.style.transform = 'translateY(0)';
+            });
+            
+            const authorsText = lit.authors ? (Array.isArray(lit.authors) ? lit.authors.join(', ') : lit.authors) : '未知作者';
+            const yearText = lit.year ? ` (${lit.year})` : '';
+            const journalText = lit.journal || lit.source || '';
+            const abstractText = lit.abstract || '';
+            
+            // 显示编号：优先显示真正编号，如果没有则显示初始编号
+            const displayIndex = lit.actualIndex !== null && lit.actualIndex !== undefined ? lit.actualIndex : (lit.initialIndex || (index + 1));
+            // 如果有真正编号，只显示真正编号；如果没有，显示初始编号并标注
+            const indexLabel = lit.actualIndex !== null && lit.actualIndex !== undefined ? 
+                `[${displayIndex}]` : 
+                `[${lit.initialIndex || displayIndex}]`;
+            
+            item.innerHTML = `
+                <div style="margin-bottom: 8px;">
+                    <p style="margin: 0; font-size: 16px; font-weight: 600; color: #1e293b; line-height: 1.4;">
+                        <strong>${indexLabel}</strong> ${lit.title || '无标题'}
+                    </p>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <p style="margin: 0; font-size: 14px; color: #64748b;">
+                        ${authorsText}${yearText}${journalText ? ` - ${journalText}` : ''}
+                    </p>
+                </div>
+                ${abstractText ? `
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                    <p style="margin: 0; font-size: 13px; color: #64748b; line-height: 1.5;">
+                        ${abstractText.length > 200 ? abstractText.substring(0, 200) + '...' : abstractText}
+                    </p>
+                </div>
+                ` : ''}
+                ${lit.url ? `
+                <div style="margin-top: 8px;">
+                    <a href="${lit.url}" target="_blank" style="color: #3b82f6; text-decoration: none; font-size: 13px;">
+                        查看原文 →
+                    </a>
+                </div>
+                ` : ''}
+            `;
+            
+            container.appendChild(item);
+        });
     },
 
     // 更新生成按钮的显示状态
@@ -673,11 +1063,14 @@ window.WorkflowManager = {
             requiredElement = document.getElementById('main-requirement-input') || 
                              document.getElementById('main-api-provider-select');
         } else if (subprojectType === 'reviewWriting') {
-            // 综述撰写子项目：检查API Key输入框
-            requiredElement = document.getElementById('main-api-key-input');
+            // 综述撰写子项目：检查API供应商选择框或大纲要求输入框（撰写页面没有API Key输入框）
+            requiredElement = document.getElementById('main-api-provider-select') || 
+                             document.getElementById('main-requirement-input') ||
+                             document.getElementById('main-chapter-count');
         } else {
-            // 兼容旧格式：检查API Key输入框
-            requiredElement = document.getElementById('main-api-key-input');
+            // 兼容旧格式：检查API Key输入框或API供应商选择框
+            requiredElement = document.getElementById('main-api-key-input') || 
+                             document.getElementById('main-api-provider-select');
         }
         
         if (!requiredElement) {
@@ -764,13 +1157,52 @@ window.WorkflowManager = {
             }
         }
         
-        // 加载需求描述
-        if (this.state.requirementData.requirement) {
+        // 加载需求描述/大纲要求
+        // 对于撰写子项目，优先从 node5 中读取，如果不存在则清空（避免显示其他子项目的数据）
+        if (subprojectType === 'reviewWriting') {
+            console.log('[checkRequirementStatus] 加载撰写子项目数据:', {
+                hasSubproject: !!state.currentSubproject,
+                hasNode5: !!state.currentSubproject?.node5,
+                outlineRequirement: state.currentSubproject?.node5?.outlineRequirement,
+                chapterCount: state.currentSubproject?.node5?.chapterCount,
+                hasOutline: !!state.currentSubproject?.node5?.outline,
+                outlineLength: state.currentSubproject?.node5?.outline?.length || 0
+            });
+            
+            if (state.currentSubproject?.node5?.outlineRequirement !== undefined) {
+                window.UIUtils.setValue('main-requirement-input', state.currentSubproject.node5.outlineRequirement);
+            } else {
+                window.UIUtils.setValue('main-requirement-input', ''); // 清空，避免显示其他子项目的数据
+            }
+        } else if (this.state.requirementData.requirement) {
             window.UIUtils.setValue('main-requirement-input', this.state.requirementData.requirement);
         }
         
-        // 加载目标数量
-        if (this.state.requirementData.targetCount) {
+        // 加载章节数（仅撰写子项目）
+        if (subprojectType === 'reviewWriting') {
+            if (state.currentSubproject?.node5?.chapterCount !== undefined) {
+                window.UIUtils.setValue('main-chapter-count', state.currentSubproject.node5.chapterCount);
+            } else {
+                window.UIUtils.setValue('main-chapter-count', '3'); // 默认值，避免显示其他子项目的数据
+            }
+        }
+        
+        // 加载大纲（仅撰写子项目）
+        // 如果子项目没有大纲，应该清空显示，避免显示其他子项目的大纲
+        if (subprojectType === 'reviewWriting') {
+            if (state.currentSubproject?.node5?.outline) {
+                window.UIUtils.setValue('main-outline-editor', state.currentSubproject.node5.outline);
+                window.UIUtils.showElement('main-outline-result');
+                console.log('[checkRequirementStatus] 大纲已加载到编辑器，长度:', state.currentSubproject.node5.outline.length);
+            } else {
+                window.UIUtils.setValue('main-outline-editor', ''); // 清空大纲编辑器
+                window.UIUtils.hideElement('main-outline-result'); // 隐藏大纲结果区域
+                console.log('[checkRequirementStatus] 子项目没有大纲，已清空编辑器');
+            }
+        }
+        
+        // 加载目标数量（仅文献查找子项目）
+        if (subprojectType === 'literatureSearch' && this.state.requirementData.targetCount) {
             window.UIUtils.setValue('main-target-count', this.state.requirementData.targetCount);
             if (window.RequirementManager) {
                 window.RequirementManager.updateTargetHint();
@@ -966,6 +1398,34 @@ window.WorkflowManager = {
 
     // 显示总览
     showOverview(force = false) {
+        // 如果是撰写子项目，不显示总览，而是显示文献列表
+        if (this.state.currentSubprojectType === 'reviewWriting') {
+            // 隐藏所有其他容器
+            const overviewContainer = document.getElementById('overview-container');
+            const literatureListContainer = document.getElementById('literature-list-container');
+            const nodeContentContainer = document.getElementById('node-content-container');
+            const emptyPanel = document.getElementById('node-content-empty');
+            
+            if (overviewContainer) {
+                overviewContainer.style.display = 'none';
+            }
+            if (nodeContentContainer) {
+                nodeContentContainer.style.display = 'none';
+            }
+            if (emptyPanel) {
+                emptyPanel.style.display = 'none';
+            }
+            
+            // 显示文献列表容器
+            if (literatureListContainer) {
+                literatureListContainer.style.display = 'block';
+            }
+            
+            // 加载并显示文献列表
+            this.loadReviewLiteratureList();
+            return;
+        }
+        
         // 如果正在自动生成且不是强制显示，不允许切换到总览
         if (this.isAutoGenerating() && !force) {
             window.UIUtils.showToast('流程正在进行中，请等待完成后再查看总览', 'info');
@@ -973,11 +1433,15 @@ window.WorkflowManager = {
         }
         
         const overviewContainer = document.getElementById('overview-container');
+        const literatureListContainer = document.getElementById('literature-list-container');
         const nodeContentContainer = document.getElementById('node-content-container');
         const emptyPanel = document.getElementById('node-content-empty');
         
         if (overviewContainer) {
             overviewContainer.style.display = 'block';
+        }
+        if (literatureListContainer) {
+            literatureListContainer.style.display = 'none';
         }
         if (nodeContentContainer) {
             nodeContentContainer.style.display = 'none';
@@ -992,14 +1456,41 @@ window.WorkflowManager = {
 
     // 隐藏总览，显示节点详情
     hideOverview() {
+        // 如果是撰写子项目，保持文献列表显示
+        if (this.state.currentSubprojectType === 'reviewWriting') {
+            const overviewContainer = document.getElementById('overview-container');
+            const nodeContentContainer = document.getElementById('node-content-container');
+            const emptyPanel = document.getElementById('node-content-empty');
+            const literatureListContainer = document.getElementById('literature-list-container');
+            
+            if (overviewContainer) {
+                overviewContainer.style.display = 'none';
+            }
+            if (nodeContentContainer) {
+                nodeContentContainer.style.display = 'block';
+            }
+            if (emptyPanel) {
+                emptyPanel.style.display = 'none';
+            }
+            // 保持文献列表容器显示
+            if (literatureListContainer) {
+                literatureListContainer.style.display = 'block';
+            }
+            return;
+        }
+        
         const overviewContainer = document.getElementById('overview-container');
         const nodeContentContainer = document.getElementById('node-content-container');
+        const emptyPanel = document.getElementById('node-content-empty');
         
         if (overviewContainer) {
             overviewContainer.style.display = 'none';
         }
         if (nodeContentContainer) {
             nodeContentContainer.style.display = 'block';
+        }
+        if (emptyPanel) {
+            emptyPanel.style.display = 'none';
         }
     },
 
@@ -1578,8 +2069,20 @@ window.WorkflowManager = {
                 }
                 break;
             case 5:
-                // 始终显示已选文献摘要区域
-                window.UIUtils.showElement('selected-literature-summary');
+                // 根据子项目类型决定是否显示已选文献摘要区域
+                if (this.state.currentSubprojectType === 'reviewWriting') {
+                    // 撰写子项目：隐藏已选文献区域，因为所有文献都会自动使用
+                    window.UIUtils.hideElement('selected-literature-summary');
+                } else {
+                    // 文献查找子项目：显示已选文献摘要区域
+                    window.UIUtils.showElement('selected-literature-summary');
+                    // 显示已选文献列表
+                    if (this.state.selectedLiterature && this.state.selectedLiterature.length > 0) {
+                        window.Node5Review.displaySelectedLiterature(this.state.selectedLiterature);
+                    } else {
+                        window.Node5Review.displaySelectedLiterature([]);
+                    }
+                }
                 
                 // 始终显示生成综述按钮（无论状态如何）
                 const generateBtn = document.getElementById('generate-review-btn');
@@ -1587,16 +2090,13 @@ window.WorkflowManager = {
                     generateBtn.style.display = 'inline-block';
                 }
                 
-                // 始终显示已选文献列表（无论是否有数据）
-                if (this.state.selectedLiterature && this.state.selectedLiterature.length > 0) {
-                    window.Node5Review.displaySelectedLiterature(this.state.selectedLiterature);
-                } else {
-                    window.Node5Review.displaySelectedLiterature([]);
-                }
-                
                 // 如果有综述内容，显示综述
-                if (this.state.reviewContent) {
-                    window.Node5Review.display(this.state.reviewContent, this.state.selectedLiterature);
+                if (this.state.reviewContent && this.state.reviewContent.trim()) {
+                    // 对于撰写子项目，使用子项目的文献列表；对于文献查找子项目，使用已选文献
+                    const literatureToUse = this.state.currentSubprojectType === 'reviewWriting' 
+                        ? (this.state.currentSubproject?.literature || this.state.selectedLiterature || [])
+                        : (this.state.selectedLiterature || []);
+                    window.Node5Review.display(this.state.reviewContent, literatureToUse);
                     window.UIUtils.showElement('review-result');
                 } else {
                     // 如果没有综述内容，显示提示
@@ -2490,23 +2990,36 @@ window.WorkflowManager = {
             this.state.apiProvider = apiProvider;
             this.state.requirementData.requirement = requirement;
             this.state.requirementData.targetCount = targetCount;
-            this.state.requirementData.outline = outline;
+            // outline、chapterCount、literatureMapping 只保存在子项目的 node5 中，不保存到 project.json
+            // 对于文献查找子项目，outline 可以保存在 requirementData 中
+            // 对于撰写子项目，outline 应该只保存在子项目的 node5 中
+            if (this.state.currentSubprojectType !== 'reviewWriting') {
+                this.state.requirementData.outline = outline;
+            }
             this.state.requirementData.language = language;
 
             // 保存到JSON文件
+            // outline、chapterCount、literatureMapping 不保存到 project.json，它们只保存在子项目的 node5 中
+            const requirementDataToSave = {
+                requirement: requirement,
+                targetCount: targetCount,
+                language: language
+                // keywordsPlan应该保存在node1中，不保存在requirementData中
+                // outline、chapterCount、literatureMapping 只保存在子项目的 node5 中
+            };
+            
+            // 对于文献查找子项目，可以保存 outline 到 requirementData
+            if (this.state.currentSubprojectType !== 'reviewWriting' && outline) {
+                requirementDataToSave.outline = outline;
+            }
+            
             await this.saveProjectData({
                 config: {
                     apiKeys: this.state.apiKeys || {}, // 保存所有供应商的Keys
                     apiProvider: apiProvider,
                     geminiModel: apiProvider === 'gemini' ? this.getGeminiModel() : undefined
                 },
-                requirementData: {
-                    requirement: requirement,
-                    targetCount: targetCount,
-                    outline: outline,
-                    language: language
-                    // keywordsPlan应该保存在node1中，不保存在requirementData中
-                }
+                requirementData: requirementDataToSave
             });
 
             window.UIUtils.showToast('项目需求设置已保存', 'success');
@@ -2518,42 +3031,190 @@ window.WorkflowManager = {
 
     // 分析需求
     async analyzeRequirement() {
-        const apiKey = window.UIUtils.getValue('main-api-key-input');
+        const state = this.state;
+        
+        // 立即显示提示，告知用户已开始生成
+        window.UIUtils.showToast('正在生成大纲，请稍候...', 'info');
+        
+        // 获取API Key（撰写子项目时从项目配置读取，文献查找子项目从输入框读取）
+        let apiKey = '';
+        if (state.currentSubprojectType === 'reviewWriting') {
+            // 撰写子项目：从项目配置中读取API Key
+            const apiProvider = this.getCurrentApiProvider();
+            apiKey = (state.apiKeys && state.apiKeys[apiProvider]) || 
+                     (state.projectData.config && state.projectData.config.apiKeys && state.projectData.config.apiKeys[apiProvider]) ||
+                     '';
+        } else {
+            // 文献查找子项目：从输入框读取
+            apiKey = window.UIUtils.getValue('main-api-key-input');
+        }
+        
         const requirement = window.UIUtils.getValue('main-requirement-input');
-        const targetCount = parseInt(window.UIUtils.getValue('main-target-count')) || 50;
         const language = window.UIUtils.getValue('main-language-select') || 'zh';
 
         if (!apiKey) {
-            window.UIUtils.showToast('请先输入API Key', 'error');
-            return;
-        }
-        if (!requirement) {
-            window.UIUtils.showToast('请先输入需求描述', 'error');
+            window.UIUtils.showToast('请先在项目配置中添加API Key', 'error');
             return;
         }
 
         try {
-            // 不显示页面上的进度条
-
             this.state.globalApiKey = apiKey;
-            this.state.requirementData.requirement = requirement;
-            this.state.requirementData.targetCount = targetCount;
             this.state.requirementData.language = language;
 
+            // 获取API供应商和模型（生成大纲和生成综述使用相同的）
             const apiProvider = this.getCurrentApiProvider();
             const modelName = this.getCurrentModelName();
             
-            if (!window.RequirementManager) {
-                throw new Error('RequirementManager模块未加载，无法分析需求');
+            // 如果是撰写子项目，使用不同的逻辑
+            if (state.currentSubprojectType === 'reviewWriting') {
+                // 获取章节数和大纲要求
+                const chapterCount = parseInt(window.UIUtils.getValue('main-chapter-count')) || 3;
+                const outlineRequirement = requirement || ''; // 大纲要求是可选的
+                
+                // 获取所有文献列表
+                const literatureList = state.currentSubproject?.literature || [];
+                const validLiterature = literatureList.filter(lit => lit.title && lit.title.trim().length > 0);
+                
+                if (validLiterature.length === 0) {
+                    window.UIUtils.showToast('没有可用的文献，请先关联文献查找子项目', 'error');
+                    return;
+                }
+                
+                // 保存数据
+                this.state.requirementData.requirement = outlineRequirement;
+                this.state.requirementData.chapterCount = chapterCount;
+                
+                if (!window.RequirementManager) {
+                    throw new Error('RequirementManager模块未加载，无法分析需求');
+                }
+                
+                // 显示正在生成大纲模态框
+                const generatingOutlineModal = document.getElementById('generating-outline-modal');
+                if (generatingOutlineModal) {
+                    generatingOutlineModal.style.display = 'flex';
+                }
+                
+                let result;
+                try {
+                    // 调用生成大纲，传入完整的文献列表（包含标题和年份）、章节数、大纲要求和语言
+                    result = await window.RequirementManager.generateOutlineForReview(
+                        apiKey, 
+                        validLiterature, 
+                        chapterCount, 
+                        outlineRequirement,
+                        apiProvider, 
+                        modelName,
+                        language // 传入用户选择的输出语言
+                    );
+                } finally {
+                    // 隐藏正在生成大纲模态框
+                    if (generatingOutlineModal) {
+                        generatingOutlineModal.style.display = 'none';
+                    }
+                }
+                
+                this.state.requirementData.outline = result.outline;
+                this.state.requirementData.literatureMapping = result.literatureMapping || [];
+                window.UIUtils.setValue('main-outline-editor', result.outline);
+                window.UIUtils.showElement('main-outline-result');
+                
+                // 根据文献映射重新排序文献（按章节、段落、年份）
+                const reorderedLiterature = this.reorderLiteratureByOutline(validLiterature, result.literatureMapping);
+                
+                // 更新子项目中的文献列表
+                if (state.currentSubproject) {
+                    state.currentSubproject.literature = reorderedLiterature;
+                }
+                
+                // 保存大纲和重新排序后的文献到子项目的JSON文件中
+                if (state.currentSubprojectId && state.currentProject) {
+                    // 更新node5，保存大纲相关信息
+                    const node5Updates = {
+                        outline: result.outline,
+                        chapterCount: chapterCount,
+                        outlineRequirement: outlineRequirement,
+                        literatureMapping: result.literatureMapping,
+                        status: state.currentSubproject.node5?.status || 'pending'
+                    };
+                    
+                    console.log('[analyzeRequirement] 准备保存大纲到子项目:', {
+                        subprojectId: state.currentSubprojectId,
+                        node5Updates: node5Updates,
+                        hasOutline: !!result.outline,
+                        hasMapping: !!(result.literatureMapping && result.literatureMapping.length > 0)
+                    });
+                    
+                    // 保存到 subprojects2.json 对应的子项目中
+                    // 确保 node5 的深度合并，保留 reviewContent 等已有字段
+                    const node5ToSave = {
+                        ...(state.currentSubproject.node5 || {}), // 保留原有的 node5 数据（如 reviewContent）
+                        ...node5Updates // 更新大纲相关字段
+                    };
+                    
+                    console.log('[analyzeRequirement] 准备保存的 node5 数据:', {
+                        hasReviewContent: !!node5ToSave.reviewContent,
+                        hasOutline: !!node5ToSave.outline,
+                        hasChapterCount: node5ToSave.chapterCount !== undefined,
+                        hasOutlineRequirement: node5ToSave.outlineRequirement !== undefined,
+                        hasLiteratureMapping: !!(node5ToSave.literatureMapping && node5ToSave.literatureMapping.length > 0),
+                        node5Keys: Object.keys(node5ToSave)
+                    });
+                    
+                    const updatedSubproject = await window.SubprojectManager.updateSubproject(
+                        state.currentProject,
+                        state.currentSubprojectId,
+                        {
+                            node5: node5ToSave,
+                            literature: reorderedLiterature
+                        }
+                    );
+                    
+                    if (updatedSubproject) {
+                        console.log('[analyzeRequirement] 大纲已保存到子项目，node5内容:', updatedSubproject.node5);
+                    } else {
+                        console.error('[analyzeRequirement] 保存大纲失败：未找到子项目或更新失败');
+                    }
+                    
+                    // 更新state中的子项目对象
+                    if (state.currentSubproject) {
+                        if (!state.currentSubproject.node5) {
+                            state.currentSubproject.node5 = {};
+                        }
+                        state.currentSubproject.node5 = {
+                            ...state.currentSubproject.node5,
+                            ...node5Updates
+                        };
+                        // 同时更新文献列表
+                        state.currentSubproject.literature = reorderedLiterature;
+                    }
+                } else {
+                    console.error('[analyzeRequirement] 无法保存大纲：缺少子项目ID或项目名称', {
+                        hasSubprojectId: !!state.currentSubprojectId,
+                        hasProject: !!state.currentProject
+                    });
+                }
+            } else {
+                // 文献查找子项目：使用原有逻辑
+                const targetCount = parseInt(window.UIUtils.getValue('main-target-count')) || 50;
+                
+                if (!requirement) {
+                    window.UIUtils.showToast('请先输入需求描述', 'error');
+                    return;
+                }
+                
+                this.state.requirementData.requirement = requirement;
+                this.state.requirementData.targetCount = targetCount;
+                
+                if (!window.RequirementManager) {
+                    throw new Error('RequirementManager模块未加载，无法分析需求');
+                }
+                
+                const result = await window.RequirementManager.analyzeRequirement(apiKey, requirement, targetCount, apiProvider, modelName);
+                
+                this.state.requirementData.outline = result.outline;
+                window.UIUtils.setValue('main-outline-editor', result.outline);
+                window.UIUtils.showElement('main-outline-result');
             }
-            
-            const result = await window.RequirementManager.analyzeRequirement(apiKey, requirement, targetCount, apiProvider, modelName);
-            
-            this.state.requirementData.outline = result.outline;
-            // 需求分析不再生成关键词，关键词将在节点1中生成
-
-            window.UIUtils.setValue('main-outline-editor', result.outline);
-            window.UIUtils.showElement('main-outline-result');
 
             // 保存当前供应商的Key到apiKeys对象
             if (apiKey) {
@@ -2575,10 +3236,10 @@ window.WorkflowManager = {
             // 更新生成按钮显示状态
             this.updateGenerateButtonState();
 
-            window.UIUtils.showToast('需求分析完成', 'success');
+            window.UIUtils.showToast('大纲生成完成', 'success');
         } catch (error) {
-            console.error('分析需求失败:', error);
-            window.UIUtils.showToast('分析失败: ' + error.message, 'error');
+            console.error('生成大纲失败:', error);
+            window.UIUtils.showToast('生成失败: ' + error.message, 'error');
         }
     },
 
@@ -4931,10 +5592,39 @@ window.WorkflowManager = {
 
     // 手动生成综述（用户点击按钮）
     async generateReview() {
-        // 检查是否有已选文献
-        if (!this.state.selectedLiterature || this.state.selectedLiterature.length === 0) {
-            window.UIUtils.showToast('请先选择文献', 'error');
-            return;
+        const state = this.state;
+        
+        // 根据子项目类型获取文献列表
+        let literatureToUse = [];
+        let outlineToUse = '';
+        let requirementToUse = '';
+        
+        if (state.currentSubprojectType === 'reviewWriting') {
+            // 撰写子项目：使用子项目中的完整文献列表
+            literatureToUse = state.currentSubproject?.literature || [];
+            if (literatureToUse.length === 0) {
+                window.UIUtils.showToast('没有可用的文献，请先关联文献查找子项目', 'error');
+                return;
+            }
+            
+            // 从 node5 中获取大纲和要求（撰写子项目的大纲只从 node5 中读取，不从 project.json 读取）
+            outlineToUse = state.currentSubproject?.node5?.outline || '';
+            requirementToUse = state.currentSubproject?.node5?.outlineRequirement || '';
+            
+            if (!outlineToUse || outlineToUse.trim().length === 0) {
+                window.UIUtils.showToast('请先生成大纲', 'error');
+                return;
+            }
+        } else {
+            // 文献查找子项目：使用已选文献
+            literatureToUse = state.selectedLiterature || [];
+            if (literatureToUse.length === 0) {
+                window.UIUtils.showToast('请先选择文献', 'error');
+                return;
+            }
+            
+            outlineToUse = state.requirementData.outline || '';
+            requirementToUse = state.requirementData.requirement || '';
         }
 
         // 检查是否已有综述内容
@@ -4946,9 +5636,24 @@ window.WorkflowManager = {
             }
         }
 
+        // 获取API Key（使用和生成大纲相同的逻辑）
+        const apiProvider = this.getCurrentApiProvider();
+        let apiKeyToUse = '';
+        
+        if (state.currentSubprojectType === 'reviewWriting') {
+            // 撰写子项目：从项目配置中读取API Key
+            apiKeyToUse = (state.apiKeys && state.apiKeys[apiProvider]) || 
+                         (state.projectData.config && state.projectData.config.apiKeys && state.projectData.config.apiKeys[apiProvider]) ||
+                         this.state.globalApiKey ||
+                         '';
+        } else {
+            // 文献查找子项目：从输入框或globalApiKey读取
+            apiKeyToUse = window.UIUtils.getValue('main-api-key-input') || this.state.globalApiKey || '';
+        }
+        
         // 检查API Key
-        if (!this.state.globalApiKey) {
-            window.UIUtils.showToast('请先设置API Key', 'error');
+        if (!apiKeyToUse) {
+            window.UIUtils.showToast('请先在项目配置中添加API Key', 'error');
             return;
         }
 
@@ -4964,34 +5669,97 @@ window.WorkflowManager = {
             window.UIUtils.hideElement('generate-progress');
             window.UIUtils.hideElement('review-result');
 
-            // 执行生成
-            const apiProvider = this.getCurrentApiProvider();
+            // 获取综述要求（可选）
+            const reviewRequirement = window.UIUtils.getValue('review-requirement-input') || '';
+            
+            // 获取每章字数要求（可选）
+            const chapterWordCountInput = document.getElementById('chapter-word-count-input');
+            const chapterWordCount = chapterWordCountInput && chapterWordCountInput.value 
+                ? parseInt(chapterWordCountInput.value, 10) 
+                : null;
+            
+            // 构建 requirementData 对象
+            const requirementDataForReview = {
+                outline: outlineToUse,
+                requirement: requirementToUse,
+                reviewRequirement: reviewRequirement, // 额外的综述要求
+                chapterWordCount: chapterWordCount, // 每章字数要求
+                language: state.requirementData.language || 'zh',
+                literatureMapping: state.currentSubproject?.node5?.literatureMapping || []
+            };
+
+            // 显示正在生成模态框
+            const generatingModal = document.getElementById('generating-review-modal');
+            if (generatingModal) {
+                generatingModal.style.display = 'flex';
+            }
+
+            // 执行生成（使用和生成大纲相同的API供应商和模型）
             const modelName = this.getCurrentModelName();
-            this.state.reviewContent = await window.Node5Review.execute(
-                this.state.globalApiKey,
-                this.state.selectedLiterature,
-                this.state.requirementData,
-                apiProvider,
-                modelName
-            );
+            
+            try {
+                this.state.reviewContent = await window.Node5Review.execute(
+                    apiKeyToUse,
+                    literatureToUse,
+                    requirementDataForReview,
+                    apiProvider,
+                    modelName
+                );
+            } finally {
+                // 隐藏正在生成模态框
+                if (generatingModal) {
+                    generatingModal.style.display = 'none';
+                }
+            }
 
             // 综述生成完成（不显示页面上的进度条）
 
+            // 解析综述中的文献引用顺序，重新整理文献
+            let reorderedLiterature = literatureToUse;
+            if (window.Node5Review && window.Node5Review.parseCitationOrder) {
+                reorderedLiterature = window.Node5Review.parseCitationOrder(this.state.reviewContent, [...literatureToUse]);
+                console.log('[generateReview] 文献重新排序完成，引用顺序:', reorderedLiterature.map(lit => ({
+                    title: lit.title,
+                    initialIndex: lit.initialIndex,
+                    actualIndex: lit.actualIndex
+                })));
+            }
+
+            // 如果是撰写子项目，更新文献列表和 selectedLiterature
+            if (state.currentSubprojectType === 'reviewWriting') {
+                this.state.selectedLiterature = reorderedLiterature;
+                
+                // 更新子项目中的文献列表（按真正编号排序）
+                if (state.currentSubproject) {
+                    state.currentSubproject.literature = reorderedLiterature;
+                    
+                    // 保存更新后的文献列表到子项目JSON
+                    await window.SubprojectManager.updateSubproject(
+                        state.currentProject,
+                        state.currentSubprojectId,
+                        {
+                            literature: reorderedLiterature
+                        }
+                    );
+                }
+            }
+
             // 显示结果
-            window.Node5Review.display(this.state.reviewContent, this.state.selectedLiterature);
+            window.Node5Review.display(this.state.reviewContent, reorderedLiterature);
             window.UIUtils.showElement('review-result');
 
             // 更新节点状态
             this.updateNodeState(5, 'completed');
 
-            // 保存数据
-            // 节点5只保存自己的数据
+            // 保存数据到子项目的 node5 中
             await this.saveNodeData(5, {
                 reviewContent: this.state.reviewContent
             });
 
-            // 节点完成后显示总览
-            this.showOverview(true);
+            // 节点完成后显示总览（仅文献查找子项目）
+            if (state.currentSubprojectType !== 'reviewWriting') {
+                this.showOverview(true);
+            }
 
             window.UIUtils.showToast('综述生成完成', 'success');
         } catch (error) {

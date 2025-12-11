@@ -50,6 +50,34 @@ window.API = {
 
         const providerConfig = this.providers[provider];
         
+        // 确定实际使用的模型名称
+        let actualModelName = modelName;
+        if (provider === 'gemini') {
+            actualModelName = modelName || providerConfig.defaultModel;
+        } else if (provider === 'siliconflow') {
+            actualModelName = modelName || providerConfig.defaultModel;
+        } else if (provider === 'poe') {
+            actualModelName = modelName || providerConfig.defaultModel;
+        } else {
+            actualModelName = providerConfig.defaultModel;
+        }
+        
+        // 打印API调用信息到控制台
+        console.log('='.repeat(80));
+        console.log('[API调用] 开始调用大模型API');
+        console.log('[API调用] API供应商:', provider, `(${providerConfig.name})`);
+        console.log('[API调用] 模型名称:', actualModelName);
+        console.log('[API调用] Temperature:', temperature);
+        console.log('[API调用] 消息数量:', messages.length);
+        console.log('[API调用] 完整提示词（messages）:');
+        messages.forEach((msg, index) => {
+            console.log(`  [消息 ${index + 1}] role: ${msg.role}`);
+            console.log(`  [消息 ${index + 1}] content:`);
+            console.log(msg.content);
+            console.log('  ' + '-'.repeat(76));
+        });
+        console.log('='.repeat(80));
+        
         // 根据不同的供应商使用不同的调用方式
         if (provider === 'gemini') {
             // Gemini API使用不同的格式
@@ -87,12 +115,18 @@ window.API = {
 
         const data = await response.json();
         if (!response.ok) {
+            console.error('[API调用] 调用失败:', data.error?.message || `HTTP ${response.status}`);
             throw new Error(data.error?.message || `API调用失败: ${response.status}`);
         }
 
         if (data.choices && data.choices[0]) {
-            return data.choices[0].message.content.trim();
+            const result = data.choices[0].message.content.trim();
+            console.log('[API调用] 调用成功，返回内容长度:', result.length, '字符');
+            console.log('[API调用] 返回内容预览:', result.substring(0, 200) + (result.length > 200 ? '...' : ''));
+            console.log('='.repeat(80));
+            return result;
         }
+        console.error('[API调用] 返回格式错误:', data);
         throw new Error('API返回格式错误');
     },
 
@@ -114,12 +148,18 @@ window.API = {
 
         const data = await response.json();
         if (!response.ok) {
+            console.error('[API调用] 调用失败:', data.error?.message || `HTTP ${response.status}`);
             throw new Error(data.error?.message || `API调用失败: ${response.status}`);
         }
 
         if (data.choices && data.choices[0]) {
-            return data.choices[0].message.content.trim();
+            const result = data.choices[0].message.content.trim();
+            console.log('[API调用] 调用成功，返回内容长度:', result.length, '字符');
+            console.log('[API调用] 返回内容预览:', result.substring(0, 200) + (result.length > 200 ? '...' : ''));
+            console.log('='.repeat(80));
+            return result;
         }
+        console.error('[API调用] 返回格式错误:', data);
         throw new Error('API返回格式错误');
     },
 
@@ -141,12 +181,18 @@ window.API = {
 
         const data = await response.json();
         if (!response.ok) {
+            console.error('[API调用] 调用失败:', data.error?.message || `HTTP ${response.status}`);
             throw new Error(data.error?.message || `API调用失败: ${response.status}`);
         }
 
         if (data.choices && data.choices[0]) {
-            return data.choices[0].message.content.trim();
+            const result = data.choices[0].message.content.trim();
+            console.log('[API调用] 调用成功，返回内容长度:', result.length, '字符');
+            console.log('[API调用] 返回内容预览:', result.substring(0, 200) + (result.length > 200 ? '...' : ''));
+            console.log('='.repeat(80));
+            return result;
         }
+        console.error('[API调用] 返回格式错误:', data);
         throw new Error('API返回格式错误');
     },
 
@@ -189,6 +235,8 @@ window.API = {
             // 处理 Gemini API 错误响应
             let errorMsg = '';
             
+            console.error('[API调用] Gemini API调用失败，响应状态:', response.status);
+            
             if (data.error) {
                 // Gemini API 标准错误格式
                 if (data.error.message) {
@@ -223,6 +271,7 @@ window.API = {
                 errorMsg = `API调用失败: HTTP ${response.status}`;
             }
             
+            console.error('[API调用] Gemini API调用失败，错误信息:', errorMsg);
             throw new Error(errorMsg);
         }
 
@@ -230,9 +279,14 @@ window.API = {
         if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
             const text = data.candidates[0].content.parts[0].text;
             if (text) {
-                return text.trim();
+                const result = text.trim();
+                console.log('[API调用] 调用成功，返回内容长度:', result.length, '字符');
+                console.log('[API调用] 返回内容预览:', result.substring(0, 200) + (result.length > 200 ? '...' : ''));
+                console.log('='.repeat(80));
+                return result;
             }
         }
+        console.error('[API调用] 返回格式错误，未找到有效内容:', data);
         throw new Error('API返回格式错误：未找到有效的内容');
     },
 

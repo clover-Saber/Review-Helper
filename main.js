@@ -3495,6 +3495,20 @@ ipcMain.handle('switch-to-literature-search-workflow', async () => {
   }
 });
 
+// 切换主窗口到文献撰写工作流界面
+ipcMain.handle('switch-to-review-writing-workflow', async () => {
+  try {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.loadFile(path.join(__dirname, 'pages/review-writing-workflow.html'));
+      return { success: true };
+    }
+    return { success: false, error: '主窗口不存在' };
+  } catch (error) {
+    console.error('Failed to switch to review writing workflow interface:', error);
+    return { success: false, error: error.message };
+  }
+});
+
 // 切换主窗口到项目管理界面（项目列表）
 ipcMain.handle('switch-to-index', async () => {
   try {

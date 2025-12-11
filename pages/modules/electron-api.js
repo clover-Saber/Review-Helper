@@ -152,6 +152,12 @@ window.electronAPI = {
             return ipcRenderer.invoke('switch-to-literature-search-workflow');
         }
     },
+    switchToReviewWritingWorkflow: () => {
+        if (window.require) {
+            const { ipcRenderer } = window.require('electron');
+            return ipcRenderer.invoke('switch-to-review-writing-workflow');
+        }
+    },
     switchToIndex: () => {
         if (window.require) {
             const { ipcRenderer } = window.require('electron');

@@ -83,6 +83,7 @@ window.SubprojectManager = {
         } else if (type === this.TYPES.REVIEW_WRITING) {
             subproject.node5 = { status: 'pending' };
             subproject.sourceSubprojectIds = [];  // 关联的文献查找子项目ID
+            subproject.literature = [];  // 从关联的文献查找子项目中整理后的文献列表
         }
 
         // 添加到对应类型的子项目文件
@@ -129,16 +130,43 @@ window.SubprojectManager = {
             const index = subprojects.findIndex(sp => sp.id === subprojectId);
             
             if (index !== -1) {
-                subprojects[index] = {
-                    ...subprojects[index],
+                // 深度合并更新，特别是 node5 等嵌套对象
+                const existingSubproject = subprojects[index];
+                const mergedSubproject = {
+                    ...existingSubproject,
                     ...updates,
                     updatedAt: new Date().toISOString()
                 };
+                
+                // 如果更新中包含 node5，需要深度合并（保留原有的 node5 数据）
+                if (updates.node5) {
+                    mergedSubproject.node5 = {
+                        ...(existingSubproject.node5 || {}), // 保留原有的 node5 数据（如 reviewContent、status）
+                        ...updates.node5 // 更新新的字段（如 outline、chapterCount 等）
+                    };
+                }
+                
+                // 如果更新中包含 literature，直接替换
+                if (updates.literature !== undefined) {
+                    mergedSubproject.literature = updates.literature;
+                }
+                
+                subprojects[index] = mergedSubproject;
+                
+                console.log('[updateSubproject] 保存子项目更新:', {
+                    subprojectId: subprojectId,
+                    type: type,
+                    hasNode5: !!mergedSubproject.node5,
+                    node5Keys: mergedSubproject.node5 ? Object.keys(mergedSubproject.node5) : [],
+                    hasLiterature: !!mergedSubproject.literature,
+                    literatureCount: mergedSubproject.literature ? mergedSubproject.literature.length : 0
+                });
                 
                 if (type === this.TYPES.LITERATURE_SEARCH) {
                     await window.electronAPI.saveSubprojects1(projectName, subprojects);
                 } else if (type === this.TYPES.REVIEW_WRITING) {
                     await window.electronAPI.saveSubprojects2(projectName, subprojects);
+                    console.log('[updateSubproject] 已保存到 subprojects2.json');
                 }
                 
                 return subprojects[index];
