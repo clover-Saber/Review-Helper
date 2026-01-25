@@ -20,4 +20,3 @@ window.LiteratureSearchWorkflow = {
         // 具体实现已在 WorkflowDataLoader 中完成
     }
 };
-

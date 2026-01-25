@@ -46,6 +46,11 @@ window.WorkflowDataLoader = {
         
         // 如果数据是旧格式（直接有 node1-node5），迁移到新格式
         if ((data.node1 || data.node2 || data.node3 || data.node4 || data.node5) && projectName) {
+            // 迁移节点4的selectedLiterature到节点3
+            if (data.node4 && data.node4.selectedLiterature && (!data.node3 || !data.node3.selectedLiterature)) {
+                if (!data.node3) data.node3 = {};
+                data.node3.selectedLiterature = data.node4.selectedLiterature;
+            }
             console.log('[migrateOldProjectData] 检测到旧格式数据，开始迁移...');
             const subprojects = [];
 
@@ -58,20 +63,26 @@ window.WorkflowDataLoader = {
                 return 'pending';
             };
 
-            // 创建文献查找子项目（包含节点1-4）
+            // 创建文献查找子项目（包含节点1-3）
             if (data.node1 || data.node2 || data.node3 || data.node4) {
+                // 迁移节点4的selectedLiterature到节点3
+                const node3Data = data.node3 || {};
+                const node4Data = data.node4 || {};
+                if (node4Data.selectedLiterature && !node3Data.selectedLiterature) {
+                    node3Data.selectedLiterature = node4Data.selectedLiterature;
+                }
+                
                 const literatureSubproject = {
                     id: `subproject_${Date.now()}_literature`,
                     name: '文献查找（迁移）',
                     type: 'literatureSearch',
-                    status: inferStatus([data.node1, data.node2, data.node3, data.node4]),
+                    status: inferStatus([data.node1, data.node2, node3Data]),
                     createdAt: data.createdAt || new Date().toISOString(),
                     updatedAt: data.updatedAt || new Date().toISOString(),
                     description: '从旧格式自动迁移的文献查找子项目',
                     node1: data.node1 || { status: 'pending' },
                     node2: data.node2 || { status: 'pending' },
-                    node3: data.node3 || { status: 'pending' },
-                    node4: data.node4 || { status: 'pending' }
+                    node3: node3Data || { status: 'pending' }
                 };
                 subprojects.push(literatureSubproject);
             }
@@ -169,11 +180,10 @@ window.WorkflowDataLoader = {
                         
                         // 从子项目中加载节点数据
                         if (subproject.type === 'literatureSearch') {
-                            // 文献查找子项目：加载节点1-4
-                            this.loadNodeData(1, subproject);
-                            this.loadNodeData(2, subproject);
-                            this.loadNodeData(3, subproject);
-                            this.loadNodeData(4, subproject);
+                        // 文献查找子项目：加载节点1-3
+                        this.loadNodeData(1, subproject);
+                        this.loadNodeData(2, subproject);
+                        this.loadNodeData(3, subproject);
                         } else if (subproject.type === 'reviewWriting') {
                             // 综述撰写子项目：加载节点5
                             this.loadNodeData(5, subproject);
@@ -237,7 +247,6 @@ window.WorkflowDataLoader = {
                     this.loadNodeData(1, data);
                     this.loadNodeData(2, data);
                     this.loadNodeData(3, data);
-                    this.loadNodeData(4, data);
                     this.loadNodeData(5, data);
                 }
                 
@@ -338,7 +347,6 @@ window.WorkflowDataLoader = {
                         this.loadNodeData(1, data);
                         this.loadNodeData(2, data);
                         this.loadNodeData(3, data);
-                        this.loadNodeData(4, data);
                         this.loadNodeData(5, data);
                         
                         // 从 searchResults 重新生成 allLiterature（如果需要）
@@ -446,19 +454,16 @@ window.WorkflowDataLoader = {
                 }
                 break;
             case 3:
-                if (nodeData.allLiterature && Array.isArray(nodeData.allLiterature)) {
+                // 节点3：精选文献（selectedLiterature）
+                if (nodeData.selectedLiterature && Array.isArray(nodeData.selectedLiterature)) {
+                    state.selectedLiterature = nodeData.selectedLiterature;
+                }
+                // 兼容旧数据：如果节点3有allLiterature，也加载（但优先使用selectedLiterature）
+                if (nodeData.allLiterature && Array.isArray(nodeData.allLiterature) && (!state.allLiterature || state.allLiterature.length === 0)) {
                     state.allLiterature = nodeData.allLiterature;
                 }
                 if (nodeData.status) {
                     state.nodeStates[3] = nodeData.status;
-                }
-                break;
-            case 4:
-                if (nodeData.selectedLiterature && Array.isArray(nodeData.selectedLiterature)) {
-                    state.selectedLiterature = nodeData.selectedLiterature;
-                }
-                if (nodeData.status) {
-                    state.nodeStates[4] = nodeData.status;
                 }
                 break;
             case 5:
@@ -521,23 +526,13 @@ window.WorkflowDataLoader = {
             }
         }
         
-        // 节点3：文献补全
+        // 节点3：精选文献
         if (data.node3) {
             if (data.node3.status) {
                 state.nodeStates[3] = data.node3.status;
             } else {
-                const hasAllLiterature = data.node3.allLiterature && Array.isArray(data.node3.allLiterature) && data.node3.allLiterature.length > 0;
-                state.nodeStates[3] = hasAllLiterature ? 'completed' : 'pending';
-            }
-        }
-        
-        // 节点4：精选文献
-        if (data.node4) {
-            if (data.node4.status) {
-                state.nodeStates[4] = data.node4.status;
-            } else {
-                const hasSelected = data.node4.selectedLiterature && Array.isArray(data.node4.selectedLiterature) && data.node4.selectedLiterature.length > 0;
-                state.nodeStates[4] = hasSelected ? 'completed' : 'pending';
+                const hasSelected = data.node3.selectedLiterature && Array.isArray(data.node3.selectedLiterature) && data.node3.selectedLiterature.length > 0;
+                state.nodeStates[3] = hasSelected ? 'completed' : 'pending';
             }
         }
         
@@ -672,10 +667,14 @@ window.WorkflowDataLoader = {
                     return Array.isArray(data.allLiterature);
                 }
                 return true;
-            case 4:
-                // 节点4：验证 selectedLiterature 格式
+            case 3:
+                // 节点3：验证 selectedLiterature 格式
                 if (data.selectedLiterature !== undefined) {
                     return Array.isArray(data.selectedLiterature);
+                }
+                // 兼容旧数据：也验证 allLiterature
+                if (data.allLiterature !== undefined) {
+                    return Array.isArray(data.allLiterature);
                 }
                 return true;
             case 5:
@@ -738,12 +737,8 @@ window.WorkflowDataLoader = {
                         status: state.nodeStates[2] || 'pending'
                     };
                     subprojectUpdates.node3 = {
-                        allLiterature: state.allLiterature,
-                        status: state.nodeStates[3] || 'pending'
-                    };
-                    subprojectUpdates.node4 = {
                         selectedLiterature: state.selectedLiterature,
-                        status: state.nodeStates[4] || 'pending'
+                        status: state.nodeStates[3] || 'pending'
                     };
                 } else if (subprojectType === 'reviewWriting') {
                     // 综述撰写子项目：保存节点5
@@ -813,12 +808,8 @@ window.WorkflowDataLoader = {
                         status: state.nodeStates[2] || 'pending'
                     },
                     node3: {
-                        allLiterature: state.allLiterature,
-                        status: state.nodeStates[3] || 'pending'
-                    },
-                    node4: {
                         selectedLiterature: state.selectedLiterature,
-                        status: state.nodeStates[4] || 'pending'
+                        status: state.nodeStates[3] || 'pending'
                     },
                     node5: {
                         reviewContent: state.reviewContent,
@@ -862,4 +853,3 @@ window.WorkflowDataLoader = {
         return state.poeModel || 'Claude-Sonnet-4';
     }
 };
-

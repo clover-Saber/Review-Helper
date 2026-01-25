@@ -1,0 +1,163 @@
+/* 加载组件样式 */
+
+/* 加载动画 */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--bg-tertiary);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin var(--transition-slower) linear infinite;
+}
+
+.loading-spinner-sm {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+}
+
+.loading-spinner-lg {
+    width: 60px;
+    height: 60px;
+    border-width: 4px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 加载文本 */
+.loading-text {
+    color: var(--text-secondary);
+    font-size: var(--font-size-base);
+    margin-top: var(--spacing-md);
+    text-align: center;
+}
+
+/* 加载容器 */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+}
+
+/* 骨架屏 */
+.skeleton {
+    background: linear-gradient(90deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-text {
+    height: 1em;
+    margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-text:last-child {
+    margin-bottom: 0;
+}
+
+.skeleton-title {
+    height: 1.5em;
+    width: 60%;
+    margin-bottom: var(--spacing-md);
+}
+
+.skeleton-paragraph {
+    height: 1em;
+    width: 100%;
+    margin-bottom: var(--spacing-xs);
+}
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-button {
+    height: 36px;
+    width: 100px;
+    border-radius: var(--radius-md);
+}
+
+.skeleton-card {
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+}
+
+/* 进度指示器 */
+.progress-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.progress-indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.progress-indicator-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.progress-indicator-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+}
+
+/* 加载覆盖层 */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-fixed);
+    backdrop-filter: var(--blur-sm);
+}
+
+/* 内联加载 */
+.loading-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+}

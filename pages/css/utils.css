@@ -1,0 +1,659 @@
+/* 工具类样式 - 用于替换常见的内联样式 */
+
+/* 显示/隐藏工具类 */
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+.flex {
+    display: flex !important;
+}
+
+.inline-flex {
+    display: inline-flex !important;
+}
+
+/* Flex布局工具类 */
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-start {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-gap-sm {
+    gap: var(--spacing-sm);
+}
+
+.flex-gap-md {
+    gap: var(--spacing-md);
+}
+
+.flex-gap-lg {
+    gap: var(--spacing-lg);
+}
+
+/* 文本工具类 */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}
+
+.text-error {
+    color: var(--error-color);
+}
+
+.text-success {
+    color: var(--success-color);
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+/* 间距工具类 */
+.mt-sm {
+    margin-top: var(--spacing-sm);
+}
+
+.mt-md {
+    margin-top: var(--spacing-md);
+}
+
+.mt-lg {
+    margin-top: var(--spacing-lg);
+}
+
+.mb-sm {
+    margin-bottom: var(--spacing-sm);
+}
+
+.mb-md {
+    margin-bottom: var(--spacing-md);
+}
+
+.mb-lg {
+    margin-bottom: var(--spacing-lg);
+}
+
+.ml-sm {
+    margin-left: var(--spacing-sm);
+}
+
+.ml-md {
+    margin-left: var(--spacing-md);
+}
+
+.mr-sm {
+    margin-right: var(--spacing-sm);
+}
+
+.mr-md {
+    margin-right: var(--spacing-md);
+}
+
+/* 宽度工具类 */
+.w-full {
+    width: 100%;
+}
+
+.w-auto {
+    width: auto;
+}
+
+.max-w-400 {
+    max-width: 400px;
+}
+
+.max-w-600 {
+    max-width: 600px;
+}
+
+.max-w-800 {
+    max-width: 800px;
+}
+
+/* 高度工具类 */
+.max-h-200 {
+    max-height: 200px;
+}
+
+.max-h-400 {
+    max-height: 400px;
+}
+
+.max-h-600 {
+    max-height: 600px;
+}
+
+.max-h-1000 {
+    max-height: 1000px;
+}
+
+/* 溢出工具类 */
+.overflow-auto {
+    overflow: auto;
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
+}
+
+.overflow-x-auto {
+    overflow-x: auto;
+}
+
+/* 边框工具类 */
+.border {
+    border: 1px solid var(--border-color);
+}
+
+.border-radius-sm {
+    border-radius: var(--radius-sm);
+}
+
+.border-radius-md {
+    border-radius: var(--radius-md);
+}
+
+.border-radius-lg {
+    border-radius: var(--radius-lg);
+}
+
+/* 填充工具类 */
+.p-sm {
+    padding: var(--spacing-sm);
+}
+
+.p-md {
+    padding: var(--spacing-md);
+}
+
+.p-lg {
+    padding: var(--spacing-lg);
+}
+
+.px-sm {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+}
+
+.px-md {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+}
+
+.py-sm {
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+}
+
+.py-md {
+    padding-top: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+}
+
+/* 字体大小工具类 */
+.text-sm {
+    font-size: var(--font-size-sm);
+}
+
+.text-base {
+    font-size: var(--font-size-base);
+}
+
+.text-lg {
+    font-size: var(--font-size-lg);
+}
+
+.font-weight-500 {
+    font-weight: 500;
+}
+
+.font-weight-600 {
+    font-weight: 600;
+}
+
+.font-weight-700 {
+    font-weight: 700;
+}
+
+/* 背景工具类 */
+.bg-light {
+    background-color: var(--bg-secondary);
+}
+
+.bg-tertiary {
+    background-color: var(--bg-tertiary);
+}
+
+/* 特定组件样式（用于替换内联样式） */
+.modal-content-large {
+    max-width: 600px;
+}
+
+.scrollable-list {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.error-message {
+    color: var(--error-color);
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 5px;
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* 显示/隐藏工具类扩展 */
+.d-none {
+    display: none !important;
+}
+
+.d-block {
+    display: block !important;
+}
+
+.d-inline {
+    display: inline !important;
+}
+
+.d-inline-block {
+    display: inline-block !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.d-inline-flex {
+    display: inline-flex !important;
+}
+
+/* 位置工具类 */
+.position-relative {
+    position: relative !important;
+}
+
+.position-absolute {
+    position: absolute !important;
+}
+
+.position-fixed {
+    position: fixed !important;
+}
+
+.position-sticky {
+    position: sticky !important;
+}
+
+/* 文本截断工具类 */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text-ellipsis-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.text-ellipsis-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 间距工具类扩展 */
+.mt-xs {
+    margin-top: var(--spacing-xs);
+}
+
+.mt-2xl {
+    margin-top: var(--spacing-2xl);
+}
+
+.mb-xs {
+    margin-bottom: var(--spacing-xs);
+}
+
+.mb-2xl {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.ml-xs {
+    margin-left: var(--spacing-xs);
+}
+
+.ml-lg {
+    margin-left: var(--spacing-lg);
+}
+
+.mr-xs {
+    margin-right: var(--spacing-xs);
+}
+
+.mr-lg {
+    margin-right: var(--spacing-lg);
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.my-auto {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.px-lg {
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+}
+
+.px-xl {
+    padding-left: var(--spacing-xl);
+    padding-right: var(--spacing-xl);
+}
+
+.py-lg {
+    padding-top: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+}
+
+.py-xl {
+    padding-top: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+}
+
+.p-xl {
+    padding: var(--spacing-xl);
+}
+
+.p-2xl {
+    padding: var(--spacing-2xl);
+}
+
+/* Gap工具类 */
+.gap-xs {
+    gap: var(--spacing-xs);
+}
+
+.gap-sm {
+    gap: var(--spacing-sm);
+}
+
+.gap-md {
+    gap: var(--spacing-md);
+}
+
+.gap-lg {
+    gap: var(--spacing-lg);
+}
+
+.gap-xl {
+    gap: var(--spacing-xl);
+}
+
+/* 对齐工具类 */
+.items-center {
+    align-items: center;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+/* 颜色工具类 */
+.text-gray {
+    color: #666;
+}
+
+.text-gray-600 {
+    color: #666;
+}
+
+.text-gray-500 {
+    color: #999;
+}
+
+/* 宽度工具类扩展 */
+.w-100 {
+    width: 100%;
+}
+
+.min-w-200 {
+    min-width: 200px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+/* 子项目名称样式（用于特定场景，不应用于项目详情页） */
+.subproject-name.hidden {
+    display: none;
+}
+
+.subproject-name.visible {
+    display: inline;
+}
+
+/* 按钮组样式 */
+.button-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* 表单提示文本 */
+.form-description {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+}
+
+/* 动画工具类 */
+.animate-fade-in {
+    animation: fadeIn var(--transition-normal) var(--ease-out);
+}
+
+.animate-fade-out {
+    animation: fadeOut var(--transition-fast) var(--ease-in);
+}
+
+.animate-slide-in {
+    animation: slideIn var(--transition-normal) var(--ease-out);
+}
+
+.animate-slide-out {
+    animation: slideOut var(--transition-fast) var(--ease-in);
+}
+
+.animate-scale-in {
+    animation: scaleIn var(--transition-normal) var(--ease-out);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 键盘导航优化 */
+*:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* 跳过链接样式 */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: var(--spacing-md);
+    background: var(--primary-color);
+    color: white;
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-decoration: none;
+    z-index: var(--z-max);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-semibold);
+    transition: top var(--transition-fast);
+    pointer-events: none;
+}
+
+.skip-link:focus {
+    top: var(--spacing-sm);
+    pointer-events: auto;
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+    .btn,
+    .api-provider-select,
+    input,
+    textarea,
+    select {
+        border-width: 2px;
+    }
+    
+    .btn:focus-visible,
+    .api-provider-select:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+        outline-width: 3px;
+    }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

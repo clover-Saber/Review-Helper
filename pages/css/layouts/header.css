@@ -1,0 +1,118 @@
+/* 头部布局样式 */
+
+header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: pulse 20s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(5%, 5%) scale(1.1); }
+}
+
+header h1 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+header p {
+    font-size: var(--font-size-lg);
+    opacity: 0.95;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
+}
+
+header a {
+    color: white;
+    text-decoration: underline;
+}
+
+header a:hover {
+    opacity: 0.9;
+}
+
+/* 项目头部 */
+.project-header {
+    padding: 24px 32px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-bottom: 2px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.project-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.project-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.project-status {
+    padding: 8px 20px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.status-active {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.status-active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    header {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+    
+    header h1 {
+        font-size: var(--font-size-2xl);
+    }
+}

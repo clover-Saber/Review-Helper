@@ -1,0 +1,135 @@
+/* 进度条组件样式 */
+
+.progress {
+    width: 100%;
+    height: 8px;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: var(--radius-sm);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* 进度条变体 */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.progress-bar .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+}
+
+/* 进度区域 */
+.progress-section {
+    background: var(--bg-primary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-xl);
+}
+
+.progress-section h2 {
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-color);
+}
+
+/* 进度对话框中的进度条 */
+#literature-search-progress-modal .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#literature-search-progress-modal .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #2563eb);
+    width: 0%;
+    transition: width 0.3s;
+}
+
+/* 进度条尺寸变体 */
+.progress-sm {
+    height: 4px;
+}
+
+.progress-md {
+    height: 8px;
+}
+
+.progress-lg {
+    height: 12px;
+}
+
+/* 进度条颜色变体 */
+.progress-success .progress-fill {
+    background: var(--gradient-success);
+}
+
+.progress-warning .progress-fill {
+    background: var(--gradient-warning);
+}
+
+.progress-error .progress-fill {
+    background: var(--gradient-error);
+}
+
+.progress-info .progress-fill {
+    background: linear-gradient(90deg, var(--info-color) 0%, var(--info-dark) 100%);
+}
+
+/* 进度条动画优化 */
+.progress-fill {
+    transition: width var(--transition-normal) var(--ease-out);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* 进度条文本优化 */
+.progress-text {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+    font-weight: var(--font-weight-medium);
+}

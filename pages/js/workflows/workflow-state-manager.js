@@ -88,4 +88,3 @@ window.WorkflowStateManager = {
         this.state.currentSubprojectType = null;
     }
 };
-

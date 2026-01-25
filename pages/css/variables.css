@@ -1,0 +1,181 @@
+/* CSS变量定义 - 科研风格统一设计系统 */
+
+:root {
+    /* 科研风格配色 - 柔和版本 */
+    --primary-color: #3b82f6;        /* 蓝色 - 主色（更柔和） */
+    --primary-light: #60a5fa;        /* 浅蓝 */
+    --primary-dark: #2563eb;         /* 深蓝 */
+    --primary-hover: #2563eb;        /* 主色hover状态 */
+    --primary-active: #1d4ed8;       /* 主色active状态 */
+    --primary-bg: #eff6ff;           /* 主色背景 */
+    --primary-bg-light: #dbeafe;     /* 主色浅背景 */
+    
+    --secondary-color: #64748b;      /* 灰蓝 - 次要色 */
+    --secondary-light: #94a3b8;      /* 浅灰蓝 */
+    --secondary-dark: #475569;       /* 深灰蓝 */
+    --secondary-hover: #475569;      /* 次要色hover状态 */
+    
+    --accent-color: #4f46e5;         /* 强调色 */
+    --accent-light: #6366f1;         /* 浅强调色 */
+    --accent-dark: #4338ca;          /* 深强调色 */
+    
+    --success-color: #10b981;       /* 成功色 - 绿色（更柔和） */
+    --success-light: #34d399;       /* 浅绿色 */
+    --success-dark: #059669;        /* 深绿色 */
+    --success-bg: #d1fae5;          /* 成功背景 */
+    
+    --warning-color: #f59e0b;       /* 警告色（更柔和） */
+    --warning-light: #fbbf24;       /* 浅橙色 */
+    --warning-dark: #d97706;        /* 深橙色 */
+    --warning-bg: #fef3c7;          /* 警告背景 */
+    
+    --error-color: #ef4444;         /* 错误色（更柔和） */
+    --error-light: #f87171;         /* 浅红色 */
+    --error-dark: #dc2626;          /* 深红色 */
+    --error-bg: #fee2e2;            /* 错误背景 */
+    
+    --info-color: #06b6d4;          /* 信息色 */
+    --info-light: #22d3ee;          /* 浅青色 */
+    --info-dark: #0891b2;           /* 深青色 */
+    --info-bg: #cffafe;             /* 信息背景 */
+    
+    --neutral-color: #6b7280;       /* 中性色 */
+    --neutral-light: #9ca3af;      /* 浅中性色 */
+    --neutral-dark: #4b5563;       /* 深中性色 */
+    
+    /* 中性色 */
+    --text-primary: #1e293b;        /* 主文本（稍浅） */
+    --text-secondary: #64748b;      /* 次要文本 */
+    --text-muted: #94a3b8;          /* 弱文本 */
+    --text-disabled: #cbd5e1;       /* 禁用文本 */
+    --text-color: #1e293b;          /* 文本颜色（兼容旧变量名） */
+    --text-inverse: #ffffff;        /* 反色文本（白色背景上的深色） */
+    
+    --border-color: #e2e8f0;        /* 边框色 */
+    --border-light: #f1f5f9;        /* 浅边框 */
+    --border-dark: #cbd5e1;        /* 深边框 */
+    --border-focus: #3b82f6;        /* 聚焦边框 */
+    
+    --bg-primary: #ffffff;          /* 主背景 */
+    --bg-secondary: #f8fafc;       /* 次背景（更浅） */
+    --bg-tertiary: #f1f5f9;        /* 三级背景 */
+    --bg-light: #f8fafc;            /* 浅背景（兼容旧变量名） */
+    --bg-hover: #f1f5f9;            /* hover背景 */
+    --bg-active: #e2e8f0;           /* active背景 */
+    --bg-overlay: rgba(0, 0, 0, 0.5); /* 遮罩背景 */
+    
+    /* 间距 */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    --spacing-3xl: 64px;
+    --spacing-4xl: 96px;
+    
+    /* 字体 */
+    --font-family-base: 'Segoe UI', 'Microsoft YaHei', 'SimSun', Arial, sans-serif;
+    --font-family-serif: 'Times New Roman', 'SimSun', serif;
+    --font-family-mono: 'Courier New', 'Consolas', monospace;
+    
+    --font-size-xs: 10px;
+    --font-size-sm: 12px;
+    --font-size-base: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+    --font-size-2xl: 24px;
+    --font-size-3xl: 32px;
+    --font-size-4xl: 40px;
+    
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+    --line-height-loose: 2;
+    
+    /* 圆角 */
+    --radius-xs: 2px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-2xl: 16px;
+    --radius-full: 9999px;
+    --border-radius: 8px;           /* 兼容旧变量名 */
+    
+    /* 阴影 */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-2xl: 0 12px 48px rgba(0, 0, 0, 0.15);
+    --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+    
+    /* 阴影 - 彩色变体 */
+    --shadow-primary: 0 4px 12px rgba(59, 130, 246, 0.3);
+    --shadow-success: 0 4px 12px rgba(16, 185, 129, 0.3);
+    --shadow-warning: 0 4px 12px rgba(245, 158, 11, 0.3);
+    --shadow-error: 0 4px 12px rgba(239, 68, 68, 0.3);
+    
+    /* 动画和过渡 */
+    --transition-fast: 150ms;
+    --transition-base: 200ms;
+    --transition-normal: 300ms;
+    --transition-slow: 500ms;
+    --transition-slower: 700ms;
+    
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    --transition-default: var(--transition-normal) var(--ease-smooth);
+    --transition-colors: var(--transition-base) var(--ease-in-out);
+    --transition-transform: var(--transition-base) var(--ease-out);
+    --transition-opacity: var(--transition-fast) var(--ease-in-out);
+    
+    /* Z-index层级 */
+    --z-base: 0;
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    --z-toast: 1080;
+    --z-max: 9999;
+    
+    /* 断点（用于响应式设计） */
+    --breakpoint-xs: 480px;
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
+    
+    /* 渐变 */
+    --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    --gradient-success: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%);
+    --gradient-warning: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-dark) 100%);
+    --gradient-error: linear-gradient(135deg, var(--error-color) 0%, var(--error-dark) 100%);
+    --gradient-accent: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-bg: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    
+    /* 模糊 */
+    --blur-sm: 4px;
+    --blur-md: 8px;
+    --blur-lg: 16px;
+    --blur-xl: 24px;
+    
+    /* 不透明度 */
+    --opacity-disabled: 0.6;
+    --opacity-hover: 0.8;
+    --opacity-overlay: 0.5;
+}

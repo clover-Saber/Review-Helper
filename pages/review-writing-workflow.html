@@ -5,338 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Helper - 文献撰写工作流</title>
     <link rel="stylesheet" href="common.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .project-header {
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .project-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .project-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .project-status {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        /* 主内容区域：左右分栏布局 */
-        .main-content {
-            display: flex;
-            min-height: calc(100vh - 200px);
-        }
-
-        /* 左侧主区域 */
-        .main-left {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        /* 需求设置区域 */
-        .requirement-section {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        .requirement-section h2 {
-            font-size: 22px;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        /* 工作流区域 */
-        .workflow-section {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        /* 右侧节点内容区域 */
-        .main-right {
-            width: 500px;
-            background: #f8f9fa;
-            border-left: 1px solid #e9ecef;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        /* 通用表单样式 */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        /* 进度条 */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s ease;
-        }
-
-        /* 文献列表 */
-        .literature-list {
-            max-height: 500px;
-            overflow-y: auto;
-            margin-top: 20px;
-        }
-
-        .literature-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            transition: all 0.2s;
-        }
-
-        .literature-item:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .literature-item h5 {
-            font-size: 15px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .literature-item p {
-            font-size: 13px;
-            color: #666;
-            margin: 4px 0;
-        }
-
-        /* Toast通知 */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #333;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 10000;
-            display: none;
-        }
-
-        .toast.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .overview-header {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #e9ecef;
-        }
-
-        .overview-header h2 {
-            font-size: 26px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
-
-        .overview-header p {
-            color: #64748b;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        /* 节点内容区域 */
-        .node-content {
-            display: block;
-            margin-bottom: 20px;
-        }
-
-        .node-content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .node-content-header h3 {
-            font-size: 20px;
-            color: #333;
-        }
-
-        .node-content-body {
-            display: block;
-        }
-
-        /* API供应商选择框样式 */
-        .api-provider-select {
-            width: 100%;
-            padding: 12px 16px;
-            padding-right: 40px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 15px;
-            background-color: #fff;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 20px;
-        }
-        
-        .api-provider-select:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .api-provider-select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-    </style>
+    <link rel="stylesheet" href="css/pages/review-writing-workflow.css">
 </head>
 <body>
     <div class="container">
@@ -348,10 +17,10 @@
         <div class="project-header">
             <div class="project-info">
                 <span class="project-name" id="current-project-name">未选择项目</span>
-                <span class="project-name" id="current-subproject-name" style="display: none; margin-left: 10px; color: #666; font-size: 14px;"></span>
+                <span class="project-name subproject-name" id="current-subproject-name"></span>
                 <span class="project-status status-active" id="project-status">就绪</span>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
+            <div class="button-group">
                 <button class="btn btn-secondary" id="back-to-index-btn">返回</button>
             </div>
         </div>
@@ -363,10 +32,10 @@
                 <!-- 需求设置区域 -->
                 <div class="requirement-section" id="requirement-section">
                     <h2>项目配置</h2>
-                    <p style="color: #666; margin-bottom: 20px;">请填写以下信息，系统将自动生成文献综述大纲</p>
+                    <p class="form-description">请填写以下信息，系统将自动生成文献综述大纲</p>
                     
                     <div class="form-group">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">API供应商:</label>
+                        <label class="form-label">API供应商:</label>
                         <select id="main-api-provider-select" class="api-provider-select" 
                                 onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
                                 onmouseout="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'"
@@ -380,7 +49,7 @@
                     </div>
                     
                     <!-- Gemini 模型选择（仅在选择 Gemini 时显示） -->
-                    <div class="form-group" id="gemini-model-select-group" style="display: none;">
+                    <div class="form-group d-none" id="gemini-model-select-group">
                         <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Gemini 模型:</label>
                         <select id="gemini-model-select" class="api-provider-select" 
                                 onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
@@ -390,16 +59,15 @@
                             <option value="gemini-2.5-flash">Gemini 2.5 Flash（快速响应）</option>
                             <option value="gemini-2.5-pro">Gemini 2.5 Pro（更强大）</option>
                         </select>
-                        <small style="display: block; margin-top: 5px; color: #666;">
+                        <small class="form-hint">
                             <span id="gemini-model-desc">快速响应，适合大多数任务</span>
                         </small>
                     </div>
 
                     <!-- 硅基流动模型选择（仅在选择硅基流动时显示） -->
-                    <div class="form-group" id="siliconflow-model-select-group" style="display: none;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">硅基流动模型:</label>
-                        <select id="siliconflow-model-select" class="api-provider-select" 
-                                style="width: 100%; max-height: 200px; overflow-y: auto;"
+                    <div class="form-group d-none" id="siliconflow-model-select-group">
+                        <label class="form-label">硅基流动模型:</label>
+                        <select id="siliconflow-model-select" class="api-provider-select select-scrollable w-full"
                                 onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
                                 onmouseout="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'"
                                 onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'"
@@ -469,7 +137,7 @@
                             <option value="zh">中文</option>
                             <option value="en">English</option>
                         </select>
-                        <small style="display: block; margin-top: 5px; color: #666;">
+                        <small class="form-hint">
                             选择综述的输出语言，将影响AI提示词和最终生成的综述内容
                         </small>
                     </div>
@@ -510,7 +178,7 @@
                             <div class="form-group" style="margin-bottom: 20px;">
                                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">综述要求（可选）:</label>
                                 <textarea id="review-requirement-input" rows="4" placeholder="请描述您对文献综述的具体要求，例如：重点关注技术实现、系统架构、安全性和用户体验等方面。此项为可选，可不填写。"></textarea>
-                                <small style="display: block; margin-top: 5px; color: #666;">
+                                <small class="form-hint">
                                     可选：填写您对综述的具体要求，将影响AI生成的内容
                                 </small>
                             </div>
@@ -518,7 +186,7 @@
                             <div class="form-group" style="margin-bottom: 20px;">
                                 <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">每章字数要求（可选）:</label>
                                 <input type="number" id="chapter-word-count-input" min="300" max="5000" step="100" placeholder="例如：1000" style="width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                                <small style="display: block; margin-top: 5px; color: #666;">
+                                <small class="form-hint">
                                     可选：指定每章的字数要求（建议300-5000字），留空则使用默认值（500-1500字）
                                 </small>
                             </div>
@@ -582,37 +250,23 @@
                 <p style="margin: 0; color: #666; font-size: 14px;">请稍候，这可能需要几分钟时间...</p>
             </div>
         </div>
-        
-        <style>
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
     </div>
 
     <!-- 加载模块 -->
-    <script src="modules/electron-api.js"></script>
-    <script src="modules/api.js"></script>
-    <script src="modules/data-manager.js"></script>
-    <script src="modules/ui-utils.js"></script>
-    <script src="modules/requirement-manager.js"></script>
-    <script src="modules/node5-review.js"></script>
+    <script src="js/core/electron-api.js"></script>
+    <script src="js/core/api.js"></script>
+    <script src="js/core/data-manager.js"></script>
+    <script src="js/utils/ui-utils.js"></script>
+    <script src="js/utils/dom-utils.js"></script>
+    <script src="js/utils/format-utils.js"></script>
+    <script src="js/managers/requirement-manager.js"></script>
+    <script src="js/nodes/node5-review.js"></script>
     <!-- 工作流模块（按依赖顺序加载） -->
-    <script src="modules/subproject-manager.js"></script>
-    <script src="modules/workflow-state-manager.js"></script>
-    <script src="modules/workflow-data-loader.js"></script>
-    <script src="modules/review-writing-workflow.js"></script>
-    <script src="modules/workflow-manager.js"></script>
-    <script>
-        // 初始化页面
-        document.addEventListener('DOMContentLoaded', async () => {
-            // 确保 WorkflowManager 已加载
-            if (window.WorkflowManager) {
-                await window.WorkflowManager.init();
-            }
-        });
-    </script>
+    <script src="js/managers/subproject-manager.js"></script>
+    <script src="js/workflows/workflow-state-manager.js"></script>
+    <script src="js/workflows/workflow-data-loader.js"></script>
+    <script src="js/workflows/review-writing-workflow.js"></script>
+    <script src="js/workflows/workflow-manager.js"></script>
+    <script src="js/pages/review-writing-workflow.js"></script>
 </body>
 </html>
-

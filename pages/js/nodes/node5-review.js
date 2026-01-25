@@ -559,4 +559,3 @@ ${literatureInfo}
         });
     }
 };
-

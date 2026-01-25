@@ -1,0 +1,629 @@
+/* 按钮组件样式 */
+
+.btn {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn:hover:not(:disabled) {
+    background-color: var(--primary-light);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    background-color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* 按钮变体 */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-primary:hover:not(:disabled)::before {
+    left: 100%;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: var(--text-secondary);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.btn-success:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+    color: white;
+}
+
+.btn-warning:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--error-color) 0%, #dc2626 100%);
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline:hover:not(:disabled) {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* 特殊按钮样式 */
+.btn-edit {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+}
+
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-save {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    margin-right: var(--spacing-sm);
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-cancel {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: #e9ecef;
+    color: #495057;
+}
+
+.btn-cancel:hover {
+    background: #dee2e6;
+}
+
+.btn-back {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background: var(--secondary-dark);
+    transform: translateX(-2px);
+}
+
+.btn-verify {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-verify:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-save-key {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-save-key:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* 项目控制按钮 */
+.project-controls button {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.project-controls button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.project-controls button:hover {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.project-controls button:hover::before {
+    left: 100%;
+}
+
+/* 输入组按钮 */
+.input-group button {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    position: relative;
+    overflow: hidden;
+    pointer-events: auto !important;
+    z-index: 1;
+}
+
+.input-group button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.input-group button:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.input-group button:hover:not(:disabled)::before {
+    left: 100%;
+}
+
+.input-group button:disabled {
+    background-color: var(--text-muted);
+    border-color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* 步骤按钮 */
+.step-btn, .step-confirm-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    margin-right: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+    transition: all 0.2s ease;
+}
+
+.step-btn:hover:not(:disabled), .step-confirm-btn:hover:not(:disabled) {
+    background-color: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+.step-btn:disabled {
+    background-color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.step-confirm-btn {
+    background-color: var(--success-color);
+}
+
+.step-confirm-btn:hover:not(:disabled) {
+    background-color: #1b5e20;
+}
+
+/* 子项目按钮 */
+.subproject-open-btn,
+.subproject-delete-btn {
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    transition: all 0.2s ease;
+}
+
+.subproject-open-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.subproject-open-btn:hover {
+    background: var(--primary-dark);
+}
+
+.subproject-delete-btn {
+    background: #ef4444;
+    color: white;
+    display: inline-block;
+    visibility: visible;
+    opacity: 1;
+}
+
+.subproject-delete-btn:hover {
+    background: #dc2626;
+}
+
+.subproject-create-btn {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    margin-top: var(--spacing-md);
+}
+
+.subproject-create-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* 项目卡片按钮 */
+.project-open-btn {
+    flex: 1;
+    padding: var(--spacing-md) var(--spacing-lg);
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-open-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.project-open-btn:hover {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.project-open-btn:hover::before {
+    left: 100%;
+}
+
+.project-open-btn:active {
+    transform: translateY(0);
+}
+
+.project-delete-btn {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: transparent;
+    color: #ef4444;
+    border: 1.5px solid #ef4444;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: none;
+    align-self: center;
+}
+
+.project-delete-btn:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.project-delete-btn:active {
+    transform: translateY(0) scale(1);
+}
+
+/* 关闭节点按钮 */
+.close-node-btn {
+    background: #e9ecef;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.close-node-btn:hover {
+    background: #dee2e6;
+}
+
+.toggle-node-btn {
+    background: transparent;
+    border: none;
+    color: #3b82f6;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    border-radius: 4px;
+    text-decoration: underline;
+}
+
+.toggle-node-btn:hover {
+    background: #f3f4f6;
+    color: #2563eb;
+}
+
+/* 按钮尺寸变体 */
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+}
+
+.btn-md {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-base);
+}
+
+.btn-lg {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* 按钮加载状态 */
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* 按钮组 */
+.button-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.button-group .btn {
+    margin: 0;
+}
+
+/* 图标按钮 */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm);
+    width: auto;
+    min-width: auto;
+}
+
+.btn-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-icon.btn-sm svg {
+    width: 14px;
+    height: 14px;
+}
+
+.btn-icon.btn-lg svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* 按钮焦点状态优化 */
+.btn:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* 键盘导航优化 */
+.btn:focus-visible,
+.api-provider-select:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* 跳过链接（用于键盘导航） */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary-color);
+    color: white;
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-decoration: none;
+    z-index: var(--z-max);
+    border-radius: var(--radius-md);
+    pointer-events: none;
+}
+
+.skip-link:focus {
+    top: var(--spacing-sm);
+    pointer-events: auto;
+}
+
+/* 按钮禁用状态优化 */
+.btn:disabled {
+    opacity: var(--opacity-disabled);
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}

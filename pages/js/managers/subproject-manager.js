@@ -184,15 +184,16 @@ window.SubprojectManager = {
     // 检查子项目状态
     checkSubprojectStatus(subproject) {
         if (subproject.type === this.TYPES.LITERATURE_SEARCH) {
-            // 检查节点1-4的状态
+            // 检查节点1-3的状态（不再考虑node4）
             const node1Status = subproject.node1?.status || 'pending';
             const node2Status = subproject.node2?.status || 'pending';
             const node3Status = subproject.node3?.status || 'pending';
-            const node4Status = subproject.node4?.status || 'pending';
 
-            if (node4Status === 'completed') return 'completed';
-            if (node1Status === 'active' || node2Status === 'active' ||
-                node3Status === 'active' || node4Status === 'active') return 'active';
+            // 如果节点3完成，则整个子项目完成
+            if (node3Status === 'completed') return 'completed';
+            // 如果任何节点进行中，则整个子项目进行中
+            if (node1Status === 'active' || node2Status === 'active' || node3Status === 'active') return 'active';
+            // 否则为待开始
             return 'pending';
         } else if (subproject.type === this.TYPES.REVIEW_WRITING) {
             const node5Status = subproject.node5?.status || 'pending';
@@ -212,4 +213,3 @@ window.SubprojectManager = {
         }
     }
 };
-

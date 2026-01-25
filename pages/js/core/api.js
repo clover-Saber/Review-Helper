@@ -113,16 +113,65 @@ window.API = {
             })
         });
 
-        const data = await response.json();
+        // 先检查响应状态，再决定如何解析响应
+        let data;
+        const contentType = response.headers.get('content-type') || '';
+        const isJson = contentType.includes('application/json');
+        
         if (!response.ok) {
+            // 错误响应：尝试解析 JSON，如果失败则读取文本
+            try {
+                if (isJson) {
+                    data = await response.json();
+                } else {
+                    const text = await response.text();
+                    console.error('[API调用] 非JSON错误响应:', text.substring(0, 200));
+                    // 根据状态码提供友好的错误消息
+                    if (response.status === 401) {
+                        throw new Error('API密钥无效或已过期。请检查您的API密钥是否正确，并确保有足够的权限。');
+                    } else if (response.status === 429) {
+                        throw new Error('API调用频率过高，请稍后再试。');
+                    } else if (response.status >= 500) {
+                        throw new Error(`API服务器错误 (${response.status})，请稍后再试。`);
+                    } else {
+                        throw new Error(`API调用失败 (${response.status}): ${text.substring(0, 100)}`);
+                    }
+                }
+            } catch (parseError) {
+                // 如果 JSON 解析失败，使用文本内容
+                if (parseError instanceof SyntaxError) {
+                    const text = await response.text().catch(() => '无法读取错误响应');
+                    if (response.status === 401) {
+                        throw new Error('API密钥无效或已过期。请检查您的API密钥是否正确。');
+                    } else {
+                        throw new Error(`API调用失败 (${response.status}): ${text.substring(0, 100)}`);
+                    }
+                }
+                throw parseError;
+            }
+            
+            // 如果成功解析了 JSON 错误响应
             console.error('[API调用] 调用失败:', data.error?.message || `HTTP ${response.status}`);
             throw new Error(data.error?.message || `API调用失败: ${response.status}`);
+        }
+
+        // 成功响应：解析 JSON
+        try {
+            data = await response.json();
+        } catch (parseError) {
+            console.error('[API调用] JSON解析失败:', parseError);
+            const text = await response.text().catch(() => '无法读取响应');
+            throw new Error(`API返回格式错误，无法解析JSON: ${text.substring(0, 100)}`);
         }
 
         if (data.choices && data.choices[0]) {
             const result = data.choices[0].message.content.trim();
             console.log('[API调用] 调用成功，返回内容长度:', result.length, '字符');
             console.log('[API调用] 返回内容预览:', result.substring(0, 200) + (result.length > 200 ? '...' : ''));
+            console.log('='.repeat(80));
+            console.log('[API调用] 完整返回内容:');
+            console.log('='.repeat(80));
+            console.log(result);
             console.log('='.repeat(80));
             return result;
         }
@@ -146,16 +195,60 @@ window.API = {
             })
         });
 
-        const data = await response.json();
+        // 先检查响应状态，再决定如何解析响应
+        let data;
+        const contentType = response.headers.get('content-type') || '';
+        const isJson = contentType.includes('application/json');
+        
         if (!response.ok) {
+            // 错误响应：尝试解析 JSON，如果失败则读取文本
+            try {
+                if (isJson) {
+                    data = await response.json();
+                } else {
+                    const text = await response.text();
+                    console.error('[API调用] 非JSON错误响应:', text.substring(0, 200));
+                    if (response.status === 401) {
+                        throw new Error('API密钥无效或已过期。请检查您的API密钥是否正确。');
+                    } else if (response.status === 429) {
+                        throw new Error('API调用频率过高，请稍后再试。');
+                    } else {
+                        throw new Error(`API调用失败 (${response.status}): ${text.substring(0, 100)}`);
+                    }
+                }
+            } catch (parseError) {
+                if (parseError instanceof SyntaxError) {
+                    const text = await response.text().catch(() => '无法读取错误响应');
+                    if (response.status === 401) {
+                        throw new Error('API密钥无效或已过期。请检查您的API密钥是否正确。');
+                    } else {
+                        throw new Error(`API调用失败 (${response.status}): ${text.substring(0, 100)}`);
+                    }
+                }
+                throw parseError;
+            }
+            
             console.error('[API调用] 调用失败:', data.error?.message || `HTTP ${response.status}`);
             throw new Error(data.error?.message || `API调用失败: ${response.status}`);
+        }
+
+        // 成功响应：解析 JSON
+        try {
+            data = await response.json();
+        } catch (parseError) {
+            console.error('[API调用] JSON解析失败:', parseError);
+            const text = await response.text().catch(() => '无法读取响应');
+            throw new Error(`API返回格式错误，无法解析JSON: ${text.substring(0, 100)}`);
         }
 
         if (data.choices && data.choices[0]) {
             const result = data.choices[0].message.content.trim();
             console.log('[API调用] 调用成功，返回内容长度:', result.length, '字符');
             console.log('[API调用] 返回内容预览:', result.substring(0, 200) + (result.length > 200 ? '...' : ''));
+            console.log('='.repeat(80));
+            console.log('[API调用] 完整返回内容:');
+            console.log('='.repeat(80));
+            console.log(result);
             console.log('='.repeat(80));
             return result;
         }
@@ -179,16 +272,60 @@ window.API = {
             })
         });
 
-        const data = await response.json();
+        // 先检查响应状态，再决定如何解析响应
+        let data;
+        const contentType = response.headers.get('content-type') || '';
+        const isJson = contentType.includes('application/json');
+        
         if (!response.ok) {
+            // 错误响应：尝试解析 JSON，如果失败则读取文本
+            try {
+                if (isJson) {
+                    data = await response.json();
+                } else {
+                    const text = await response.text();
+                    console.error('[API调用] 非JSON错误响应:', text.substring(0, 200));
+                    if (response.status === 401) {
+                        throw new Error('API密钥无效或已过期。请检查您的API密钥是否正确。');
+                    } else if (response.status === 429) {
+                        throw new Error('API调用频率过高，请稍后再试。');
+                    } else {
+                        throw new Error(`API调用失败 (${response.status}): ${text.substring(0, 100)}`);
+                    }
+                }
+            } catch (parseError) {
+                if (parseError instanceof SyntaxError) {
+                    const text = await response.text().catch(() => '无法读取错误响应');
+                    if (response.status === 401) {
+                        throw new Error('API密钥无效或已过期。请检查您的API密钥是否正确。');
+                    } else {
+                        throw new Error(`API调用失败 (${response.status}): ${text.substring(0, 100)}`);
+                    }
+                }
+                throw parseError;
+            }
+            
             console.error('[API调用] 调用失败:', data.error?.message || `HTTP ${response.status}`);
             throw new Error(data.error?.message || `API调用失败: ${response.status}`);
+        }
+
+        // 成功响应：解析 JSON
+        try {
+            data = await response.json();
+        } catch (parseError) {
+            console.error('[API调用] JSON解析失败:', parseError);
+            const text = await response.text().catch(() => '无法读取响应');
+            throw new Error(`API返回格式错误，无法解析JSON: ${text.substring(0, 100)}`);
         }
 
         if (data.choices && data.choices[0]) {
             const result = data.choices[0].message.content.trim();
             console.log('[API调用] 调用成功，返回内容长度:', result.length, '字符');
             console.log('[API调用] 返回内容预览:', result.substring(0, 200) + (result.length > 200 ? '...' : ''));
+            console.log('='.repeat(80));
+            console.log('[API调用] 完整返回内容:');
+            console.log('='.repeat(80));
+            console.log(result);
             console.log('='.repeat(80));
             return result;
         }
@@ -275,6 +412,13 @@ window.API = {
             throw new Error(errorMsg);
         }
 
+        // 打印完整响应
+        console.log('='.repeat(80));
+        console.log('[API调用] Gemini API 完整响应:');
+        console.log('='.repeat(80));
+        console.log(JSON.stringify(data, null, 2));
+        console.log('='.repeat(80));
+        
         // 解析Gemini API响应
         if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
             const text = data.candidates[0].content.parts[0].text;
@@ -282,6 +426,10 @@ window.API = {
                 const result = text.trim();
                 console.log('[API调用] 调用成功，返回内容长度:', result.length, '字符');
                 console.log('[API调用] 返回内容预览:', result.substring(0, 200) + (result.length > 200 ? '...' : ''));
+                console.log('='.repeat(80));
+                console.log('[API调用] 完整返回内容:');
+                console.log('='.repeat(80));
+                console.log(result);
                 console.log('='.repeat(80));
                 return result;
             }
@@ -298,19 +446,48 @@ window.API = {
 
     // Google Scholar搜索
     async searchGoogleScholar(keyword, limit, minYear) {
-        const response = await window.electronAPI.searchGoogleScholar(keyword, limit, minYear);
-        
-        // 处理返回格式
-        if (response && typeof response === 'object') {
-            if (Array.isArray(response)) {
-                return response;
-            } else if (response.results && Array.isArray(response.results)) {
-                return response.results;
-            } else if (response.success && response.results) {
-                return response.results;
+        try {
+            const response = await window.electronAPI.searchGoogleScholar(keyword, limit, minYear);
+            
+            console.log('[API.searchGoogleScholar] 收到响应:', {
+                type: typeof response,
+                isArray: Array.isArray(response),
+                hasResults: response?.results !== undefined,
+                success: response?.success,
+                error: response?.error,
+                resultsLength: Array.isArray(response?.results) ? response.results.length : (Array.isArray(response) ? response.length : 0)
+            });
+            
+            // 处理返回格式
+            if (response && typeof response === 'object') {
+                // 如果直接是数组，直接返回
+                if (Array.isArray(response)) {
+                    console.log('[API.searchGoogleScholar] 返回数组格式，长度:', response.length);
+                    return response;
+                }
+                // 如果有 results 字段且是数组
+                if (response.results && Array.isArray(response.results)) {
+                    console.log('[API.searchGoogleScholar] 返回 response.results，长度:', response.results.length);
+                    return response.results;
+                }
+                // 如果有 success 和 results
+                if (response.success && response.results && Array.isArray(response.results)) {
+                    console.log('[API.searchGoogleScholar] 返回 response.results (success格式)，长度:', response.results.length);
+                    return response.results;
+                }
+                // 如果 success 为 false，说明搜索失败
+                if (response.success === false) {
+                    console.error('[API.searchGoogleScholar] 搜索失败:', response.error);
+                    throw new Error(response.error || 'Google Scholar搜索失败');
+                }
             }
+            
+            console.warn('[API.searchGoogleScholar] 无法解析响应格式，返回空数组。响应:', response);
+            return [];
+        } catch (error) {
+            console.error('[API.searchGoogleScholar] 搜索出错:', error);
+            throw error;
         }
-        return [];
     },
     
     // 烂番薯学术搜索
@@ -362,6 +539,18 @@ window.API = {
             // 默认使用Google Scholar
             return await this.searchGoogleScholar(keyword, limit, minYear);
         }
+    },
+
+    // 获取引用格式（GB/T、APA、BibTeX等）
+    async fetchCitationFormats(citeUrl) {
+        const response = await window.electronAPI.fetchCitationFormats(citeUrl);
+        if (response && typeof response === 'object') {
+            if (response.success === false) {
+                throw new Error(response.error || '获取引用格式失败');
+            }
+            return response.formats || null;
+        }
+        throw new Error('获取引用格式返回格式错误');
     }
 };
 

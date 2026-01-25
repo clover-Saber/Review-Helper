@@ -1,0 +1,343 @@
+/* 模态框组件样式 */
+
+.modal {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--bg-overlay);
+    display: none !important;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    backdrop-filter: var(--blur-sm);
+    animation: modalFadeIn var(--transition-normal) var(--ease-out);
+}
+
+.modal.show {
+    display: flex !important;
+}
+
+/* 确保模态框在显示时可见 */
+.modal.show:not(.hidden) {
+    display: flex !important;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    width: 90%;
+    max-width: 1200px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2xl);
+    transform: scale(0.95) translateY(20px);
+    animation: modalAppear var(--transition-normal) var(--ease-out) forwards;
+    position: relative;
+}
+
+@keyframes modalAppear {
+    to {
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* 模态框尺寸变体 */
+.modal-content-sm {
+    max-width: 320px;
+}
+
+.modal-content-md {
+    max-width: 500px;
+}
+
+.modal-content-lg {
+    max-width: 1000px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.modal-body {
+    max-height: calc(70vh - 120px);
+    overflow-y: auto;
+    padding: var(--spacing-md) 0;
+}
+
+.modal-content-xl {
+    max-width: 1200px;
+}
+
+/* 模态框关闭按钮 */
+.modal-close {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+    z-index: 10;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    transform: scale(1.1);
+}
+
+.modal-close:active {
+    transform: scale(0.95);
+}
+
+.modal-close:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.modal-content h3 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.modal-content input,
+.modal-content select {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-base);
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+    margin-top: var(--spacing-lg);
+}
+
+.modal-actions button {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.modal-actions button:first-child {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--text-secondary) 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(100, 116, 139, 0.3);
+}
+
+.modal-actions button:first-child:hover {
+    background: linear-gradient(135deg, var(--text-secondary) 0%, var(--secondary-color) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.4);
+}
+
+.modal-actions button:last-child {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.modal-actions button:last-child:hover {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+/* 文献编辑模态框 */
+#literature-edit-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+#literature-edit-modal > div {
+    position: relative;
+    max-width: 800px;
+    margin: 50px auto;
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+#close-edit-modal-btn {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+}
+
+#close-edit-modal-btn:hover {
+    color: #333;
+}
+
+#edit-modal-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* 进度对话框模态框 */
+#literature-search-progress-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+}
+
+#literature-search-progress-modal > div {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+#close-progress-modal-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+#close-progress-modal-btn:hover {
+    background: #f3f4f6;
+}
+
+/* 生成大纲/综述模态框 */
+#generating-outline-modal,
+#generating-review-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+#generating-outline-modal > div,
+#generating-review-modal > div {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    text-align: center;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#generating-outline-modal .spinner,
+#generating-review-modal .spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f4f6;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    margin: 0 auto;
+    animation: spin 1s linear infinite;
+}
+
+/* 选择文献查找子项目对话框 */
+#select-literature-subprojects-modal .modal-content {
+    max-width: 600px;
+}
+
+#literature-subprojects-list {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+#select-subprojects-error {
+    color: #ef4444;
+    margin-bottom: 10px;
+    display: none;
+    font-size: 14px;
+}

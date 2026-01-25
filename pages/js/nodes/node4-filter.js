@@ -123,8 +123,8 @@ window.Node4Filter = {
         return assessments.join('\n');
     },
     
-    // 自动执行文献筛选
-    async execute(apiKey, allLiterature, requirement, targetCount, onProgress, apiProvider = 'deepseek', modelName = null) {
+    // 自动执行文献筛选（一次性处理所有文献，不分批）
+    async execute(apiKey, allLiterature, requirement, targetCount, onProgress, apiProvider = 'deepseek', modelName = null, batchSize = 50) {
         // 数据验证
         if (!allLiterature || !Array.isArray(allLiterature)) {
             console.error('节点4执行失败: allLiterature不是数组或为空');
@@ -146,32 +146,29 @@ window.Node4Filter = {
             };
         }
         
-        let selectedLiterature = [];
         const total = allLiterature.length;
-        let relevantCount = 0;
-        let irrelevantCount = 0;
-
-        for (let i = 0; i < allLiterature.length; i++) {
-            // 检查是否应该停止
-            if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
-                console.log('[节点4筛选] 检测到停止信号，中断筛选');
-                break;
-            }
-            
-            const lit = allLiterature[i];
-            
-            // 更新进度
-            if (onProgress) {
-                onProgress(i + 1, total, lit.title || '未知标题', 'AI判断中...');
-            }
-            
-            // 再次检查停止标志
-            if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
-                console.log('[节点4筛选] 检测到停止信号，中断筛选');
-                break;
-            }
-            
-            try {
+        
+        console.log(`[节点4筛选] 开始筛选，总文献数：${total}，目标数量：${targetCount}`);
+        
+        // 更新进度：开始筛选
+        if (onProgress) {
+            onProgress(0, total, '准备筛选...', '进行中');
+        }
+        
+        // 检查是否应该停止
+        if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+            console.log('[节点4筛选] 检测到停止信号，中断筛选');
+            return {
+                selectedLiterature: [],
+                relevantCount: 0,
+                irrelevantCount: 0,
+                total
+            };
+        }
+        
+        try {
+            // 构建所有文献的信息列表（不包含摘要）
+            const literatureList = allLiterature.map((lit, index) => {
                 // 生成质量评估信息
                 const qualityAssessment = this.generateQualityAssessment(lit);
                 
@@ -181,7 +178,6 @@ window.Node4Filter = {
                     if (Array.isArray(lit.authors)) {
                         authorsText = lit.authors.join(', ');
                     } else if (typeof lit.authors === 'string') {
-                        // 如果authors字符串包含年份和来源，只提取作者部分
                         const authorsStr = lit.authors.trim();
                         const dashIndex = authorsStr.indexOf(' - ');
                         if (dashIndex > 0) {
@@ -204,148 +200,196 @@ window.Node4Filter = {
                 // 处理引用数
                 const citedText = lit.cited !== undefined && lit.cited !== null ? lit.cited.toString() : '未知';
                 
-                const prompt = `请综合判断以下文献是否与研究主题相关，并给出推荐理由。
+                return {
+                    index: index + 1, // 索引从1开始
+                    originalIndex: index, // 原始索引（用于映射回allLiterature）
+                    title: lit.title || '无标题',
+                    authors: authorsText,
+                    year: yearText,
+                    journal: journalText,
+                    cited: citedText,
+                    qualityAssessment: qualityAssessment
+                };
+            });
+            
+            // 更新进度：AI分析中
+            if (onProgress) {
+                onProgress(0, total, 'AI分析中...', '进行中');
+            }
+            
+            // 构建筛选提示词（不包含摘要）
+            const prompt = `你是一个专业的文献筛选助手。请从以下 ${total} 篇文献中，筛选出最优质、最相关的 ${targetCount} 篇文献。
 
 研究主题：${requirement}
 
-文献信息：
-标题：${lit.title || '无标题'}
-作者：${authorsText}
-年份：${yearText}
-期刊：${journalText}
-被引次数：${citedText}
-摘要：${lit.abstract || '无摘要'}
+筛选目标：从 ${total} 篇文献中筛选出 ${targetCount} 篇高质量且与研究主题最相关的文献。
 
+文献列表：
+${literatureList.map((lit, idx) => `
+【文献 ${lit.index}】
+标题：${lit.title}
+作者：${lit.authors}
+年份：${lit.year}
+期刊：${lit.journal}
+被引次数：${lit.cited}
 质量评估信息：
-${qualityAssessment}
+${lit.qualityAssessment}
+`).join('\n---\n')}
 
-请综合考虑以下因素进行判断：
-1. **文献相关性**（最重要）：文献是否与研究主题相关？是否对研究有参考价值？
-2. **补全完整性**：摘要是否完整？如果摘要缺失或不完整，可能影响对文献内容的理解和判断。
-3. **期刊质量档次**：
+请综合考虑以下因素进行筛选：
+1. **文献相关性**（最重要）：文献是否与研究主题高度相关？是否对研究有重要参考价值？
+2. **期刊质量档次**：
    - 高质量期刊（如Nature、Science、IEEE Transactions系列等）通常具有更高的学术价值和可信度
    - 中等质量期刊需要谨慎评估其学术价值
    - Onhold期刊（质量较低或声誉不佳的期刊）应不予考虑
-4. **发表时间和引用数量**：
+3. **发表时间和引用数量**：
    - 发表很久但引用很少的文献，可能质量不高或影响力有限
    - 过于久远的文献（超过20年）需要评估其时效性和当前研究价值
    - 近期高质量文献（引用数高）通常更有参考价值
    - 经典文献（发表较久但引用数很高）仍然具有重要参考价值
 
+请严格把关，只推荐真正高质量且高度相关的文献。从 ${total} 篇文献中筛选出最优质的 ${targetCount} 篇。
+
 请以JSON格式返回结果：
 {
-  "relevant": true/false,
-  "reason": "综合推荐理由（如果相关）或为什么不相关（如果不相关）。请简要说明你如何综合考虑相关性、补全完整性、期刊质量、发表时间和引用数量等因素。"
+  "selected": [1, 3, 5, ...],
+  "reasons": {
+    "1": "推荐理由：...",
+    "3": "推荐理由：...",
+    "5": "推荐理由：..."
+  }
 }
 
-如果相关，请给出综合推荐理由；如果不相关，请简要说明原因。`;
+其中：
+- "selected" 是一个数组，包含被选中的文献编号（从1开始，对应文献列表中的文献编号）
+- "reasons" 是一个对象，键是文献编号（字符串），值是对应的推荐理由
 
-                // 在API调用前再次检查停止标志
-                if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
-                    console.log('[节点4筛选] 检测到停止信号，中断筛选');
-                    break;
-                }
-                
-                const answer = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.3, modelName);
-                
-                // API调用后再次检查停止标志
-                if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
-                    console.log('[节点4筛选] 检测到停止信号，中断筛选');
-                    break;
-                }
-                
-                // 尝试解析JSON
-                let isRelevant = false;
-                let reason = '';
-                
-                try {
-                    const jsonMatch = answer.match(/\{[\s\S]*\}/);
-                    if (jsonMatch) {
-                        const data = JSON.parse(jsonMatch[0]);
-                        isRelevant = data.relevant === true || data.relevant === 'true';
-                        reason = data.reason || '';
-                    } else {
-                        // 如果不是JSON，尝试从文本中提取
-                        if (answer.includes('相关') || answer.includes('relevant') || answer.toLowerCase().includes('true')) {
-                            isRelevant = true;
-                            reason = answer.replace(/相关|relevant|true|false|不相关/gi, '').trim();
-                        } else {
-                            isRelevant = false;
-                            reason = answer.trim();
-                        }
+请确保选中的文献数量恰好为 ${targetCount} 篇，并且只选择最优质、最相关的文献。`;
+
+            // 在API调用前再次检查停止标志
+            if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                console.log('[节点4筛选] 检测到停止信号，中断筛选');
+                return {
+                    selectedLiterature: [],
+                    relevantCount: 0,
+                    irrelevantCount: 0,
+                    total
+                };
+            }
+            
+            // 调用AI API进行筛选（添加错误处理）
+            let answer = null;
+            try {
+                answer = await window.API.callAPI(apiProvider, apiKey, [{ role: 'user', content: prompt }], 0.3, modelName);
+            } catch (apiError) {
+                console.error('[节点4筛选] API调用失败:', apiError);
+                throw apiError; // 重新抛出错误，让上层处理
+            }
+            
+            // API调用后再次检查停止标志
+            if (window.WorkflowManager && window.WorkflowManager.state && window.WorkflowManager.state.shouldStop) {
+                console.log('[节点4筛选] 检测到停止信号，中断筛选');
+                return {
+                    selectedLiterature: [],
+                    relevantCount: 0,
+                    irrelevantCount: 0,
+                    total
+                };
+            }
+            
+            // 检查answer是否有效
+            if (!answer || typeof answer !== 'string') {
+                throw new Error('API返回结果无效');
+            }
+            
+            // 更新进度：解析结果中
+            if (onProgress) {
+                onProgress(0, total, '解析筛选结果...', '进行中');
+            }
+            
+            // 解析AI返回的JSON结果
+            let selectedIndices = [];
+            let reasons = {};
+            
+            try {
+                const jsonMatch = answer.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    const data = JSON.parse(jsonMatch[0]);
+                    if (data.selected && Array.isArray(data.selected)) {
+                        selectedIndices = data.selected.map(idx => parseInt(idx));
                     }
-                } catch (parseError) {
-                    console.log('解析AI返回结果失败，尝试文本匹配:', parseError);
-                    // 如果解析失败，使用简单的文本匹配
-                    if (answer.includes('相关') || answer.includes('relevant')) {
-                        isRelevant = true;
-                        reason = answer.replace(/相关|relevant/gi, '').trim();
-                    } else {
-                        isRelevant = false;
-                        reason = answer.trim();
-                    }
-                }
-                
-                if (isRelevant) {
-                    lit.selected = true;
-                    lit.aiRecommendReason = reason; // 保存AI推荐理由
-                    selectedLiterature.push(lit);
-                    relevantCount++;
-                    // 更新进度
-                    if (onProgress) {
-                        onProgress(i + 1, total, lit.title || '未知标题', 'AI推荐');
+                    if (data.reasons && typeof data.reasons === 'object') {
+                        reasons = data.reasons;
                     }
                 } else {
-                    lit.selected = false;
-                    lit.aiRecommendReason = reason; // 保存AI不推荐的理由
-                    irrelevantCount++;
-                    // 更新进度
-                    if (onProgress) {
-                        onProgress(i + 1, total, lit.title || '未知标题', '不推荐');
+                    // 如果不是JSON，尝试从文本中提取文献编号
+                    const numberMatches = answer.matchAll(/\b(\d+)\b/g);
+                    for (const match of numberMatches) {
+                        const num = parseInt(match[1]);
+                        if (num >= 1 && num <= total) {
+                            selectedIndices.push(num);
+                        }
                     }
+                    // 去重并限制数量
+                    selectedIndices = [...new Set(selectedIndices)].slice(0, targetCount);
                 }
-            } catch (error) {
-                console.error(`筛选文献 "${lit.title}" 失败:`, error);
-                // 筛选失败时，默认选中
-                lit.selected = true;
-                lit.aiRecommendReason = 'AI筛选失败，默认选中';
-                selectedLiterature.push(lit);
-                relevantCount++;
-                // 更新进度
-                if (onProgress) {
-                    onProgress(i + 1, total, lit.title || '未知标题', '筛选失败，默认选中');
+            } catch (parseError) {
+                console.error('[节点4筛选] 解析AI返回结果失败:', parseError);
+                throw new Error('解析AI返回结果失败: ' + parseError.message);
+            }
+            
+            // 根据选中的索引构建选中文献列表
+            const selectedLiterature = [];
+            for (const index of selectedIndices) {
+                // 索引从1开始，数组从0开始
+                const litIndex = index - 1;
+                if (litIndex >= 0 && litIndex < allLiterature.length) {
+                    const lit = allLiterature[litIndex];
+                    lit.selected = true;
+                    lit.aiRecommendReason = reasons[index] || reasons[index.toString()] || 'AI推荐（筛选）';
+                    selectedLiterature.push(lit);
                 }
             }
-        }
+            
+            // 更新未选中文献的状态
+            for (let i = 0; i < allLiterature.length; i++) {
+                if (!selectedIndices.includes(i + 1)) {
+                    allLiterature[i].selected = false;
+                    allLiterature[i].aiRecommendReason = '未选中（筛选）';
+                }
+            }
+            
+            const relevantCount = selectedLiterature.length;
+            const irrelevantCount = total - relevantCount;
+            
+            // 更新进度：完成
+            if (onProgress) {
+                onProgress(total, total, `筛选完成：选中 ${relevantCount} 篇`, '已完成');
+            }
+            
+            console.log('筛选完成:', {
+                total: allLiterature.length,
+                selected: selectedLiterature.length,
+                relevantCount,
+                irrelevantCount
+            });
 
-        // 确保所有选中的文献都有AI推荐理由，并且selected状态正确
-        // 过滤掉没有推荐理由或selected为false的文献
-        selectedLiterature = selectedLiterature.filter(lit => {
-            return lit && lit.aiRecommendReason && lit.selected === true;
-        });
-        
-        // 更新allLiterature中的selected状态，确保只有AI推荐的被选中
-        for (const lit of allLiterature) {
-            // 如果文献在selectedLiterature中，确保selected为true
-            const isSelected = selectedLiterature.some(selected => 
-                selected.title === lit.title && selected.url === lit.url
-            );
-            lit.selected = isSelected;
+            return {
+                selectedLiterature,
+                relevantCount,
+                irrelevantCount,
+                total
+            };
+        } catch (error) {
+            console.error('[节点4筛选] 批量筛选失败:', error);
+            console.error('[节点4筛选] 错误堆栈:', error.stack);
+            // 更新进度：失败
+            if (onProgress) {
+                onProgress(total, total, `筛选失败: ${error.message || '未知错误'}`, '失败');
+            }
+            // 筛选失败时，抛出错误以便上层处理
+            throw error;
         }
-        
-        console.log('筛选完成:', {
-            total: allLiterature.length,
-            selected: selectedLiterature.length,
-            relevantCount,
-            irrelevantCount
-        });
-
-        return {
-            selectedLiterature,
-            relevantCount,
-            irrelevantCount,
-            total
-        };
     },
 
     // 显示筛选结果（美观展示，编辑通过弹窗实现）
@@ -626,4 +670,3 @@ ${qualityAssessment}
         return div.innerHTML;
     }
 };
-

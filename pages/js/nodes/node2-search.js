@@ -2,23 +2,32 @@
 window.Node2Search = {
     // 自动执行文献搜索
     async execute(keywords, keywordsPlan, targetCount, onProgress, literatureSource = 'google-scholar') {
-        const searchParams = {};
+        // 新逻辑：每个关键词通过翻页搜索，每页10个，直到达到配置的数量（无上限）
+        const perKeywordCount = Math.max(
+            parseInt(
+                window.WorkflowManager?.state?.requirementData?.initialScreening?.perKeywordCount ||
+                window.WorkflowManager?.state?.currentSubproject?.config?.initialScreening?.perKeywordCount ||
+                20,
+                10
+            ) || 20,
+            1
+        );
+        
+        // 从keywordsPlan中提取关键词，如果没有则使用keywords数组
+        const validKeywords = [];
         if (keywordsPlan && keywordsPlan.length > 0) {
             keywordsPlan.forEach(plan => {
-                searchParams[plan.keyword] = plan.count;
+                if (plan.keyword && plan.keyword.trim()) {
+                    validKeywords.push(plan.keyword.trim());
+                }
             });
-        } else {
-            const avgCount = Math.ceil(targetCount / keywords.length);
+        } else if (keywords && keywords.length > 0) {
             keywords.forEach(keyword => {
-                searchParams[keyword] = avgCount;
+                if (keyword && keyword.trim()) {
+                    validKeywords.push(keyword.trim());
+                }
             });
         }
-
-        // 过滤掉文献数量为0的关键词
-        const validKeywords = keywords.filter(keyword => {
-            const count = searchParams[keyword] || 0;
-            return count > 0;
-        });
 
         if (validKeywords.length === 0) {
             console.warn('[节点2搜索] 没有有效的关键词，返回空结果');
@@ -40,12 +49,16 @@ window.Node2Search = {
             }
             
             const keyword = validKeywords[i];
-            const maxPerKeyword = searchParams[keyword] || 10;
+            // 每个关键词按步骤1的计划（keywordsPlan[].count）优先；否则回退配置（≤20）
+            let maxPerKeyword = perKeywordCount;
             
             // 从keywordsPlan中获取该关键词的时间限制
             let minYear = null;
             if (keywordsPlan && keywordsPlan.length > 0) {
-                const planItem = keywordsPlan.find(p => p.keyword === keyword);
+                const planItem = keywordsPlan.find(p => p.keyword && p.keyword.trim() === keyword);
+                if (planItem && planItem.count !== undefined && planItem.count !== null) {
+                    maxPerKeyword = Math.max(parseInt(planItem.count, 10) || perKeywordCount, 1);
+                }
                 if (planItem && planItem.minYear) {
                     minYear = planItem.minYear;
                 }
@@ -55,7 +68,9 @@ window.Node2Search = {
                 // 更新进度：开始搜索当前关键词
                 if (onProgress) {
                     const yearText = minYear ? `（${minYear}年及以后）` : '';
-                    onProgress(i + 1, totalKeywords, keyword, `搜索中${yearText}...`);
+                    // 计算当前已搜索的文献总数（去重后）
+                    let currentTotalFound = allLiterature.length;
+                    onProgress(i + 1, totalKeywords, keyword, `搜索中${yearText}... 累计 ${currentTotalFound} 篇`);
                 }
                 
                 // 再次检查停止标志
@@ -106,14 +121,23 @@ window.Node2Search = {
                 
                 // 更新进度：完成当前关键词搜索
                 if (onProgress) {
-                    onProgress(i + 1, totalKeywords, keyword, `完成，找到 ${results ? results.length : 0} 篇`);
+                    // 计算当前已搜索的文献总数（包括本次结果，去重后）
+                    let currentTotalFound = allLiterature.length;
+                    onProgress(i + 1, totalKeywords, keyword, `完成，找到 ${results ? results.length : 0} 篇（累计 ${currentTotalFound} 篇）`);
                 }
             } catch (error) {
                 console.error(`搜索关键词 "${keyword}" 失败:`, error);
+                console.error(`错误详情:`, {
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name
+                });
                 // 更新进度：搜索失败
                 if (onProgress) {
-                    onProgress(i + 1, totalKeywords, keyword, '搜索失败');
+                    onProgress(i + 1, totalKeywords, keyword, `搜索失败: ${error.message || '未知错误'}`);
                 }
+                // 不中断整个搜索流程，继续下一个关键词
+                // 但记录错误，让用户知道哪个关键词失败了
             }
         }
 
@@ -219,4 +243,3 @@ window.Node2Search = {
         }
     }
 };
-

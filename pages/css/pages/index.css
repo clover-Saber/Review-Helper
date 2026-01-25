@@ -1,0 +1,95 @@
+/* 项目列表页样式 */
+
+@import url('../variables.css');
+@import url('../common.css');
+@import url('../components/button.css');
+@import url('../components/card.css');
+@import url('../components/modal.css');
+@import url('../components/toast.css');
+@import url('../components/form.css');
+@import url('../layouts/header.css');
+@import url('../layouts/footer.css');
+@import url('../layouts/container.css');
+
+/* 项目列表样式 */
+.projects-list-section {
+    margin-top: var(--spacing-xl);
+}
+
+.projects-list-section h3 {
+    margin-bottom: var(--spacing-lg);
+    color: var(--primary-color);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.projects-list-section h3::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    border-radius: 2px;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-lg);
+    align-items: stretch;
+}
+
+.empty-projects {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    color: var(--text-muted);
+    font-size: var(--font-size-base);
+    grid-column: 1 / -1;
+    background: var(--bg-tertiary);
+    border-radius: 16px;
+    border: 2px dashed var(--border-color);
+}
+
+.loading-projects {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    color: var(--text-secondary);
+    font-size: var(--font-size-base);
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+}
+
+.loading-projects::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-projects {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    color: var(--error-color);
+    font-size: var(--font-size-base);
+    grid-column: 1 / -1;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,15 @@
+/* 项目详情页样式 */
+
+@import url('../variables.css');
+@import url('../common.css');
+@import url('../components/button.css');
+@import url('../components/card.css');
+@import url('../components/modal.css');
+@import url('../components/toast.css');
+@import url('../components/form.css');
+@import url('../layouts/header.css');
+@import url('../layouts/footer.css');
+@import url('../layouts/container.css');
+
+/* 项目详情页面特定样式已在container.css中定义 */
+/* 这里可以添加项目详情页特有的样式 */

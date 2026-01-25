@@ -1,6 +1,15 @@
 /* 主页面样式 - 科研风格 */
 
+@import url('css/variables.css');
 @import url('common.css');
+@import url('css/components/button.css');
+@import url('css/components/card.css');
+@import url('css/components/modal.css');
+@import url('css/components/toast.css');
+@import url('css/components/form.css');
+@import url('css/layouts/header.css');
+@import url('css/layouts/footer.css');
+@import url('css/layouts/container.css');
 
 /* 项目详情页面样式 */
 .project-detail-section {

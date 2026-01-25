@@ -17,12 +17,15 @@ window.Node1Keywords = {
         const language = requirementData.language || 'zh';
         const yearLimit = config.yearLimit || { recentYears: 5, percentage: 60 };
         const literatureSource = config.literatureSource || 'google-scholar';
+        const keywordCount = Math.min(Math.max(parseInt(config.initialScreening?.keywordCount || requirementData?.initialScreening?.keywordCount || 10, 10) || 10, 1), 20);
+        const perKeywordCount = Math.max(parseInt(config.initialScreening?.perKeywordCount || requirementData?.initialScreening?.perKeywordCount || 20, 10) || 20, 1);
         
         console.log('[Node1Keywords.execute] Config:', {
             targetCount,
             language,
             yearLimit,
-            literatureSource
+            literatureSource,
+            initialScreening: { keywordCount, perKeywordCount }
         });
         
         // 根据语言确定关键词语言
@@ -42,36 +45,32 @@ window.Node1Keywords = {
 ${requirementData.requirement || '未提供'}
 
 查找配置：
-- 目标文献数量：${targetCount}篇
 - 文献语言：${language === 'en' ? '英文' : '中文'}
-- 文献来源库：${literatureSource === 'google-scholar' ? 'Google Scholar（谷歌学术）' : literatureSource}${yearLimitText}
+- 文献来源库：${literatureSource === 'google-scholar' ? 'Google Scholar（谷歌学术）' : literatureSource === 'lanfanshu' ? '烂番薯学术' : literatureSource}${yearLimitText}
 
 要求：
-1. 根据用户需求描述，提取关键词。${keywordLanguageInstruction}
-2. 为每个关键词分配文献查询数量，所有关键词的查询数量总和必须等于${targetCount}篇
-3. 根据关键词的重要性和覆盖面合理分配数量
-4. 关键词应该覆盖需求描述中的各个主要研究方向
-5. 每个关键词都应该一个比较具体的专业短语，而不是多个短语
-6. 如果配置了年份限制，需要考虑时间因素，为每个关键词设置合适的时间限制（minYear字段）
+1. 根据用户需求描述，生成${keywordCount}个不同的关键词。${keywordLanguageInstruction}
+2. 每个关键词都应该是一个比较具体的专业短语，而不是多个短语
+3. 关键词应该覆盖需求描述中的各个主要研究方向，确保全面性
+4. 关键词之间应该有所区别，避免重复或过于相似
+5. 如果配置了年份限制，需要考虑时间因素，为每个关键词设置合适的时间限制（minYear字段）
 
 请以JSON格式返回结果：
 {
   "keywords": [
     {
       "keyword": "关键词1",
-      "count": 10,
       "minYear": 2020
     },
     {
       "keyword": "关键词2",
-      "count": 15,
       "minYear": 2019
     }
   ]
 }
 
 注意：
-- 所有count的总和必须等于${targetCount}
+- 必须返回恰好${keywordCount}个关键词
 - 如果配置了年份限制（近${yearLimit.recentYears}年占${yearLimit.percentage}%），则大部分关键词的minYear应该设置为最近${yearLimit.recentYears}年内的年份
 - minYear字段表示该关键词搜索时的最小年份限制（可选，如果不设置则使用全局年份限制）
 - 只返回JSON，不要添加任何其他文字说明`;
@@ -98,8 +97,8 @@ ${requirementData.requirement || '未提供'}
             keywordsLength: result.keywords ? result.keywords.length : 0
         });
         
-        // 验证和调整数量
-        console.log('[Node1Keywords.execute] Validating and adjusting counts...');
+        // 验证和调整关键词
+        console.log('[Node1Keywords.execute] Validating and adjusting keywords...');
         if (result.keywords && Array.isArray(result.keywords)) {
             // 确保每个关键词都有必要的字段
             result.keywords = result.keywords.map(item => {
@@ -108,23 +107,18 @@ ${requirementData.requirement || '未提供'}
                 }
                 return {
                     keyword: item.keyword.trim(),
-                    count: item.count || 0,
-                    minYear: item.minYear || null // 时间限制（可选）
+                    minYear: item.minYear || null, // 时间限制（可选）
+                    // 每个关键词搜索数量：与步骤2严格对齐（通过翻页获取）
+                    count: perKeywordCount
                 };
             }).filter(item => item !== null);
             
-            // 调整数量以确保总和等于目标数量
-            const totalCount = result.keywords.reduce((sum, item) => sum + (item.count || 0), 0);
-            if (totalCount > 0 && Math.abs(totalCount - targetCount) > 2) {
-                const ratio = targetCount / totalCount;
-                result.keywords.forEach(item => {
-                    item.count = Math.round(item.count * ratio);
-                });
-                const newTotal = result.keywords.reduce((sum, item) => sum + item.count, 0);
-                const diff = targetCount - newTotal;
-                if (diff !== 0 && result.keywords.length > 0) {
-                    result.keywords[0].count += diff;
-                }
+            // 确保关键词数量符合配置
+            if (result.keywords.length < keywordCount) {
+                console.warn(`[Node1Keywords.execute] 关键词数量不足${keywordCount}个（${result.keywords.length}个），将使用现有关键词`);
+            } else if (result.keywords.length > keywordCount) {
+                console.warn(`[Node1Keywords.execute] 关键词数量超过${keywordCount}个（${result.keywords.length}个），将只使用前${keywordCount}个`);
+                result.keywords = result.keywords.slice(0, keywordCount);
             }
             
             // 如果没有设置minYear，根据年份限制配置设置默认值
@@ -218,6 +212,20 @@ ${requirementData.requirement || '未提供'}
         
         keywordsPlan.forEach((item, index) => {
             const minYearText = item.minYear ? `${item.minYear}年及以后` : '无限制';
+            const perKeywordCount =
+                Math.min(
+                    Math.max(
+                        parseInt(
+                            item.count ??
+                            window.WorkflowManager?.state?.requirementData?.initialScreening?.perKeywordCount ??
+                            window.WorkflowManager?.state?.currentSubproject?.config?.initialScreening?.perKeywordCount ??
+                            20,
+                            10
+                        ) || 20,
+                        1
+                    ),
+                    20
+                );
             html += `<div style="margin-bottom: 16px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 <div style="margin-bottom: 12px;">
                     <div style="font-size: 16px; font-weight: 600; color: #1f2937; line-height: 1.6; word-break: break-word;">
@@ -227,8 +235,8 @@ ${requirementData.requirement || '未提供'}
                 </div>
                 <div style="display: flex; gap: 24px; align-items: center; font-size: 14px; color: #6b7280;">
                     <div>
-                        <span style="color: #9ca3af; margin-right: 6px;">查询数量:</span>
-                        <span style="color: #1f2937; font-weight: 500;">${item.count || 0}篇</span>
+                        <span style="color: #9ca3af; margin-right: 6px;">搜索数量:</span>
+                        <span style="color: #1f2937; font-weight: 500;">${perKeywordCount}篇</span>
                     </div>
                     <div>
                         <span style="color: #9ca3af; margin-right: 6px;">时间限制:</span>
@@ -238,20 +246,9 @@ ${requirementData.requirement || '未提供'}
             </div>`;
         });
         
-        const totalCount = keywordsPlan.reduce((sum, item) => sum + (item.count || 0), 0);
-        html += `<div style="margin-top: 16px; padding: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e5e7eb;">
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 15px;">
-                <span style="font-weight: 600; color: #1f2937;">总计</span>
-                <span style="font-weight: 600; color: #1f2937;">${totalCount}篇</span>
-            </div>
-        </div>`;
         html += '</div>';
         
-        // 摘要信息
-        html += '<div id="keywords-summary" style="padding: 10px; background: #f8f9fa; border-radius: 4px; margin-top: 10px;">';
-        html += `<p style="margin: 0;"><strong>关键词数量：</strong>${keywordsPlan.length}个</p>`;
-        html += `<p style="margin: 5px 0 0 0;"><strong>总查询数量：</strong>${totalCount}篇</p>`;
-        html += '</div>';
+        // 已移除：关键词统计摘要块（用户要求“去掉”）
         
         console.log('[Node1Keywords.displayReadOnly] HTML generated, length:', html.length);
         console.log('[Node1Keywords.displayReadOnly] Setting container.innerHTML...');
@@ -293,6 +290,20 @@ ${requirementData.requirement || '未提供'}
         
         keywordsPlan.forEach((item, index) => {
             const currentYear = new Date().getFullYear();
+            const perKeywordCount =
+                Math.min(
+                    Math.max(
+                        parseInt(
+                            item.count ??
+                            window.WorkflowManager?.state?.requirementData?.initialScreening?.perKeywordCount ??
+                            window.WorkflowManager?.state?.currentSubproject?.config?.initialScreening?.perKeywordCount ??
+                            20,
+                            10
+                        ) || 20,
+                        1
+                    ),
+                    20
+                );
             html += `<div data-index="${index}" style="margin-bottom: 16px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                 <div style="margin-bottom: 12px;">
                     <input type="text" class="keyword-input" value="${this.escapeHtml(item.keyword || '')}" 
@@ -300,14 +311,11 @@ ${requirementData.requirement || '未提供'}
                            data-index="${index}"
                            placeholder="请输入关键词">
                 </div>
-                <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">查询数量:</label>
-                        <input type="number" class="count-input" value="${item.count || 0}" min="1" 
-                               style="width: 80px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 4px; text-align: center; font-size: 14px;" 
-                               data-index="${index}">
-                        <span style="font-size: 14px; color: #4b5563;">篇</span>
-                    </div>
+                    <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">搜索数量:</label>
+                            <span style="font-size: 14px; color: #1f2937; font-weight: 500;">${perKeywordCount}篇</span>
+                        </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">时间限制:</label>
                         <input type="number" class="minyear-input" value="${item.minYear || ''}" min="1900" max="${currentYear}" 
@@ -329,11 +337,10 @@ ${requirementData.requirement || '未提供'}
         html += '</div>';
         
         // 总计行
-        const totalCount = keywordsPlan.reduce((sum, item) => sum + (item.count || 0), 0);
         html += `<div style="margin-top: 16px; padding: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e5e7eb;">
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 15px;">
-                <span style="font-weight: 600; color: #1f2937;">总计</span>
-                <span style="font-weight: 600; color: #1f2937;" id="keywords-total">${totalCount}篇</span>
+                <span style="font-weight: 600; color: #1f2937;">预计总文献数</span>
+                <span style="font-weight: 600; color: #1f2937;">${keywordsPlan.length * Math.max(parseInt(window.WorkflowManager?.state?.requirementData?.initialScreening?.perKeywordCount || window.WorkflowManager?.state?.currentSubproject?.config?.initialScreening?.perKeywordCount || 20, 10) || 20, 1)}篇（去重后可能更少）</span>
             </div>
         </div>`;
         html += '</div>';
@@ -374,6 +381,19 @@ ${requirementData.requirement || '未提供'}
                 const newCard = document.createElement('div');
                 newCard.setAttribute('data-index', newIndex);
                 const currentYear = new Date().getFullYear();
+                const perKeywordCount =
+                    Math.min(
+                        Math.max(
+                            parseInt(
+                                window.WorkflowManager?.state?.requirementData?.initialScreening?.perKeywordCount ??
+                                window.WorkflowManager?.state?.currentSubproject?.config?.initialScreening?.perKeywordCount ??
+                                20,
+                                10
+                            ) || 20,
+                            1
+                        ),
+                        20
+                    );
                 newCard.style.cssText = 'margin-bottom: 16px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
                 newCard.innerHTML = `
                     <div style="margin-bottom: 12px;">
@@ -384,11 +404,8 @@ ${requirementData.requirement || '未提供'}
                     </div>
                     <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">查询数量:</label>
-                            <input type="number" class="count-input" value="5" min="1" 
-                                   style="width: 80px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 4px; text-align: center; font-size: 14px;" 
-                                   data-index="${newIndex}">
-                            <span style="font-size: 14px; color: #4b5563;">篇</span>
+                            <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">搜索数量:</label>
+                            <span style="font-size: 14px; color: #1f2937; font-weight: 500;">${perKeywordCount}篇</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <label style="font-size: 14px; color: #6b7280; white-space: nowrap;">时间限制:</label>
@@ -452,10 +469,7 @@ ${requirementData.requirement || '未提供'}
             });
         });
         
-        // 数量输入框变化时更新总计
-        document.querySelectorAll('.count-input').forEach(input => {
-            input.addEventListener('input', () => this.updateTotal());
-        });
+        // 不再需要更新总计（因为每个关键词固定搜索100篇）
         
         // 保存按钮
         const saveBtn = document.getElementById('save-keywords-btn');
@@ -467,40 +481,42 @@ ${requirementData.requirement || '未提供'}
         
     },
 
-    // 更新总计
+    // 更新总计（不再需要，因为每个关键词固定搜索100篇）
     updateTotal() {
-        const totalEl = document.getElementById('keywords-total');
-        if (!totalEl) return;
-        
-        let total = 0;
-        document.querySelectorAll('.count-input').forEach(input => {
-            const value = parseInt(input.value) || 0;
-            total += value;
-        });
-        
-        totalEl.textContent = `${total}篇`;
+        // 已废弃：每个关键词固定搜索100篇
     },
 
     // 保存关键词
     saveKeywords() {
         const keywordsPlan = [];
         const cards = document.querySelectorAll('#keywords-table-body > div[data-index]');
+        const perKeywordCount =
+            Math.min(
+                Math.max(
+                    parseInt(
+                        window.WorkflowManager?.state?.requirementData?.initialScreening?.perKeywordCount ??
+                        window.WorkflowManager?.state?.currentSubproject?.config?.initialScreening?.perKeywordCount ??
+                        20,
+                        10
+                    ) || 20,
+                    1
+                ),
+                20
+            );
         
         cards.forEach(card => {
             const keywordInput = card.querySelector('.keyword-input');
-            const countInput = card.querySelector('.count-input');
             const minYearInput = card.querySelector('.minyear-input');
             
-            if (keywordInput && countInput) {
+            if (keywordInput) {
                 const keyword = keywordInput.value.trim();
-                const count = parseInt(countInput.value) || 0;
                 const minYear = minYearInput ? (minYearInput.value.trim() ? parseInt(minYearInput.value) : null) : null;
                 
-                if (keyword && count > 0) {
+                if (keyword) {
                     keywordsPlan.push({ 
-                        keyword, 
-                        count,
-                        minYear: minYear || null
+                        keyword,
+                        minYear: minYear || null,
+                        count: perKeywordCount
                     });
                 }
             }
@@ -537,4 +553,3 @@ ${requirementData.requirement || '未提供'}
         return div.innerHTML;
     }
 };
-

@@ -1,0 +1,91 @@
+/* 综述撰写工作流页样式 */
+
+@import url('../variables.css');
+@import url('../common.css');
+@import url('../components/button.css');
+@import url('../components/card.css');
+@import url('../components/modal.css');
+@import url('../components/toast.css');
+@import url('../components/form.css');
+@import url('../components/progress.css');
+@import url('../layouts/header.css');
+@import url('../layouts/footer.css');
+@import url('../layouts/container.css');
+
+/* 综述撰写工作流页特定样式 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+/* 文献列表 */
+.literature-list {
+    max-height: 500px;
+    overflow-y: auto;
+    margin-top: 20px;
+}
+
+.literature-item {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s;
+}
+
+.literature-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.literature-item h5 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.literature-item p {
+    font-size: 13px;
+    color: #666;
+    margin: 4px 0;
+}
+
+/* 已选文献摘要 */
+#selected-literature-summary {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f0f4ff;
+    border-radius: 8px;
+}
+
+#selected-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+/* 综述结果 */
+#review-result {
+    margin-top: 20px;
+}
+
+#review-content {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+}
